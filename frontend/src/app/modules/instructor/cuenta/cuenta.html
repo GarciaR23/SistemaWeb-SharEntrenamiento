@@ -1,0 +1,94 @@
+<section class="cuenta-page fade-in">
+  <div class="cuenta-shell">
+    <nav class="cuenta-steps" aria-label="Progreso de perfil">
+      <button type="button" class="step" routerLink="/formulario" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span>1</span>
+        <small>PERFIL</small>
+      </button>
+      <div class="step-separator"></div>
+      <button type="button" class="step" routerLink="/certificado" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span>2</span>
+        <small>CERTIFICADOS</small>
+      </button>
+      <div class="step-separator"></div>
+      <button type="button" class="step" routerLink="/cuenta" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span>3</span>
+        <small>CUENTA</small>
+      </button>
+    </nav>
+
+    <div class="cuenta-card">
+      <header class="cuenta-header">
+        <div>
+          <h1>Crear tu cuenta</h1>
+          <p>Define tus credenciales de acceso y revisa tu resumen de registro.</p>
+        </div>
+      </header>
+
+      <form class="cuenta-form" [formGroup]="accountForm" autocomplete="off">
+        <div class="field-row">
+          <label class="field-group">
+            <span>Correo electrónico</span>
+            <div class="input-wrapper">
+              <input type="email" placeholder="ejemplo@entreno.com" formControlName="email" autocomplete="email" />
+              <span class="input-icon">
+                <img src="assets/icons/Icon_email.png" alt="Icono de correo" />
+              </span>
+            </div>
+          </label>
+          <label class="field-group">
+            <span>Contraseña</span>
+            <div class="input-wrapper">
+              <input [type]="showPassword ? 'text' : 'password'" placeholder="********" formControlName="password" autocomplete="current-password" />
+              <button type="button" (click)="togglePassword()" class="icon-button" aria-label="Mostrar contraseña">👁</button>
+            </div>
+          </label>
+        </div>
+
+        <div class="resumen-card">
+          <div class="resumen-title">
+            <strong>Resumen de Registro</strong>
+          </div>
+          <div class="resumen-item">
+            <span> Nombre Completo</span>
+            <strong>{{ formState.state.profile.fullName || 'No especificado' }}</strong>
+          </div>
+          <div class="resumen-item">
+            <span> Especialidad</span>
+            <strong>{{ formState.state.profile.specialty || 'No especificado' }}</strong>
+          </div>
+          <div class="resumen-item">
+            <span> Certificación</span>
+            <strong>{{ formState.state.profile.bio ? 'Certificado agregado' : 'Sin descripción' }}</strong>
+          </div>
+          <div class="resumen-item">
+            <span> Disponibilidad</span>
+            <strong>{{ formState.state.profile.selectedDay }} , {{ formState.state.profile.selectedShift }} : {{ formState.state.profile.fromTime }} - {{ formState.state.profile.toTime }}</strong>
+          </div>
+          <div class="resumen-item">
+            <span> Documentos</span>
+            <strong>{{ formState.state.documents.certificacion.status }} / {{ formState.state.documents.dni.status }} / {{ formState.state.documents.titulo.status }} / {{ formState.state.documents.antecedentes.status }}</strong>
+          </div>
+        </div>
+
+        <p class="form-feedback" *ngIf="feedbackMessage">{{ feedbackMessage }}</p>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" routerLink="/certificado">← Atrás</button>
+          <button type="button" class="btn-primary" (click)="finalizarRegistro()">Continuar →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Enviado modal -->
+<div class="modal-backdrop" *ngIf="showModal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-body">
+      <div class="modal-check">✓</div>
+      <h2>Creado</h2>
+      <button class="btn-primary" (click)="closeModal()">Ok</button>
+    </div>
+  </div>
+</div>

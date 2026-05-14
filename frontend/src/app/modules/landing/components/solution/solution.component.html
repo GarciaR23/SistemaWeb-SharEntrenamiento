@@ -1,0 +1,42 @@
+<section id="metodologia" class="ecosystem-container">
+
+  <!-- Material Icons (local al componente como pediste) -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- BACKGROUND GLOW -->
+  <div class="bg-glow"></div>
+
+  <div class="header-content">
+
+    <h1 class="title">
+      La Revolución del <span class="highlight-text">Entrenamiento Inclusivo</span>
+    </h1>
+
+    <p class="description">
+      ShareEntrenamiento no es solo una app, es un ecosistema diseñado para derribar
+      muros a través de la tecnología y la empatía.
+    </p>
+
+  </div>
+
+  <div class="cards-grid">
+
+    @for (feature of features; track feature.title) {
+      <div class="feature-card" [class.featured]="feature.isFeatured">
+
+        <div class="icon-wrapper">
+          <span class="material-icons">{{ feature.icon }}</span>
+        </div>
+
+        <h2 class="card-title">{{ feature.title }}</h2>
+
+        <p class="card-description">
+          {{ feature.description }}
+        </p>
+
+      </div>
+    }
+
+  </div>
+
+</section>

@@ -1,0 +1,1 @@
+# Config\n\nCarpeta para configuraciones globales (Security, CORS, Swagger).

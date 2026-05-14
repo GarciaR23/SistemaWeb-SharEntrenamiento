@@ -1,0 +1,242 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+.certificado-page {
+  @include onboarding-page;
+}
+
+.certificado-shell {
+  @include onboarding-shell;
+}
+
+.certificado-steps {
+  @include onboarding-steps;
+  width: 100%;
+  margin-bottom: $spacing-lg;
+}
+
+.step {
+  @include onboarding-step;
+  min-width: 140px;
+}
+
+.step-separator {
+  @include onboarding-separator;
+  margin: 0 $spacing-sm;
+}
+
+.certificado-card {
+  @include onboarding-card;
+  padding: $spacing-2xl;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgba($color-primary, 0.06), transparent 35%);
+  }
+}
+
+.certificado-header {
+  @include onboarding-header;
+  position: relative;
+  z-index: 1;
+  margin-bottom: $spacing-2xl;
+
+  h1 {
+    letter-spacing: -0.03em;
+  }
+
+  p {
+    color: $color-text-secondary;
+    line-height: 1.7;
+  }
+}
+
+.certificado-list {
+  display: grid;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-2xl;
+  position: relative;
+  z-index: 1;
+}
+
+.document-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg;
+  background: rgba(20, 28, 44, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: $border-radius-lg;
+  transition: all $transition-base;
+
+  &:hover {
+    border-color: rgba($color-primary, 0.24);
+    background: rgba(20, 28, 44, 0.8);
+    transform: translateY(-2px);
+  }
+}
+
+.document-info {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-lg;
+  flex: 1;
+}
+
+.document-icon {
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+}
+
+.document-info > div {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+
+  strong {
+    color: $color-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.status {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: $font-weight-bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: $border-radius-sm;
+
+  &::before {
+    content: '●';
+    font-size: 8px;
+  }
+
+  &.pending {
+    color: $color-warning;
+
+    &::before {
+      color: $color-warning;
+    }
+  }
+
+  &.completed {
+    color: $color-success;
+
+    &::before {
+      color: $color-success;
+    }
+  }
+
+  &.rejected {
+    color: $color-error;
+
+    &::before {
+      color: $color-error;
+    }
+  }
+}
+
+.btn-upload {
+  @include button-base;
+  padding: $spacing-md $spacing-lg;
+  background: rgba($color-primary, 0.12);
+  color: $color-primary;
+  border: 1px solid rgba($color-primary, 0.3);
+  border-radius: $border-radius-lg;
+  font-weight: $font-weight-semibold;
+  min-width: 120px;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba($color-primary, 0.18);
+    border-color: rgba($color-primary, 0.5);
+    transform: translateY(-2px);
+  }
+}
+
+.certificado-note {
+  padding: $spacing-lg;
+  background: linear-gradient(135deg, rgba($color-info, 0.08), rgba($color-primary, 0.06));
+  border-left: 3px solid $color-info;
+  border-radius: $border-radius-md;
+  position: relative;
+  z-index: 1;
+
+  p {
+    color: $color-text-secondary;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin: 0;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-md;
+  margin-top: $spacing-2xl;
+}
+
+.btn-primary {
+  @include btn-pill-primary;
+  min-width: 180px;
+  box-shadow: 0 16px 30px rgba($color-primary, 0.14);
+}
+
+.btn-secondary {
+  @include button-base;
+  padding: 16px 32px;
+  border-radius: $border-radius-full;
+  background: transparent;
+  color: $color-text-primary;
+  border: 1px solid rgba($color-text-primary, 0.12);
+  font-weight: $font-weight-semibold;
+  min-width: 180px;
+
+  &:hover {
+    background: rgba($color-text-primary, 0.04);
+    border-color: rgba($color-text-primary, 0.24);
+    transform: translateY(-2px);
+  }
+}
+
+@media (max-width: 768px) {
+  .certificado-card {
+    padding: $spacing-xl;
+  }
+
+  .document-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $spacing-md;
+  }
+
+  .btn-upload {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 620px) {
+  .certificado-card {
+    padding: $spacing-lg;
+  }
+
+  .certificado-header {
+    flex-direction: column;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-lg;
+  }
+}

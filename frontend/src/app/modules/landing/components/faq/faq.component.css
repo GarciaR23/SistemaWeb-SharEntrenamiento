@@ -1,0 +1,156 @@
+:host {
+  display: block;
+  background: radial-gradient(circle at top, #111827, #0f1117);
+  padding: 90px 20px;
+  font-family: 'Inter', sans-serif;
+  color: white;
+}
+
+/* TITLE */
+.faq-title {
+  text-align: center;
+  font-size: 2.6rem;
+  font-weight: 800;
+  margin-bottom: 50px;
+}
+
+.faq-title span {
+  color: #4ade80;
+}
+
+/* GRID */
+.faq-grid {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* CARD */
+.faq-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 20px 22px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.faq-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(74,222,128,0.3);
+  background: rgba(74,222,128,0.05);
+}
+
+/* LEFT SIDE */
+.faq-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ICON MÁS GRANDE (IMPORTANTE) */
+.faq-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: rgba(74,222,128,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.faq-icon .material-icons {
+  font-size: 22px;
+  color: #4ade80;
+}
+
+/* QUESTION */
+.question {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #e5e7eb;
+}
+
+/* ARROW */
+.arrow {
+  font-size: 18px;
+  color: #9ca3af;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.faq-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* CONTENT */
+.modal-content {
+  width: 90%;
+  max-width: 520px;
+  background: #171B28;
+  padding: 30px;
+  border-radius: 18px;
+  animation: fadeIn 0.25s ease;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* HEADER MODAL */
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+/* ICON MODAL GRANDE */
+.modal-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(74,222,128,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-icon .material-icons {
+  font-size: 26px;
+  color: #4ade80;
+}
+
+/* TEXT */
+.modal-content h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.modal-content p {
+  color: #9ca3af;
+  line-height: 1.6;
+}
+
+/* ANIMATION */
+@keyframes fadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

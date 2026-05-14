@@ -1,0 +1,61 @@
+<section class="certificado-page fade-in">
+  <div class="certificado-shell">
+    <nav class="certificado-steps" aria-label="Progreso de perfil">
+      <button type="button" class="step" routerLink="/formulario" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span>1</span>
+        <small>PERFIL</small>
+      </button>
+      <div class="step-separator"></div>
+      <button type="button" class="step" routerLink="/certificado" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span>2</span>
+        <small>CERTIFICADOS</small>
+      </button>
+      <div class="step-separator"></div>
+      <button type="button" class="step" routerLink="/cuenta" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span>3</span>
+        <small>CUENTA</small>
+      </button>
+    </nav>
+
+    <div class="certificado-card">
+      <header class="certificado-header">
+        <div>
+          <h1>Certificaciones y Documentos</h1>
+          <p>Sube tus documentos para obtener el sello de verificación.</p>
+        </div>
+      </header>
+
+      <div class="certificado-list">
+        <article class="document-item" *ngFor="let document of documents">
+          <div class="document-info">
+            <span class="document-icon">🪪</span>
+            <div>
+              <strong>{{ document.title }}</strong>
+              <span class="status" [class.pending]="getStatusLabel(document.key) === 'PENDIENTE'" [class.delivered]="getStatusLabel(document.key) === 'ENTREGADO'">
+                {{ getStatusLabel(document.key) }}
+              </span>
+            </div>
+          </div>
+          <button type="button" class="btn-upload" (click)="certificacionInput.click()">
+            <img src="assets/icons/Icon_update.png" alt="Icono de documento"/> Subir</button>
+          <input type="file" #certificacionInput (change)="getFile(document.key, $event)" hidden>
+          <small *ngIf="getFileName(document.key)">Archivo: {{ getFileName(document.key) }}</small>
+        </article>
+      </div>
+
+      <p class="form-feedback" *ngIf="feedbackMessage">{{ feedbackMessage }}</p>
+
+      <div class="certificado-note">
+        <p>
+          Los documentos serán revisados por el equipo de SharEntrenamiento en un plazo máximo de 48 horas hábiles.
+          Recibirás una notificación una vez validados.
+        </p>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" routerLink="/formulario">← Atrás</button>
+        <button type="button" class="btn-primary" (click)="goToCuenta()">Continuar →</button>
+      </div>
+    </div>
+  </div>
+</section>

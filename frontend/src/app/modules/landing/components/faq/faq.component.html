@@ -1,0 +1,54 @@
+<section id="soporte" class="faq-container">
+
+  <h2 class="faq-title">
+    Preguntas <span>Frecuentes</span>
+  </h2>
+
+  <!-- LISTA -->
+  <div class="faq-grid">
+
+    @for (item of faqs; track $index) {
+      <div class="faq-card" (click)="openFaq(item)">
+
+        <div class="faq-left">
+
+          <div class="faq-icon">
+            <span class="material-icons">help_outline</span>
+          </div>
+
+          <span class="question">{{ item.question }}</span>
+
+        </div>
+
+        <span class="material-icons arrow">arrow_forward_ios</span>
+
+      </div>
+    }
+
+  </div>
+
+  <!-- MODAL -->
+  @if (selectedFaq) {
+    <div class="faq-modal" (click)="closeFaq()">
+
+      <div class="modal-content" (click)="$event.stopPropagation()">
+
+        <!-- HEADER VISUAL -->
+        <div class="modal-header">
+
+          <div class="modal-icon">
+            <span class="material-icons">live_help</span>
+          </div>
+
+          <h3>{{ selectedFaq.question }}</h3>
+
+        </div>
+
+        <p>{{ selectedFaq.answer }}</p>
+
+      </div>
+
+    </div>
+  }
+
+</section>

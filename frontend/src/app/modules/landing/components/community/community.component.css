@@ -1,0 +1,139 @@
+:host {
+  display: block;
+  background-color: #0F131F;
+  color: white;
+  font-family: 'Inter', sans-serif;
+}
+
+/* LAYOUT */
+.community-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  padding: 90px 40px;
+}
+
+/* LEFT */
+.info-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* TITLE */
+.title {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 20px;
+  letter-spacing: -0.5px;
+  max-width: 540px;
+}
+
+.highlight {
+  color: #4ade80;
+}
+
+/* SUBTITLE */
+.subtitle {
+  color: #9ca3af;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 30px;
+  max-width: 520px;
+}
+
+/* LIST */
+.benefits-list {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 40px;
+}
+
+.benefits-list li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  font-size: 1.05rem;
+  color: #e5e7eb;
+}
+
+/* ICON */
+.check-icon {
+  font-family: 'Material Icons';
+  color: #4ade80;
+  font-size: 22px;
+}
+
+/* BUTTON */
+.cta-button {
+  background: linear-gradient(135deg, #71ffbb, #4ade80);
+  color: #0d1117;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 50px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  width: fit-content;
+}
+
+.cta-button:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 15px 30px rgba(74,222,128,0.25);
+}
+
+/* RIGHT IMAGE */
+.image-side {
+  position: relative;
+  width: 100%;
+  min-height: 500px;
+}
+
+.image-wrapper {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 22px;
+}
+
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.95);
+  transform: scale(1.02);
+}
+
+/* BADGE */
+.trust-badge {
+  position: absolute;
+  bottom: 25px;
+  left: 25px;
+  background: rgba(163, 201, 248, 0.95);
+  color: #1e3a8a;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .community-container {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .title {
+    font-size: 2.4rem;
+  }
+
+  .image-side {
+    min-height: 320px;
+  }
+}

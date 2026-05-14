@@ -1,0 +1,35 @@
+<section class="benefits-container">
+  <h2 class="main-title">Respaldado por Rigurosidad Técnica</h2>
+
+  <div class="cert-grid">
+    @for (cert of certifications; track cert.title) {
+      <div class="cert-card">
+        <div class="icon-circle">
+          <span class="material-icons">{{ cert.icon }}</span>
+        </div>
+        <h3>{{ cert.title }}</h3>
+        <p>{{ cert.desc }}</p>
+      </div>
+    }
+  </div>
+
+  <div class="comparison-grid">
+    <div class="comp-box sin-box">
+      <h3 class="comp-title">SIN SHARENTRENAMIENTO</h3>
+      <ul class="list">
+        @for (item of negativePoints; track item) {
+          <li><span class="icon red">close</span> {{ item }}</li>
+        }
+      </ul>
+    </div>
+
+    <div class="comp-box con-box">
+      <h3 class="comp-title">CON SHARENTRENAMIENTO</h3>
+      <ul class="list">
+        @for (item of positivePoints; track item) {
+          <li><span class="icon green">done_all</span> {{ item }}</li>
+        }
+      </ul>
+    </div>
+  </div>
+</section>

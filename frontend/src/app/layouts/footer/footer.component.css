@@ -1,0 +1,172 @@
+:host {
+  display: block;
+  background: #0d1117;
+  color: #9ca3af;
+  font-family: 'Inter', sans-serif;
+}
+
+/* CONTENEDOR CENTRAL */
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 20px 40px;
+
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+/* ================= BRAND ================= */
+
+.footer-brand {
+  flex: 1;
+  min-width: 280px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+/* 🔥 LOGO IGUAL AL HEADER */
+.logo-icon {
+  position: relative;
+  width: 42px;
+  height: 42px;
+}
+
+.logo-circle {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+.blue-circle {
+  background: linear-gradient(135deg, #4a90e2, #3b7fd9);
+  top: 0;
+  left: 0;
+}
+
+.green-circle {
+  background: linear-gradient(135deg, #28c768, #20a856);
+  bottom: 0;
+  right: 0;
+}
+
+.brand-name {
+  color: #4ade80;
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.brand-description {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 350px;
+}
+
+/* ================= LINKS ================= */
+
+.footer-links {
+  display: flex;
+  gap: 80px;
+  flex: 1;
+  justify-content: flex-end;
+  min-width: 280px;
+}
+
+.link-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.link-group h4 {
+  color: white;
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.link-group a {
+  color: #9ca3af;
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.link-group a:hover {
+  color: #4ade80;
+}
+
+/* ================= DIVIDER ================= */
+
+.footer-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255,255,255,0.08);
+  margin: 10px auto;
+}
+
+/* ================= BOTTOM ================= */
+
+.footer-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.social-icons {
+  display: flex;
+  gap: 12px;
+}
+
+/* 🔥 ICONOS LIMPIOS (sin Material Icons mal usados) */
+.social-icons a {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #1e293b;
+  color: white;
+
+  font-size: 0.8rem;
+  text-decoration: none;
+
+  transition: 0.3s ease;
+}
+
+.social-icons a:hover {
+  background: #4ade80;
+  color: #0d1117;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .footer-links {
+    justify-content: flex-start;
+    gap: 40px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+}

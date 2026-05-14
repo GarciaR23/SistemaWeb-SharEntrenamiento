@@ -1,0 +1,43 @@
+<div class="login-page">
+  <div class="login-background">
+    <div class="circle circle-left"></div>
+    <div class="circle circle-right"></div>
+  </div>
+
+  <div class="login-card">
+    <div class="login-header">
+      <h2>Bienvenido</h2>
+      <p>Accede a tu plataforma de entrenamiento</p>
+    </div>
+
+    <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off">
+      <label class="form-label">
+        <span>Correo electrónico</span>
+        <div class="input-wrapper">
+          <input type="email" formControlName="email" placeholder="ejemplo@entreno.com" autocomplete="email" />
+          <span class="input-icon">
+             <img src="assets/icons/Icon_email.png" alt="Icono de correo" />
+          </span>
+        </div>
+      </label>
+
+      <label class="form-label">
+        <span>Contraseña</span>
+        <div class="input-wrapper">
+          <input [type]="showPassword ? 'text': 'password'" formControlName="password" placeholder="********" autocomplete="current-password" />
+          <button type="button" (click)="togglePassword()" class="icon-button" aria-label="Mostrar contraseña">👁</button>
+        </div>
+      </label>
+
+      <div class="form-footer">
+        <a href="#" class="secondary-link">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <button type="submit" [disabled]="loginForm.invalid" class="btn-primary">Iniciar Sesión</button>
+
+      <p class="register-link">
+        ¿No tienes una cuenta? <a [routerLink]="['/seleccion-rol']" routerLinkActive="router-link-active" (click)="closeMenu()">Registrarse</a>
+      </p>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,98 @@
+<section class="perfil-page fade-in">
+  <div class="perfil-shell">
+    <nav class="perfil-steps" aria-label="Progreso de perfil">
+      <button type="button" class="step" routerLink="/formulario" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span>1</span>
+        <small>PERFIL</small>
+      </button>
+      <div class="step-separator"></div>
+      <button type="button" class="step" routerLink="/certificado" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span>2</span>
+        <small>CERTIFICADOS</small>
+      </button>
+      <div class="step-separator"></div>
+      <button type="button" class="step" routerLink="/cuenta" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span>3</span>
+        <small>CUENTA</small>
+      </button>
+    </nav>
+
+    <div class="perfil-card">
+      <header class="perfil-header">
+        <div>
+          <h1>Perfil Profesional</h1>
+          <p>Tu información como instructor certificado.</p>
+        </div>
+      </header>
+
+      <form class="perfil-form" [formGroup]="profileForm" autocomplete="off">
+        <div class="field-row">
+          <label class="field-group">
+            <span>Nombre Completo</span>
+            <input type="text" placeholder="Ej. Alex Rivera" formControlName="fullName" />
+          </label>
+
+          <label class="field-group">
+            <span>Especialidad</span>
+            <select formControlName="specialty">
+              <option value="">Selecciona tu área</option>
+              <option value="Entrenamiento funcional">Entrenamiento funcional</option>
+              <option value="Fitness general">Fitness general</option>
+              <option value="Pilates">Pilates</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="field-row">
+          <label class="field-group">
+            <span>Tarifa por hora (USD)</span>
+            <input type="text" placeholder="$ 45.00" formControlName="rate" />
+          </label>
+
+          <div class="field-group">
+            <span>Horario disponible</span>
+            <div class="toggle-group">
+              <button type="button" class="toggle" [class.active]="profileForm.value.selectedShift === 'Mañana'" (click)="selectShift('Mañana')">Mañana</button>
+              <button type="button" class="toggle" [class.active]="profileForm.value.selectedShift === 'Tarde'" (click)="selectShift('Tarde')">Tarde</button>
+              <button type="button" class="toggle" [class.active]="profileForm.value.selectedShift === 'Noche'" (click)="selectShift('Noche')">Noche</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label">DÍAS DISPONIBLES</div>
+        <div class="days-grid">
+          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'L'" (click)="selectDay('L')">L</button>
+          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'M'" (click)="selectDay('M')">M</button>
+          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'Mi'" (click)="selectDay('Mi')">Mi</button>
+          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'J'" (click)="selectDay('J')">J</button>
+          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'V'" (click)="selectDay('V')">V</button>
+          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'S'" (click)="selectDay('S')">S</button>
+          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'D'" (click)="selectDay('D')">D</button>
+        </div>
+
+        <div class="section-label">FRANJA HORARIA PREFERIDA</div>
+        <div class="field-row">
+          <label class="field-group">
+            <span>Desde</span>
+            <input type="time" formControlName="fromTime" />
+          </label>
+          <label class="field-group">
+            <span>Hasta</span>
+            <input type="time" formControlName="toTime" />
+          </label>
+        </div>
+
+        <label class="field-group bio-group">
+          <span>Biografía profesional</span>
+          <textarea rows="4" placeholder="Describe tu metodología, años de experiencia y lo que te motiva..." formControlName="bio"></textarea>
+        </label>
+
+        <p class="form-feedback" *ngIf="feedbackMessage">{{ feedbackMessage }}</p>
+
+        <div class="form-actions">
+          <button type="button" class="btn-primary" (click)="goToCertificado()">Continuar →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

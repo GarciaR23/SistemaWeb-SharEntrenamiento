@@ -1,0 +1,303 @@
+<div class="tutor-form-page">
+
+    <!-- STEPS -->
+    <div class="steps">
+        <div class="step" [class.active]="paso === 1">
+            <span>1</span>
+            <p>DATOS</p>
+        </div>
+
+        <div class="line"></div>
+
+        <div class="step" [class.active]="paso === 2">
+            <span>2</span>
+            <p>PROTOCOLO</p>
+        </div>
+
+        <div class="line"></div>
+
+        <div class="step" [class.active]="paso === 3">
+            <span>3</span>
+            <p>CONTACTO</p>
+        </div>
+
+        <div class="line"></div>
+
+        <div class="step" [class.active]="paso === 4">
+            <span>4</span>
+            <p>CUENTA</p>
+        </div>
+    </div>
+
+    <!-- PASO 1 -->
+    <div class="form-card" *ngIf="paso === 1">
+        <h1>Datos del Paciente</h1>
+
+        <p class="subtitle">
+            Información del paciente que recibirá el entrenamiento.
+        </p>
+
+        <p class="section-label">INFORMACIÓN GENERAL</p>
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label>Tu Nombre Completo</label>
+                <input [(ngModel)]="nombreTutor" name="nombreTutor" placeholder="Ej. Alex Rivera">
+            </div>
+
+            <div class="form-group">
+                <label>Nombre del Paciente</label>
+                <input [(ngModel)]="nombrePaciente" name="nombrePaciente" placeholder="Ej. Roxana Pérez">
+            </div>
+
+            <div class="form-group">
+                <label>Condición / Diagnóstico</label>
+                <input [(ngModel)]="condicion" name="condicion" placeholder="Ej. TEA, PC...">
+            </div>
+
+            <div class="form-group">
+                <label>Grado de Autismo</label>
+                <select [(ngModel)]="gradoAutismo" name="gradoAutismo">
+                    <option value="" disabled>Selecciona</option>
+                    <option>Leve</option>
+                    <option>Moderado</option>
+                    <option>Severo</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Género</label>
+                <select [(ngModel)]="genero" name="genero">
+                    <option value="" disabled>Selecciona</option>
+                    <option>Masculino</option>
+                    <option>Femenino</option>
+                    <option>Otro</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Edad</label>
+                <input [(ngModel)]="edad" name="edad" type="number" placeholder="Ej. 24">
+            </div>
+
+        </div>
+
+        <div class="actions">
+            <button type="button" (click)="siguiente()">Continuar →</button>
+        </div>
+    </div>
+
+    <!-- PASO 2 -->
+    <div class="form-card" *ngIf="paso === 2">
+        <h1>Protocolo de Crisis</h1>
+
+        <p class="subtitle">
+            Selecciona las sensibilidades del paciente y define el protocolo de emergencia.
+        </p>
+
+        <p class="section-label">
+            SENSIBILIDADES (SELECCIONA TODAS LAS QUE APLIQUEN)
+        </p>
+
+        <div class="grid-2">
+
+            <div class="check" [class.selected]="estaSeleccionada('Ruidos fuertes')"
+                (click)="toggleSensibilidad('Ruidos fuertes')">
+                Ruidos fuertes
+            </div>
+
+            <div class="check" [class.selected]="estaSeleccionada('Contacto físico')"
+                (click)="toggleSensibilidad('Contacto físico')">
+                Contacto físico
+            </div>
+
+            <div class="check" [class.selected]="estaSeleccionada('Luces brillantes')"
+                (click)="toggleSensibilidad('Luces brillantes')">
+                Luces brillantes
+            </div>
+
+            <div class="check" [class.selected]="estaSeleccionada('Multitudes')"
+                (click)="toggleSensibilidad('Multitudes')">
+                Multitudes
+            </div>
+
+            <div class="check" [class.selected]="estaSeleccionada('Cambios de rutina')"
+                (click)="toggleSensibilidad('Cambios de rutina')">
+                Cambios de rutina
+            </div>
+
+            <div class="check" [class.selected]="estaSeleccionada('Texturas específicas')"
+                (click)="toggleSensibilidad('Texturas específicas')">
+                Texturas específicas
+            </div>
+
+            <div class="check" [class.selected]="estaSeleccionada('Olores intensos')"
+                (click)="toggleSensibilidad('Olores intensos')">
+                Olores intensos
+            </div>
+
+            <div class="check" [class.selected]="estaSeleccionada('Espacios cerrados')"
+                (click)="toggleSensibilidad('Espacios cerrados')">
+                Espacios cerrados
+            </div>
+
+        </div>
+
+        <p class="section-label">PROTOCOLO DE EMERGENCIA</p>
+
+        <textarea [(ngModel)]="protocoloEmergencia" name="protocoloEmergencia"
+            placeholder="Instrucciones específicas en caso de colapso...">
+    </textarea>
+
+        <div class="actions between">
+            <button type="button" class="back-btn" (click)="atras()">← Atrás</button>
+            <button type="button" (click)="siguiente()">Continuar →</button>
+        </div>
+    </div>
+
+    <!-- PASO 3 -->
+    <div class="form-card" *ngIf="paso === 3">
+        <h1>Contacto de Emergencia</h1>
+
+        <p class="subtitle">
+            Esta persona será contactada si se activa el protocolo de colapso.
+        </p>
+
+        <p class="section-label">INFORMACIÓN DEL CONTACTO</p>
+
+        <div class="contact-form">
+
+            <div class="form-group full">
+                <label>Nombre del Contacto</label>
+                <input [(ngModel)]="nombreContacto" name="nombreContacto" placeholder="Ej. Mónica Torres">
+            </div>
+
+            <div class="form-group">
+                <label>Teléfono</label>
+                <input [(ngModel)]="telefonoContacto" name="telefonoContacto" placeholder="Ej. 987654321">
+            </div>
+
+            <div class="form-group">
+                <label>Relación</label>
+                <select [(ngModel)]="relacionContacto" name="relacionContacto">
+                    <option value="" disabled>Selecciona</option>
+                    <option>Madre</option>
+                    <option>Padre</option>
+                    <option>Hermano/a</option>
+                    <option>Cuidador/a</option>
+                    <option>Otro</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="actions between">
+            <button type="button" class="back-btn" (click)="atras()">← Atrás</button>
+            <button type="button" (click)="siguiente()">Continuar →</button>
+        </div>
+    </div>
+
+    <!-- PASO 4 -->
+    <div class="form-card" *ngIf="paso === 4">
+        <h1>Crear tu cuenta</h1>
+
+        <p class="subtitle">
+            Define tus credenciales de acceso para ingresar como tutor.
+        </p>
+
+        <p class="section-label">CREDENCIALES DE ACCESO</p>
+
+        <div class="account-form">
+
+            <div class="form-group">
+                <label>Correo Electrónico</label>
+                <input [(ngModel)]="correo" name="correo" type="email" placeholder="ejemplo@entreno.com">
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input [(ngModel)]="contrasena" name="contrasena" type="password" placeholder="••••••••">
+            </div>
+
+        </div>
+
+        <div class="summary">
+            <h3>Resumen de Registro</h3>
+
+            <div class="summary-row">
+                <span>Rol seleccionado</span>
+                <strong>Tutor</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Nombre del Tutor</span>
+                <strong>{{ nombreTutor || 'No registrado' }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Paciente</span>
+                <strong>{{ nombrePaciente || 'No registrado' }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Condición</span>
+                <strong>{{ condicion || 'No registrada' }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Grado de Autismo</span>
+                <strong>{{ gradoAutismo || 'No seleccionado' }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Género</span>
+                <strong>{{ genero || 'No seleccionado' }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Edad</span>
+                <strong>{{ edad || 'No registrada' }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Sensibilidades</span>
+                <strong>
+                    {{ sensibilidadesSeleccionadas.length ? sensibilidadesSeleccionadas.join(', ') : 'No seleccionadas'
+                    }}
+                </strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Protocolo</span>
+                <strong>{{ protocoloEmergencia ? 'Registrado' : 'No registrado' }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Contacto</span>
+                <strong>{{ nombreContacto || 'No registrado' }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Teléfono</span>
+                <strong>{{ telefonoContacto || 'No registrado' }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Relación</span>
+                <strong>{{ relacionContacto || 'No seleccionada' }}</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Correo</span>
+                <strong>{{ correo || 'No registrado' }}</strong>
+            </div>
+        </div>
+
+        <div class="actions between">
+            <button type="button" class="back-btn" (click)="atras()">← Atrás</button>
+            <button type="button" (click)="finalizar()">Continuar →</button>
+        </div>
+    </div>
+
+</div>

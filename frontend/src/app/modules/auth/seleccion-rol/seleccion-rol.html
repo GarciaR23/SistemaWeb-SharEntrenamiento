@@ -1,0 +1,42 @@
+<div class="rol-page">
+
+  <div class="rol-card">
+
+    <div class="rol-header">
+      <h2>¿Cómo deseas integrarte hoy?</h2>
+      <p>Selecciona tu rol para comenzar tu experiencia.</p>
+    </div>
+
+    <div class="rol-options">
+      <button class="rol-option tutor" (click)="seleccionarRol('TUTOR')">
+        <div class="rol-icon">👥</div>
+
+        <div class="rol-info">
+          <h3>Tutor</h3>
+          <p>Responsable de persona con autismo</p>
+        </div>
+
+        <span class="rol-arrow">›</span>
+      </button>
+
+      <button class="rol-option instructor" (click)="seleccionarRol('INSTRUCTOR')">
+        <div class="rol-icon">🏋️</div>
+
+        <div class="rol-info">
+          <h3>Instructor</h3>
+          <p>Especialista en entrenamiento adaptado</p>
+        </div>
+
+        <span class="rol-arrow">›</span>
+      </button>
+
+    </div>
+
+    <div class="rol-footer">
+      ¿Ya tienes cuenta?
+      <a routerLink="/login">Iniciar sesión</a>
+    </div>
+
+  </div>
+
+</div>

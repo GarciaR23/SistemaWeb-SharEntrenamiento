@@ -1,0 +1,78 @@
+# Maven / Java
+backend/target/
+backend/.classpath
+backend/.project
+backend/.settings/
+backend/.idea/
+backend/*.iml
+backend/*.iws
+backend/*.ipr
+backend/bin/
+backend/out/
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+.DS_Store
+
+# Angular / Node.js
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.nx/
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+.history/
+.grunt/
+.lock-wscript
+.node_repl_history
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.vuepress/dist
+.cache-loader
+dist/
+
+# OS
+Thumbs.db
+.DS_Store
+.env
+.env.local
+.env.*.local
+.env*
+
+# Temporary files
+*.tmp
+temp/
+tmp/
+
+# IDE Config files
+*.code-workspace
+.eslintcache
+
+# Build files
+backend/mvn-pom.xml.bak
+frontend/angular.json.bak
+
+# Database
+*.db
+*.sqlite
+*.log
+
+# System files
+*.pid
+.cache

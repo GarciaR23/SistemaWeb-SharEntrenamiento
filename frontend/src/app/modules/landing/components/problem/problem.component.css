@@ -1,0 +1,164 @@
+.realidad {
+  padding: 120px 6%;
+  background: radial-gradient(circle at top, #0b1120, #020617);
+  color: #e5e7eb;
+  font-family: 'Inter', sans-serif;
+}
+
+/* GRID */
+.realidad__container {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+/* TAG */
+.realidad__tag {
+  color: #34d399;
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  font-weight: 800;
+}
+
+/* TITULO */
+.realidad__title {
+  font-size: 3.6rem;
+  font-weight: 800;
+  margin: 15px 0;
+  line-height: 1.1;
+}
+
+.realidad__title span {
+  color: #fda4af;
+}
+
+/* DESCRIPCIÓN */
+.realidad__desc {
+  font-size: 1.2rem;
+  color: #cbd5e1;
+  max-width: 560px;
+  margin-bottom: 40px;
+  line-height: 1.7;
+}
+
+/* ITEMS */
+.realidad__items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ITEM CARD MEJORADO */
+.item {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.item:hover {
+  transform: translateY(-5px);
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+/* ICONO */
+.item__icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  background: radial-gradient(circle, #1f2937, #0f172a);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+/* TEXTO */
+.item__text h4 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f9fafb;
+}
+
+.item__text p {
+  margin-top: 6px;
+  font-size: 0.95rem;
+  color: #9ca3af;
+  line-height: 1.5;
+}
+
+/* IMAGEN PREMIUM */
+.realidad__right {
+  display: flex;
+  justify-content: center;
+}
+
+.image-frame {
+  position: relative;
+  width: 100%;
+  height: 560px;
+  border-radius: 32px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  transform: translateY(-10px);
+}
+
+/* IMAGEN FULL COVER */
+.image-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+/* HOVER SUAVE */
+.image-frame:hover img {
+  transform: scale(1.05);
+}
+
+/* OVERLAY DEGRADADO */
+.image-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(52, 211, 153, 0.25),
+    rgba(253, 164, 175, 0.18)
+  );
+  pointer-events: none;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .realidad__container {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .realidad__title {
+    font-size: 2.6rem;
+  }
+
+  .realidad__desc {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .realidad__right {
+    margin-top: 40px;
+  }
+
+  .image-frame {
+    height: 380px;
+    transform: none;
+  }
+}

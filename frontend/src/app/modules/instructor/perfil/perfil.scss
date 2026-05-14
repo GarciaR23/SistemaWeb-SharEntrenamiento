@@ -1,0 +1,220 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+
+.perfil-page {
+  @include onboarding-page;
+  padding-top: $spacing-2xl;
+  padding-bottom: $spacing-2xl;
+}
+
+.perfil-shell {
+  @include onboarding-shell;
+}
+
+.perfil-steps {
+  @include onboarding-steps;
+  width: 100%;
+  margin-bottom: $spacing-lg;
+}
+
+.step {
+  @include onboarding-step;
+  min-width: 140px;
+}
+
+.step-separator {
+  @include onboarding-separator;
+  margin: 0 $spacing-sm;
+}
+
+.perfil-card {
+  @include onboarding-card;
+  padding: $spacing-2xl;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgba($color-primary, 0.06), transparent 35%);
+  }
+}
+
+.perfil-header {
+  @include onboarding-header;
+  position: relative;
+  z-index: 1;
+
+  h1 {
+    letter-spacing: -0.03em;
+  }
+
+  p {
+    color: $color-text-secondary;
+    line-height: 1.7;
+  }
+}
+
+.perfil-form {
+  @include form-grid;
+  position: relative;
+  z-index: 1;
+}
+
+.field-row {
+  @include field-row;
+}
+
+.field-group {
+  @include field-group;
+
+  input,
+  select,
+  textarea {
+    min-height: 56px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  }
+
+  select {
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, $color-text-tertiary 50%), linear-gradient(135deg, $color-text-tertiary 50%, transparent 50%);
+    background-position: calc(100% - 18px) calc(50% - 2px), calc(100% - 12px) calc(50% - 2px);
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+    padding-right: 40px;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 150px;
+    line-height: 1.7;
+  }
+}
+
+.bio-group {
+  margin-top: $spacing-xs;
+}
+
+.toggle-group {
+  display: flex;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.toggle {
+  @include button-base;
+  padding: 10px 16px;
+  background: transparent;
+  color: $color-text-secondary;
+  border: 1px solid rgba($color-text-primary, 0.14);
+  border-radius: $border-radius-full;
+
+  &:hover {
+    border-color: rgba($color-primary, 0.38);
+    color: $color-text-primary;
+    transform: translateY(-1px);
+  }
+
+  &.active {
+    background: linear-gradient(135deg, rgba($color-primary, 0.18), rgba($color-info, 0.18));
+    border-color: rgba($color-primary, 0.36);
+    color: $color-text-primary;
+    box-shadow: 0 10px 24px rgba($color-primary, 0.08);
+  }
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: $spacing-md;
+}
+
+.day {
+  @include button-base;
+  min-height: 48px;
+  padding: 0;
+  background: rgba(24, 32, 52, 0.95);
+  color: $color-text-secondary;
+  border: 1px solid rgba($color-text-primary, 0.06);
+  border-radius: $border-radius-md;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.02em;
+
+  &:hover {
+    border-color: rgba($color-primary, 0.3);
+    color: $color-text-primary;
+    transform: translateY(-1px);
+  }
+
+  &.active {
+    background: linear-gradient(135deg, #0c67b3 0%, #0b8dcb 100%);
+    color: #ffffff;
+    border-color: rgba(12, 103, 179, 0.55);
+    box-shadow: 0 14px 30px rgba(12, 103, 179, 0.2);
+  }
+}
+
+.section-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: $color-text-tertiary;
+  margin-top: $spacing-sm;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: $spacing-lg;
+}
+
+.btn-primary {
+  @include btn-pill-primary;
+  min-width: 180px;
+  box-shadow: 0 16px 30px rgba($color-primary, 0.14);
+}
+
+@media (max-width: 860px) {
+  .perfil-card {
+    padding: $spacing-xl;
+  }
+
+  .perfil-steps {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .step-separator {
+    display: none;
+  }
+
+  .field-row,
+  .days-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .perfil-page {
+    padding: $spacing-xl $spacing-md;
+  }
+
+  .perfil-header {
+    flex-direction: column;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-xl;
+  }
+
+  .perfil-card {
+    padding: $spacing-lg;
+  }
+
+  .btn-primary {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
