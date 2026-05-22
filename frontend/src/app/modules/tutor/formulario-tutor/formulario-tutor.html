@@ -1,6 +1,5 @@
 <div class="tutor-form-page">
 
-    <!-- STEPS -->
     <div class="steps">
         <div class="step" [class.active]="paso === 1">
             <span>1</span>
@@ -29,18 +28,12 @@
         </div>
     </div>
 
-    <!-- PASO 1 -->
-    <div class="form-card" *ngIf="paso === 1">
+    <div class="form-card step-1" *ngIf="paso === 1">
         <h1>Datos del Paciente</h1>
-
-        <p class="subtitle">
-            Información del paciente que recibirá el entrenamiento.
-        </p>
-
+        <p class="subtitle">Información del paciente que recibirá el entrenamiento.</p>
         <p class="section-label">INFORMACIÓN GENERAL</p>
 
         <div class="form-grid">
-
             <div class="form-group">
                 <label>Tu Nombre Completo</label>
                 <input [(ngModel)]="nombreTutor" name="nombreTutor" placeholder="Ej. Alex Rivera">
@@ -59,7 +52,7 @@
             <div class="form-group">
                 <label>Grado de Autismo</label>
                 <select [(ngModel)]="gradoAutismo" name="gradoAutismo">
-                    <option value="" disabled>Selecciona</option>
+                    <option value="" disabled selected>Selecciona</option>
                     <option>Leve</option>
                     <option>Moderado</option>
                     <option>Severo</option>
@@ -69,7 +62,7 @@
             <div class="form-group">
                 <label>Género</label>
                 <select [(ngModel)]="genero" name="genero">
-                    <option value="" disabled>Selecciona</option>
+                    <option value="" disabled selected>Selecciona</option>
                     <option>Masculino</option>
                     <option>Femenino</option>
                     <option>Otro</option>
@@ -81,6 +74,20 @@
                 <input [(ngModel)]="edad" name="edad" type="number" placeholder="Ej. 24">
             </div>
 
+            <div class="form-group">
+                <label>Distrito</label>
+                <select [(ngModel)]="distrito" name="distrito">
+                    <option value="" disabled selected>Selecciona tu distrito</option>
+                    <option *ngFor="let d of allDistricts" [value]="d.code">
+                        {{ d.district | titlecase }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Dirección</label>
+                <input [(ngModel)]="direccion" name="direccion" placeholder="Ej. Av. Principal 123">
+            </div>
         </div>
 
         <div class="actions">
@@ -88,67 +95,24 @@
         </div>
     </div>
 
-    <!-- PASO 2 -->
-    <div class="form-card" *ngIf="paso === 2">
+    <div class="form-card step-2" *ngIf="paso === 2">
         <h1>Protocolo de Crisis</h1>
-
-        <p class="subtitle">
-            Selecciona las sensibilidades del paciente y define el protocolo de emergencia.
-        </p>
-
-        <p class="section-label">
-            SENSIBILIDADES (SELECCIONA TODAS LAS QUE APLIQUEN)
-        </p>
+        <p class="subtitle">Selecciona las sensibilidades del paciente y define el protocolo de emergencia.</p>
+        <p class="section-label">SENSIBILIDADES</p>
 
         <div class="grid-2">
-
-            <div class="check" [class.selected]="estaSeleccionada('Ruidos fuertes')"
-                (click)="toggleSensibilidad('Ruidos fuertes')">
-                Ruidos fuertes
-            </div>
-
-            <div class="check" [class.selected]="estaSeleccionada('Contacto físico')"
-                (click)="toggleSensibilidad('Contacto físico')">
-                Contacto físico
-            </div>
-
-            <div class="check" [class.selected]="estaSeleccionada('Luces brillantes')"
-                (click)="toggleSensibilidad('Luces brillantes')">
-                Luces brillantes
-            </div>
-
-            <div class="check" [class.selected]="estaSeleccionada('Multitudes')"
-                (click)="toggleSensibilidad('Multitudes')">
-                Multitudes
-            </div>
-
-            <div class="check" [class.selected]="estaSeleccionada('Cambios de rutina')"
-                (click)="toggleSensibilidad('Cambios de rutina')">
-                Cambios de rutina
-            </div>
-
-            <div class="check" [class.selected]="estaSeleccionada('Texturas específicas')"
-                (click)="toggleSensibilidad('Texturas específicas')">
-                Texturas específicas
-            </div>
-
-            <div class="check" [class.selected]="estaSeleccionada('Olores intensos')"
-                (click)="toggleSensibilidad('Olores intensos')">
-                Olores intensos
-            </div>
-
-            <div class="check" [class.selected]="estaSeleccionada('Espacios cerrados')"
-                (click)="toggleSensibilidad('Espacios cerrados')">
-                Espacios cerrados
-            </div>
-
+            <div class="check" [class.selected]="estaSeleccionada('Ruidos fuertes')" (click)="toggleSensibilidad('Ruidos fuertes')">Ruidos fuertes</div>
+            <div class="check" [class.selected]="estaSeleccionada('Contacto físico')" (click)="toggleSensibilidad('Contacto físico')">Contacto físico</div>
+            <div class="check" [class.selected]="estaSeleccionada('Luces brillantes')" (click)="toggleSensibilidad('Luces brillantes')">Luces brillantes</div>
+            <div class="check" [class.selected]="estaSeleccionada('Multitudes')" (click)="toggleSensibilidad('Multitudes')">Multitudes</div>
+            <div class="check" [class.selected]="estaSeleccionada('Cambios de rutina')" (click)="toggleSensibilidad('Cambios de rutina')">Cambios de rutina</div>
+            <div class="check" [class.selected]="estaSeleccionada('Texturas específicas')" (click)="toggleSensibilidad('Texturas específicas')">Texturas específicas</div>
+            <div class="check" [class.selected]="estaSeleccionada('Olores intensos')" (click)="toggleSensibilidad('Olores intensos')">Olores intensos</div>
+            <div class="check" [class.selected]="estaSeleccionada('Espacios cerrados')" (click)="toggleSensibilidad('Espacios cerrados')">Espacios cerrados</div>
         </div>
 
         <p class="section-label">PROTOCOLO DE EMERGENCIA</p>
-
-        <textarea [(ngModel)]="protocoloEmergencia" name="protocoloEmergencia"
-            placeholder="Instrucciones específicas en caso de colapso...">
-    </textarea>
+        <textarea [(ngModel)]="protocoloEmergencia" name="protocoloEmergencia" placeholder="Instrucciones específicas en caso de colapso..."></textarea>
 
         <div class="actions between">
             <button type="button" class="back-btn" (click)="atras()">← Atrás</button>
@@ -156,32 +120,24 @@
         </div>
     </div>
 
-    <!-- PASO 3 -->
-    <div class="form-card" *ngIf="paso === 3">
+    <div class="form-card step-3" *ngIf="paso === 3">
         <h1>Contacto de Emergencia</h1>
-
-        <p class="subtitle">
-            Esta persona será contactada si se activa el protocolo de colapso.
-        </p>
-
+        <p class="subtitle">Esta persona será contactada si se activa el protocolo de colapso.</p>
         <p class="section-label">INFORMACIÓN DEL CONTACTO</p>
 
         <div class="contact-form">
-
             <div class="form-group full">
                 <label>Nombre del Contacto</label>
                 <input [(ngModel)]="nombreContacto" name="nombreContacto" placeholder="Ej. Mónica Torres">
             </div>
-
             <div class="form-group">
                 <label>Teléfono</label>
                 <input [(ngModel)]="telefonoContacto" name="telefonoContacto" placeholder="Ej. 987654321">
             </div>
-
             <div class="form-group">
                 <label>Relación</label>
                 <select [(ngModel)]="relacionContacto" name="relacionContacto">
-                    <option value="" disabled>Selecciona</option>
+                    <option value="" disabled selected>Selecciona</option>
                     <option>Madre</option>
                     <option>Padre</option>
                     <option>Hermano/a</option>
@@ -189,7 +145,6 @@
                     <option>Otro</option>
                 </select>
             </div>
-
         </div>
 
         <div class="actions between">
@@ -198,106 +153,90 @@
         </div>
     </div>
 
-    <!-- PASO 4 -->
-    <div class="form-card" *ngIf="paso === 4">
+    <div class="form-card step-4" *ngIf="paso === 4">
         <h1>Crear tu cuenta</h1>
-
-        <p class="subtitle">
-            Define tus credenciales de acceso para ingresar como tutor.
-        </p>
-
+        <p class="subtitle">Define tus credenciales de acceso para ingresar como tutor.</p>
+        
         <p class="section-label">CREDENCIALES DE ACCESO</p>
-
         <div class="account-form">
-
             <div class="form-group">
                 <label>Correo Electrónico</label>
                 <input [(ngModel)]="correo" name="correo" type="email" placeholder="ejemplo@entreno.com">
             </div>
-
             <div class="form-group">
                 <label>Contraseña</label>
                 <input [(ngModel)]="contrasena" name="contrasena" type="password" placeholder="••••••••">
             </div>
-
         </div>
 
-        <div class="summary">
-            <h3>Resumen de Registro</h3>
+        <p class="section-label" style="margin-top: 40px;">SUBIR FOTO DEL PACIENTE</p>
+        <div class="file-upload-modern">
+            <label class="file-label-modern">
+                <input type="file" accept="image/*" (change)="onFotoChange($event)" hidden>
+                <div class="upload-content">
+                    <div class="upload-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                    </div>
+                    <span class="upload-title">{{ fotoPacienteNombre ? fotoPacienteNombre : 'Click para subir o arrastra y suelta' }}</span>
+                    <span class="upload-subtitle" *ngIf="!fotoPacienteNombre">PNG, JPG hasta 5MB</span>
+                </div>
+            </label>
+        </div>
 
-            <div class="summary-row">
-                <span>Rol seleccionado</span>
-                <strong>Tutor</strong>
+        <div class="summary-modern">
+            <div class="summary-header">
+                <div class="header-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="8" y1="12" x2="16" y2="12"></line><line x1="8" y1="16" x2="16" y2="16"></line><line x1="8" y1="8" x2="10" y2="8"></line></svg>
+                </div>
+                <h3>Resumen de Registro</h3>
             </div>
 
-            <div class="summary-row">
-                <span>Nombre del Tutor</span>
-                <strong>{{ nombreTutor || 'No registrado' }}</strong>
-            </div>
+            <div class="summary-list">
+                <div class="summary-item">
+                    <div class="item-label-group">
+                        <div class="item-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </div>
+                        <span>Nombre Completo</span>
+                    </div>
+                    <strong>{{ nombrePaciente || 'No registrado' }}</strong>
+                </div>
 
-            <div class="summary-row">
-                <span>Paciente</span>
-                <strong>{{ nombrePaciente || 'No registrado' }}</strong>
-            </div>
+                <div class="summary-item">
+                    <div class="item-label-group">
+                        <div class="item-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                        </div>
+                        <span>Condición</span>
+                    </div>
+                    <strong>{{ condicion || 'No registrada' }}</strong>
+                </div>
 
-            <div class="summary-row">
-                <span>Condición</span>
-                <strong>{{ condicion || 'No registrada' }}</strong>
-            </div>
+                <div class="summary-item">
+                    <div class="item-label-group">
+                        <div class="item-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        </div>
+                        <span>Grado de Autismo</span>
+                    </div>
+                    <strong>{{ gradoAutismo || 'No registrado' }}</strong>
+                </div>
 
-            <div class="summary-row">
-                <span>Grado de Autismo</span>
-                <strong>{{ gradoAutismo || 'No seleccionado' }}</strong>
-            </div>
-
-            <div class="summary-row">
-                <span>Género</span>
-                <strong>{{ genero || 'No seleccionado' }}</strong>
-            </div>
-
-            <div class="summary-row">
-                <span>Edad</span>
-                <strong>{{ edad || 'No registrada' }}</strong>
-            </div>
-
-            <div class="summary-row">
-                <span>Sensibilidades</span>
-                <strong>
-                    {{ sensibilidadesSeleccionadas.length ? sensibilidadesSeleccionadas.join(', ') : 'No seleccionadas'
-                    }}
-                </strong>
-            </div>
-
-            <div class="summary-row">
-                <span>Protocolo</span>
-                <strong>{{ protocoloEmergencia ? 'Registrado' : 'No registrado' }}</strong>
-            </div>
-
-            <div class="summary-row">
-                <span>Contacto</span>
-                <strong>{{ nombreContacto || 'No registrado' }}</strong>
-            </div>
-
-            <div class="summary-row">
-                <span>Teléfono</span>
-                <strong>{{ telefonoContacto || 'No registrado' }}</strong>
-            </div>
-
-            <div class="summary-row">
-                <span>Relación</span>
-                <strong>{{ relacionContacto || 'No seleccionada' }}</strong>
-            </div>
-
-            <div class="summary-row">
-                <span>Correo</span>
-                <strong>{{ correo || 'No registrado' }}</strong>
+                <div class="summary-item">
+                    <div class="item-label-group">
+                        <div class="item-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        </div>
+                        <span>Tutor a Cargo</span>
+                    </div>
+                    <strong>{{ nombreTutor || 'No registrado' }}</strong>
+                </div>
             </div>
         </div>
 
         <div class="actions between">
             <button type="button" class="back-btn" (click)="atras()">← Atrás</button>
-            <button type="button" (click)="finalizar()">Continuar →</button>
+            <button type="button" (click)="finalizar()">Finalizar Registro →</button>
         </div>
     </div>
-
 </div>
