@@ -9,6 +9,8 @@ export interface RegistrationDocumentState {
 export interface ProfileState {
   fullName: string;
   specialty: string;
+  district: string;
+  address: string;
   rate: string;
   selectedShift: string;
   selectedDay: string;

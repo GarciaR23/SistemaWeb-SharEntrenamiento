@@ -11,8 +11,10 @@ export class FormStateService {
     profile: {
       fullName: '',
       specialty: '',
+      district: '',
+      address: '',
       rate: '',
-      selectedShift: 'Mañana',
+      selectedShift: '',
       selectedDay: 'L',
       fromTime: '08:00',
       toTime: '17:00',
@@ -58,6 +60,8 @@ export class FormStateService {
 
     if (!profile.fullName.trim()) missing.push('Nombre completo');
     if (!profile.specialty.trim()) missing.push('Especialidad');
+    if (!profile.district.trim()) missing.push('Distrito');
+    if (!profile.address.trim()) missing.push('Dirección');
     if (!profile.rate.trim()) missing.push('Tarifa por hora');
     if (!profile.selectedShift.trim()) missing.push('Horario disponible');
     if (!profile.selectedDay.trim()) missing.push('Día disponible');
@@ -119,8 +123,10 @@ export class FormStateService {
       profile: {
         fullName: '',
         specialty: '',
+        district: '',
+        address: '',
         rate: '',
-        selectedShift: 'Mañana',
+        selectedShift: '',
         selectedDay: 'L',
         fromTime: '08:00',
         toTime: '17:00',
