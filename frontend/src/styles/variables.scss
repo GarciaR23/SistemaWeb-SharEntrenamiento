@@ -1,7 +1,8 @@
 // Colores principales
-$color-primary: #00D4AA;        // Turquesa/Cian brillante
+$color-primary: #00E5A0;        // Verde Neón / Cian
 $color-primary-dark: #00A98A;   // Turquesa oscuro
 $color-primary-light: #4FEFDA;  // Turquesa claro
+$color-secondary: #004883;        // Azul oscuro
 
 // Colores oscuros (Dark Mode)
 $color-bg-dark: #0F1419;        // Fondo muy oscuro
@@ -24,12 +25,12 @@ $color-border: #2D3748;         // Borde oscuro
 $color-border-light: #4A5568;   // Borde más claro
 
 // Tipografía
-$font-family-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-$font-size-base: 14px;
+$font-family-primary: 'Plus Jakarta Sans', sans-serif;
+$font-size-base: 18px;
 $font-size-lg: 16px;
-$font-size-xl: 20px;
-$font-size-2xl: 24px;
-$font-size-3xl: 32px;
+$font-size-xl: 24px;
+$font-size-2xl: 48px;
+$font-size-3xl: 72px;
 
 // Tamaños de fuente responsivos
 $font-sizes: (
@@ -48,6 +49,7 @@ $font-weight-normal: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;
 $font-weight-bold: 700;
+$font-weight-extrabold: 800;
 
 // Espaciado
 $spacing-xs: 4px;

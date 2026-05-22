@@ -45,6 +45,21 @@
 
         <div class="field-row">
           <label class="field-group">
+            <span>Distrito</span>
+            <select formControlName="district" (change)="onDistrictChange($event)">
+              <option value="">Selecciona tu distrito</option>
+              <option *ngFor="let d of allDistricts" [value]="d.code">{{ d.district | titlecase }}</option>
+            </select>
+          </label>
+
+          <label class="field-group">
+            <span>Dirección</span>
+            <input type="text" placeholder="Ej. Av. Girasol" formControlName="address" />
+          </label>
+        </div>
+
+        <div class="field-row">
+          <label class="field-group">
             <span>Tarifa por hora (USD)</span>
             <input type="text" placeholder="$ 45.00" formControlName="rate" />
           </label>
