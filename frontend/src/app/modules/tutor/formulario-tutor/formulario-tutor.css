@@ -1,0 +1,436 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:host {
+    display: block;
+    padding-top: 120px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* ==========================================================
+   FONDO GENERAL
+========================================================== */
+.tutor-form-page {
+    min-height: 100vh;
+    padding: 40px;
+    background:
+        radial-gradient(circle at top left, rgba(109, 255, 208, 0.08), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(109, 255, 208, 0.06), transparent 28%),
+        linear-gradient(180deg, #0b1117 0%, #13191f 100%);
+    color: #DFE2F3;
+}
+
+/* ==========================================================
+   STEPS
+========================================================== */
+.steps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 28px;
+    margin-bottom: 60px;
+    flex-wrap: wrap;
+}
+
+.step {
+    text-align: center;
+    color: rgba(223, 226, 243, 0.45);
+    transition: all .3s ease;
+}
+
+.step span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #1e2636;
+    border: 1px solid rgba(255, 255, 255, .08);
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.step p {
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+}
+
+.step.active {
+    color: #DFE2F3;
+}
+
+.step.active span {
+    background: #6dffd0;
+    color: #0b1117;
+    box-shadow: 0 0 24px rgba(109, 255, 208, .25);
+}
+
+.line {
+    width: 65px;
+    height: 2px;
+    background: rgba(255, 255, 255, .08);
+}
+
+/* ==========================================================
+   CARD GENERAL
+========================================================== */
+.form-card {
+    background: rgba(21, 28, 43, 0.95);
+    border: 1px solid rgba(255, 255, 255, .06);
+    backdrop-filter: blur(12px);
+    border-radius: 28px;
+    padding: 45px;
+    margin: auto;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, .35);
+}
+
+/* ==========================================================
+   TIPOGRAFÍA
+========================================================== */
+h1 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 36px;
+    font-weight: 800; 
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    font-size: 16px;
+    font-weight: 400; 
+    color: rgba(223, 226, 243, 0.72);
+    line-height: 1.7;
+    margin-top: 12px;
+    margin-bottom: 32px;
+    max-width: 700px;
+}
+
+.section-label {
+    color: rgba(223, 226, 243, 0.65);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .14em;
+    margin-top: 35px;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+}
+
+/* ==========================================================
+   INPUTS GENERALES
+========================================================== */
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    color: rgba(223, 226, 243, 0.78);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select,
+textarea {
+    width: 100%;
+    min-height: 58px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 16px;
+    background: #1d2433;
+    padding: 0 18px;
+    color: #DFE2F3;
+    font-size: 14px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    outline: none;
+    transition: all .25s ease;
+    box-sizing: border-box;
+}
+
+textarea {
+    min-height: 150px;
+    padding: 18px;
+    resize: vertical;
+}
+
+.form-group input::placeholder,
+textarea::placeholder {
+    color: rgba(223, 226, 243, .35);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+textarea:focus {
+    border-color: #6dffd0;
+    box-shadow: 0 0 0 4px rgba(109, 255, 208, .12);
+    background: #242d3f;
+}
+
+/* ==========================================================
+   PASO 1
+========================================================== */
+.step-1 { max-width: 1050px; }
+.step-1 .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px 30px;
+}
+
+/* ==========================================================
+   PASO 2
+========================================================== */
+.step-2 { max-width: 950px; }
+.step-2 .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.check {
+    border: 1px solid rgba(255, 255, 255, .08);
+    background: #1d2433;
+    border-radius: 16px;
+    padding: 18px;
+    cursor: pointer;
+    transition: all .25s ease;
+    text-align: center;
+    color: rgba(223, 226, 243, .8);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.check:hover {
+    border-color: #6dffd0;
+    transform: translateY(-2px);
+}
+
+.check.selected {
+    background: rgba(109, 255, 208, .12);
+    border-color: #6dffd0;
+    color: #6dffd0;
+    font-weight: 700;
+}
+
+/* ==========================================================
+   PASO 3
+========================================================== */
+.step-3 { max-width: 850px; }
+.step-3 .contact-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 30px;
+}
+.step-3 .full { grid-column: 1 / -1; }
+
+/* ==========================================================
+   PASO 4 & COMPONENTES MODERNOS
+========================================================== */
+.step-4 { max-width: 900px; }
+.step-4 .account-form {
+    display: grid;
+    gap: 22px;
+}
+
+/* Carga de Archivo Moderna */
+.file-upload-modern {
+    margin-bottom: 40px;
+}
+
+.file-label-modern {
+    display: block;
+    padding: 50px 20px;
+    border-radius: 16px;
+    border: 1px dashed rgba(223, 226, 243, 0.12);
+    background: #171d28; /* Fondo oscuro y sutil */
+    text-align: center;
+    cursor: pointer;
+    transition: all .3s ease;
+}
+
+.file-label-modern:hover {
+    background: #1a222f;
+    border-color: rgba(109, 255, 208, 0.3);
+}
+
+.upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.upload-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(0, 208, 132, 0.1); /* Verde translúcido */
+    color: #00d084; /* Verde neón */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.upload-title {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.upload-subtitle {
+    color: rgba(223, 226, 243, 0.45);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Resumen Moderno */
+.summary-modern {
+    background: #1d2331;
+    border-radius: 20px;
+    padding: 35px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.summary-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 35px;
+}
+
+.header-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #2b3648;
+    color: #8fa8d6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.summary-modern h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item-label-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.item-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #262f40;
+    color: #8c9bb4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.item-label-group span {
+    color: rgba(223, 226, 243, 0.75);
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.summary-item strong {
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: right;
+}
+
+/* ==========================================================
+   BOTONES
+========================================================== */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 14px;
+    margin-top: 40px;
+}
+
+.actions.between {
+    justify-content: space-between;
+}
+button {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    border: none;
+    border-radius: 16px;
+    padding: 16px 28px;
+    background: #6dffd0;
+    color: #334155; 
+    cursor: pointer;
+    transition: all .25s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(109, 255, 208, 0.2);
+}
+
+.back-btn {
+    background: transparent;
+    border: 1px solid rgba(109, 255, 208, .35);
+    color: #6dffd0;
+}
+
+.back-btn:hover {
+    background: rgba(109, 255, 208, 0.05);
+    box-shadow: none;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+@media (max-width: 768px) {
+    .tutor-form-page { padding: 20px; }
+    .form-card { padding: 28px; }
+    h1 { font-size: 28px; }
+
+    .step-1 .form-grid,
+    .step-2 .grid-2,
+    .step-3 .contact-form {
+        grid-template-columns: 1fr;
+    }
+    .step-3 .full { grid-column: 1; }
+
+    .summary-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .summary-item strong {
+        text-align: left;
+        padding-left: 50px; /* Alineación con el texto del label */
+    }
+
+    .actions { flex-direction: column; }
+    button { width: 100%; }
+}
