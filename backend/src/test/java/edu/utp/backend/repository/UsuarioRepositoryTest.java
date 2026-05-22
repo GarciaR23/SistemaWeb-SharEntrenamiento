@@ -1,4 +1,4 @@
-package edu.utp.backend.repositories;
+package edu.utp.backend.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import edu.utp.backend.entities.Usuario;
+import edu.utp.backend.entity.Usuario;
 
 @DataJpaTest
 class UsuarioRepositoryTest {

@@ -1,0 +1,33 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Recuperar Contraseña</h2>
+      <p>Introduce tu correo electrónico y te enviaremos<br>las instrucciones para restablecerla.</p>
+    </div>
+
+    <form [formGroup]="recoverForm" class="auth-form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <label class="form-label">
+        <span>Correo electrónico</span>
+        <div class="input-wrapper">
+          <input type="email" formControlName="email" placeholder="tu@correo.com" autocomplete="email" />
+          <span class="input-icon">
+            <img src="assets/icons/Icon_email.png" alt="Mensaje" />
+          </span>
+        </div>
+      </label>
+
+      <button type="submit" [disabled]="recoverForm.invalid" class="btn-primary">Enviar</button>
+
+      <p class="secondary-text">
+        <a routerLink="/login">← Volver al inicio de sesión</a>
+      </p>
+
+      <div class="modal-overlay" *ngIf="showModal">
+        <div class="modal-box">
+          <p>{{ modalMessage }}</p>
+          <span class="modal-note">Serás redirigido al siguiente paso.</span>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

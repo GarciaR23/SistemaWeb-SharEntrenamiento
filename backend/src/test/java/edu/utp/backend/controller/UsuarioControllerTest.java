@@ -17,8 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
-import edu.utp.backend.entities.Usuario;
-import edu.utp.backend.repositories.UsuarioRepository;
+import edu.utp.backend.entity.Usuario;
+import edu.utp.backend.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 
 @SpringBootTest

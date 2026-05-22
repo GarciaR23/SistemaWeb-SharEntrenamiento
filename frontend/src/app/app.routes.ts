@@ -1,6 +1,9 @@
 import { Routes } from '@angular/router';
 import { LandingComponent } from './modules/landing/landing.component';
 import { Login } from './modules/auth/login/login';
+import { RecuperarContrasena } from './modules/auth/recuperar-contrasena/recuperar-contrasena';
+import { TokenContrasena } from './modules/auth/token-contrasena/token-contrasena';
+import { RestaurarContrasena } from './modules/auth/restaurar-contrasena/restaurar-contrasena';
 import { Perfil } from './modules/instructor/perfil/perfil';
 import { Certificado } from './modules/instructor/certificado/certificado';
 import { Cuenta } from './modules/instructor/cuenta/cuenta';
@@ -32,6 +35,18 @@ export const routes: Routes = [
   {
     path: 'login',
     component: Login
+  },
+  {
+    path: 'recuperar-contrasena',
+    component: RecuperarContrasena
+  },
+  {
+    path: 'token-contrasena',
+    component: TokenContrasena
+  },
+  {
+    path: 'restaurar-contrasena',
+    component: RestaurarContrasena
   },
   {
     path: 'formulario',
