@@ -1,5 +1,12 @@
 import { Injectable } from '@angular/core';
-import { DocumentKey, ProfileState, RegistrationDocumentState, RegistrationState } from '../data/registration.models';
+import {
+  DayCode,
+  DocumentKey,
+  ProfileState,
+  RegistrationDocumentState,
+  RegistrationState,
+  ShiftName,
+} from '../data/registration.models';
 
 export type { DocumentKey, ProfileState, RegistrationDocumentState, RegistrationState } from '../data/registration.models';
 
@@ -14,10 +21,11 @@ export class FormStateService {
       district: '',
       address: '',
       rate: '',
-      selectedShift: '',
-      selectedDay: 'L',
-      fromTime: '08:00',
-      toTime: '17:00',
+      selectedShifts: [],
+      selectedDays: [],
+      shiftSchedules: [],
+      fromTime: '',
+      toTime: '',
       bio: '',
       email: '',
       password: '',
@@ -63,10 +71,11 @@ export class FormStateService {
     if (!profile.district.trim()) missing.push('Distrito');
     if (!profile.address.trim()) missing.push('Dirección');
     if (!profile.rate.trim()) missing.push('Tarifa por hora');
-    if (!profile.selectedShift.trim()) missing.push('Horario disponible');
-    if (!profile.selectedDay.trim()) missing.push('Día disponible');
-    if (!profile.fromTime.trim()) missing.push('Hora desde');
-    if (!profile.toTime.trim()) missing.push('Hora hasta');
+    if (!profile.selectedShifts.length) missing.push('Horario disponible');
+    if (!profile.selectedDays.length) missing.push('Días disponibles');
+    if (!profile.shiftSchedules.length) missing.push('Rangos de horario por turno');
+    if (!profile.fromTime.trim()) missing.push('Rango horario combinado (desde)');
+    if (!profile.toTime.trim()) missing.push('Rango horario combinado (hasta)');
     if (!profile.bio.trim()) missing.push('Biografía profesional');
 
     return missing;
@@ -126,10 +135,11 @@ export class FormStateService {
         district: '',
         address: '',
         rate: '',
-        selectedShift: '',
-        selectedDay: 'L',
-        fromTime: '08:00',
-        toTime: '17:00',
+        selectedShifts: [],
+        selectedDays: [],
+        shiftSchedules: [],
+        fromTime: '',
+        toTime: '',
         bio: '',
         email: '',
         password: '',
@@ -141,5 +151,37 @@ export class FormStateService {
         antecedentes: { file: null, fileName: '', status: 'PENDIENTE' },
       },
     };
+  }
+
+  updateScheduleSummary(): void {
+    const schedules = this.state.profile.shiftSchedules;
+    if (!schedules.length) {
+      this.state.profile.fromTime = '';
+      this.state.profile.toTime = '';
+      return;
+    }
+
+    const toMinutes = (value: string): number => {
+      const [h, m] = value.split(':').map(Number);
+      return (h * 60) + m;
+    };
+
+    const toTime = (minutes: number): string => {
+      const safeMinutes = Math.max(0, Math.min(minutes, 23 * 60 + 59));
+      const hours = Math.floor(safeMinutes / 60).toString().padStart(2, '0');
+      const mins = (safeMinutes % 60).toString().padStart(2, '0');
+      return `${hours}:${mins}`;
+    };
+
+    const minStart = Math.min(...schedules.map((x) => toMinutes(x.fromTime)));
+    const maxEnd = Math.max(...schedules.map((x) => toMinutes(x.toTime)));
+
+    this.state.profile.fromTime = toTime(minStart);
+    this.state.profile.toTime = toTime(maxEnd);
+  }
+
+  updateShiftSelection(shifts: ShiftName[], days: DayCode[]): void {
+    this.state.profile.selectedShifts = shifts;
+    this.state.profile.selectedDays = days;
   }
 }

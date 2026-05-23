@@ -135,7 +135,7 @@
 .day {
   @include button-base;
   min-height: 48px;
-  width: 50px;
+  width: 100%;
   padding: 0;
   background: rgba(24, 32, 52, 0.95);
   color: $color-text-secondary;
@@ -144,6 +144,62 @@
   font-weight: $font-weight-semibold;
   letter-spacing: 0.02em;
 
+
+.shift-schedules {
+  display: grid;
+  gap: $spacing-md;
+}
+
+.schedule-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: $spacing-md;
+  align-items: end;
+  padding: $spacing-md;
+  border: 1px solid rgba($color-primary, 0.15);
+  border-radius: $border-radius-lg;
+  background: rgba(20, 28, 44, 0.45);
+}
+
+.schedule-title {
+  display: grid;
+  gap: 6px;
+
+  strong {
+    color: $color-text-primary;
+  }
+
+  small {
+    color: $color-text-tertiary;
+  }
+}
+
+.field-group.compact {
+  padding-left: 70px;
+  gap: 6px;
+
+  input {
+    min-height: 48px;
+  }
+}
+
+.field-group.compact::before {
+  content: 'Desde:';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555;
+  pointer-events: none;
+  font-size: 14px;
+  z-index: 1;
+}
+
+.combined-schedule {
+  margin: 0;
+  color: $color-text-secondary;
+  font-size: 0.95rem;
+}
   &:hover {
     border-color: rgba($color-primary, 0.3);
     color: $color-text-primary;
@@ -166,6 +222,68 @@
   margin-top: $spacing-sm;
 }
 
+/* Preferred time pill-style inputs */
+.preferred-time {
+  display: flex;
+  gap: $spacing-md;
+  align-items: center;
+}
+
+.time-pill {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  background: rgba(24, 32, 52, 0.95);
+  border: 1px solid rgba($color-text-primary, 0.06);
+  border-radius: $border-radius-lg;
+  padding: 10px 18px 10px 120px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.time-pill .pill-label {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: $color-text-tertiary;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.time-pill input[type="time"] {
+  background: transparent;
+  border: none;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  margin-inline-end: 155px;
+  font-size: 1rem;
+  width: 100%;
+  min-height: 48px;
+  padding: 6px 0;
+}
+
+/* Improve time display on WebKit */
+.time-pill input[type="time"]::-webkit-datetime-edit {
+  color: $color-text-primary;
+}
+
+.time-pill .am-pm {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba($color-primary, 0.12);
+  color: $color-text-primary;
+  padding: 6px 10px;
+  border-radius: $border-radius-full;
+  font-weight: $font-weight-semibold;
+  font-size: 0.85rem;
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -176,6 +294,49 @@
   @include btn-pill-primary;
   min-width: 180px;
   box-shadow: 0 16px 30px rgba($color-primary, 0.14);
+  background: linear-gradient(135deg, $color-secondary 100%);
+  border-radius: $border-radius-md;
+  color: #fcfcfc;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+}
+
+.modal {
+  background: $color-bg-card;
+  border-radius: 16px;
+  padding: $spacing-2xl;
+  width: min(420px, 90%);
+  text-align: center;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+}
+
+.modal-body {
+  display: grid;
+  gap: $spacing-md;
+  align-items: center;
+
+  h2 {
+    margin: 0;
+    color: $color-text-primary;
+  }
+
+  p {
+    margin: 0;
+    color: $color-text-secondary;
+    line-height: 1.5;
+  }
+}
+
+.modal .btn-primary {
+  width: 100%;
+  min-width: 0;
 }
 
 @media (max-width: 860px) {
@@ -194,6 +355,10 @@
 
   .field-row,
   .days-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-row {
     grid-template-columns: 1fr;
   }
 }

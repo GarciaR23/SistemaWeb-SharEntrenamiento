@@ -62,6 +62,73 @@
   z-index: 1;
 }
 
+.photo-upload-block {
+  display: grid;
+  gap: $spacing-sm;
+  margin-top: $spacing-sm;
+}
+
+.section-label.compact {
+  margin-top: 0;
+}
+
+.file-upload-modern {
+  display: block;
+}
+
+.file-upload-modern input {
+  display: none;
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 20px;
+  border-radius: 18px;
+  border: 1px dashed rgba(223, 226, 243, 0.12);
+  background: #171d28;
+  text-align: center;
+  cursor: pointer;
+  transition: all .3s ease;
+}
+
+.file-upload-modern:hover .upload-content {
+  background: #1a222f;
+  border-color: rgba(109, 255, 208, 0.3);
+}
+
+.upload-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(0, 208, 132, 0.1);
+  color: #00d084;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 6px;
+
+  img {
+    width: 22px;
+    height: 22px;
+    display: block;
+  }
+}
+
+.upload-title {
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.upload-subtitle {
+  color: rgba(223, 226, 243, 0.45);
+  font-size: 13px;
+  font-weight: 500;
+}
+
 .field-row {
   @include field-row;
 }
@@ -142,28 +209,15 @@
 
   strong {
     color: $color-text-primary;
-    font-size: 1.1rem;
+    font-size: $font-size-xl;
     letter-spacing: -0.02em;
-  }
-
-  &::before {
-    content: '';
-    width: 28px;
-    height: 28px;
-    background: linear-gradient(135deg, rgba($color-primary, 0.2), rgba($color-info, 0.2));
-    border: 1px solid rgba($color-primary, 0.3);
-    border-radius: $border-radius-md;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
   }
 }
 
 .resumen-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: $spacing-sm;
   padding: $spacing-md 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 
@@ -177,35 +231,39 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-weight: $font-weight-medium;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: $spacing-sm;
+    gap: $spacing-xs;
 
-    &::before {
+    &::before.resumen-icons {
       content: '';
-      width: 24px;
-      height: 24px;
-      background: rgba($color-primary, 0.1);
-      border: 1px solid rgba($color-primary, 0.2);
-      border-radius: $border-radius-sm;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
+  }
+
+  .resumen-icons {
+    width: 28px;
+    height: 28px;
+    display: inline-block;
+    object-fit: cover;
+    margin-right: $spacing-xs;
   }
 
   strong {
     color: $color-text-primary;
     font-weight: $font-weight-semibold;
+    margin-left: auto;
     text-align: right;
     max-width: 50%;
   }
 }
 
+.resumen-min{
+    font-size: 1rem;
+  }
+
 .form-actions {
   display: flex;
   justify-content: space-between;
-  gap: $spacing-md;
   margin-top: $spacing-2xl;
 }
 
@@ -213,18 +271,26 @@
   @include btn-pill-primary;
   min-width: 180px;
   box-shadow: 0 16px 30px rgba($color-primary, 0.14);
-  flex: 1;
+  background: linear-gradient(135deg, $color-secondary 100%);
+  border-radius: $border-radius-md;
+  color: #fcfcfc;
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
 }
 
 .btn-secondary {
   @include button-base;
   padding: 16px 32px;
-  border-radius: $border-radius-full;
   background: transparent;
   color: $color-text-primary;
-  border: 1px solid rgba($color-text-primary, 0.12);
   font-weight: $font-weight-semibold;
-  flex: 1;
+  border-radius: $border-radius-md;
+  min-width: 180px;
 
   &:hover {
     background: rgba($color-text-primary, 0.04);
@@ -261,6 +327,12 @@
   display: grid;
   gap: $spacing-md;
   align-items: center;
+
+  p {
+    margin: 0;
+    color: $color-text-secondary;
+    line-height: 1.5;
+  }
 }
 
 .modal-check {
@@ -287,6 +359,10 @@
   .resumen-card {
     padding: $spacing-lg;
   }
+
+  .upload-content {
+    padding: 40px 18px;
+  }
 }
 
 @media (max-width: 620px) {
@@ -308,6 +384,10 @@
   .btn-secondary {
     width: 100%;
     min-width: 0;
+  }
+
+  .upload-content {
+    padding: 34px 16px;
   }
 
   .resumen-item {

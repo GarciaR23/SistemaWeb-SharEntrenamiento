@@ -28,7 +28,7 @@
       <div class="certificado-list">
         <article class="document-item" *ngFor="let document of documents">
           <div class="document-info">
-            <span class="document-icon">🪪</span>
+            <img class="document-icon" [src]="document.icon" [alt]="document.title" />
             <div>
               <strong>{{ document.title }}</strong>
               <span class="status" [class.pending]="getStatusLabel(document.key) === 'PENDIENTE'" [class.delivered]="getStatusLabel(document.key) === 'ENTREGADO'">
@@ -43,9 +43,8 @@
         </article>
       </div>
 
-      <p class="form-feedback" *ngIf="feedbackMessage">{{ feedbackMessage }}</p>
-
       <div class="certificado-note">
+        <img src="assets/icons/Icon_info.png" alt="Icono de información"/>
         <p>
           Los documentos serán revisados por el equipo de SharEntrenamiento en un plazo máximo de 48 horas hábiles.
           Recibirás una notificación una vez validados.
@@ -59,3 +58,13 @@
     </div>
   </div>
 </section>
+
+<div class="modal-backdrop" *ngIf="showFeedbackModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="certificado-feedback-title">
+    <div class="modal-body">
+      <h2 id="certificado-feedback-title">Aviso</h2>
+      <p>{{ feedbackMessage }}</p>
+      <button type="button" class="btn-primary" (click)="closeFeedbackModal()">Ok</button>
+    </div>
+  </div>
+</div>

@@ -13,12 +13,13 @@ import { DocumentKey, FormStateService } from '../../../services/form-state.serv
 })
 export class Certificado {
   feedbackMessage = '';
+  showFeedbackModal = false;
 
   readonly documents = [
-    { key: 'dni', title: 'DNI / Documento de identidad' },
-    { key: 'titulo', title: 'Título universitario (SUNEDU)' },
-    { key: 'antecedentes', title: 'Antecedentes penales' },
-    { key: 'certificacion', title: 'Certificación en entrenamiento adaptado' },
+    { key: 'dni', title: 'DNI / Documento de identidad', icon: 'assets/icons/Icon_document.png' },
+    { key: 'titulo', title: 'Título universitario (SUNEDU)', icon: 'assets/icons/Icon_universidad.png' },
+    { key: 'antecedentes', title: 'Antecedentes penales', icon: 'assets/icons/Icon_antencedentes.png' },
+    { key: 'certificacion', title: 'Certificación en entrenamiento adaptado', icon: 'assets/icons/Icon_certif_trainer.png' },
   ] as const;
 
   constructor(
@@ -32,6 +33,7 @@ export class Certificado {
 
     this.formState.updateDocument(key, file);
     this.feedbackMessage = '';
+    this.showFeedbackModal = false;
 
     console.log(`Archivo recibido para ${key}:`, this.formState.state.documents[key]);
   }
@@ -49,12 +51,19 @@ export class Certificado {
 
     if (missing.length > 0) {
       this.feedbackMessage = `Faltan documentos por subir: ${missing.join(', ')}`;
+      this.showFeedbackModal = true;
       console.warn(this.feedbackMessage);
       return;
     }
 
     console.log('Enviando certificados reactivos:', this.formState.state.documents);
     this.feedbackMessage = '';
+    this.showFeedbackModal = false;
     this.router.navigate(['/cuenta']);
+  }
+
+  closeFeedbackModal(): void {
+    this.showFeedbackModal = false;
+    this.feedbackMessage = '';
   }
 }

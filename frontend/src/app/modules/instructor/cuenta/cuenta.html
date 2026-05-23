@@ -45,29 +45,51 @@
           </label>
         </div>
 
+        <div class="photo-upload-block">
+          <span class="field-group">SUBIR FOTO DEL INSTRUCTOR</span>
+          <label class="file-upload-modern">
+            <input type="file" accept="image/*" (change)="onPhotoChange($event)" hidden />
+            <div class="upload-content">
+              <div class="upload-icon">
+                <img src="assets/icons/Icon_foto.png" alt="Subir foto" />
+              </div>
+              <span class="upload-title">{{ photoFileName ? photoFileName : 'Click para subir o arrastra y suelta' }}</span>
+              <span class="upload-subtitle" *ngIf="!photoFileName">PNG, JPG hasta 5MB</span>
+            </div>
+          </label>
+        </div>
+
         <div class="resumen-card">
           <div class="resumen-title">
+            <img src="assets/icons/Icon_resumen.png" alt="Icono de resumen" class="resumen-icons" />
             <strong>Resumen de Registro</strong>
           </div>
           <div class="resumen-item">
+            <img src="assets/icons/Icon_full_name.png" alt="Icono de perfil" class="resumen-icons" />
             <span> Nombre Completo</span>
             <strong>{{ formState.state.profile.fullName || 'No especificado' }}</strong>
           </div>
           <div class="resumen-item">
+            <img src="assets/icons/Icon_especialidad.png" alt="Icono de especialidad" class="resumen-icons" />
             <span> Especialidad</span>
             <strong>{{ formState.state.profile.specialty || 'No especificado' }}</strong>
           </div>
           <div class="resumen-item">
+            <img src="assets/icons/Icon_certification.png" alt="Icono de certificación" class="resumen-icons" />
             <span> Certificación</span>
             <strong>{{ formState.state.profile.bio ? 'Certificado agregado' : 'Sin descripción' }}</strong>
           </div>
           <div class="resumen-item">
+            <img src="assets/icons/Icon_disponible.png" alt="Icono de disponibilidad" class="resumen-icons" />
             <span> Disponibilidad</span>
-            <strong>{{ formState.state.profile.selectedDay }} , {{ formState.state.profile.selectedShift }} : {{ formState.state.profile.fromTime }} - {{ formState.state.profile.toTime }}</strong>
+            <strong class="resumen-min">
+              {{ formState.state.profile.selectedDays.length ? formState.state.profile.selectedDays.map(dayLabel).join(' a ') : 'No especificado' }},
+              {{ formState.state.profile.selectedShifts.join(', ') || 'No especificado' }};{{ formatTime12h(formState.state.profile.fromTime) }} - {{ formatTime12h(formState.state.profile.toTime) }}
+            </strong>
           </div>
           <div class="resumen-item">
             <span> Documentos</span>
-            <strong>{{ formState.state.documents.certificacion.status }} / {{ formState.state.documents.dni.status }} / {{ formState.state.documents.titulo.status }} / {{ formState.state.documents.antecedentes.status }}</strong>
+            <strong class="resumen-min">{{ formState.state.documents.certificacion.status }} / {{ formState.state.documents.dni.status }} / {{ formState.state.documents.titulo.status }} / {{ formState.state.documents.antecedentes.status }}</strong>
           </div>
         </div>
 
@@ -75,7 +97,9 @@
 
         <div class="form-actions">
           <button type="button" class="btn-secondary" routerLink="/certificado">← Atrás</button>
-          <button type="button" class="btn-primary" (click)="finalizarRegistro()">Continuar →</button>
+          <button type="button" class="btn-primary" [disabled]="isSubmitting" (click)="finalizarRegistro()">
+            {{ isSubmitting ? 'Enviando...' : 'Continuar →' }}
+          </button>
         </div>
       </form>
     </div>
@@ -87,7 +111,8 @@
   <div class="modal" role="dialog" aria-modal="true">
     <div class="modal-body">
       <div class="modal-check">✓</div>
-      <h2>Creado</h2>
+      <h2>Envío exitoso</h2>
+      <p>Estamos en revisión. Si todo es válido y legal, espera de 2 o 3 días hábiles.</p>
       <button class="btn-primary" (click)="closeModal()">Ok</button>
     </div>
   </div>

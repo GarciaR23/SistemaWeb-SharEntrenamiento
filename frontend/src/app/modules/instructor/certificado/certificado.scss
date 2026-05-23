@@ -124,7 +124,7 @@
   }
 
   &.pending {
-    color: $color-warning;
+    color: #BACBBF;
 
     &::before {
       color: $color-warning;
@@ -150,6 +150,9 @@
 
 .btn-upload {
   @include button-base;
+  display: inline-flex;
+  gap: $spacing-sm;
+
   padding: $spacing-md $spacing-lg;
   background: rgba($color-primary, 0.12);
   color: $color-primary;
@@ -168,11 +171,19 @@
 
 .certificado-note {
   padding: $spacing-lg;
+  display: flex;
+  gap: $spacing-md;
   background: linear-gradient(135deg, rgba($color-info, 0.08), rgba($color-primary, 0.06));
-  border-left: 3px solid $color-info;
-  border-radius: $border-radius-md;
+  border-left: 3px solid #A4C9FF;
+  border-top-right-radius: $border-radius-md;
+  border-bottom-right-radius: $border-radius-md;
   position: relative;
   z-index: 1;
+
+  img {
+    width: 20px;
+    height: 20px;
+  }
 
   p {
     color: $color-text-secondary;
@@ -184,8 +195,7 @@
 
 .form-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: $spacing-md;
+  justify-content: space-between;
   margin-top: $spacing-2xl;
 }
 
@@ -193,16 +203,18 @@
   @include btn-pill-primary;
   min-width: 180px;
   box-shadow: 0 16px 30px rgba($color-primary, 0.14);
+  background: linear-gradient(135deg, $color-secondary 100%);
+  border-radius: $border-radius-md;
+  color: #fcfcfc;
 }
 
 .btn-secondary {
   @include button-base;
   padding: 16px 32px;
-  border-radius: $border-radius-full;
   background: transparent;
   color: $color-text-primary;
-  border: 1px solid rgba($color-text-primary, 0.12);
   font-weight: $font-weight-semibold;
+  border-radius: $border-radius-md;
   min-width: 180px;
 
   &:hover {
@@ -210,6 +222,46 @@
     border-color: rgba($color-text-primary, 0.24);
     transform: translateY(-2px);
   }
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+}
+
+.modal {
+  background: $color-bg-card;
+  border-radius: 16px;
+  padding: $spacing-2xl;
+  width: min(420px, 90%);
+  text-align: center;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+}
+
+.modal-body {
+  display: grid;
+  gap: $spacing-md;
+  align-items: center;
+
+  h2 {
+    margin: 0;
+    color: $color-text-primary;
+  }
+
+  p {
+    margin: 0;
+    color: $color-text-secondary;
+    line-height: 1.5;
+  }
+}
+
+.modal .btn-primary {
+  width: 100%;
+  min-width: 0;
 }
 
 @media (max-width: 768px) {

@@ -31,7 +31,11 @@
         <a routerLink="/recuperar-contrasena" class="secondary-link">¿Olvidaste tu contraseña?</a>
       </div>
 
-      <button type="submit" [disabled]="loginForm.invalid" class="btn-primary">Iniciar Sesión</button>
+      <button type="submit" [disabled]="loginForm.invalid || isLoading" class="btn-primary">
+        {{ isLoading ? 'Ingresando...' : 'Iniciar Sesión' }}
+      </button>
+
+      <p class="login-feedback" *ngIf="feedbackMessage">{{ feedbackMessage }}</p>
 
       <p class="register-link">
         ¿No tienes una cuenta? <a [routerLink]="['/seleccion-rol']" routerLinkActive="router-link-active" (click)="closeMenu()">Registrarse</a>

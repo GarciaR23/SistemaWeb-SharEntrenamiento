@@ -1,4 +1,12 @@
 export type DocumentKey = 'certificacion' | 'dni' | 'titulo' | 'antecedentes';
+export type ShiftName = 'Mañana' | 'Tarde' | 'Noche';
+export type DayCode = 'L' | 'M' | 'Mi' | 'J' | 'V' | 'S' | 'D';
+
+export interface ShiftSchedule {
+  shift: ShiftName;
+  fromTime: string;
+  toTime: string;
+}
 
 export interface RegistrationDocumentState {
   file: File | null;
@@ -12,8 +20,9 @@ export interface ProfileState {
   district: string;
   address: string;
   rate: string;
-  selectedShift: string;
-  selectedDay: string;
+  selectedShifts: ShiftName[];
+  selectedDays: DayCode[];
+  shiftSchedules: ShiftSchedule[];
   fromTime: string;
   toTime: string;
   bio: string;

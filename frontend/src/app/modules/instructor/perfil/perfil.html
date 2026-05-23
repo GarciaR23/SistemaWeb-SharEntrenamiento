@@ -67,33 +67,42 @@
           <div class="field-group">
             <span>Horario disponible</span>
             <div class="toggle-group">
-              <button type="button" class="toggle" [class.active]="profileForm.value.selectedShift === 'Mañana'" (click)="selectShift('Mañana')">Mañana</button>
-              <button type="button" class="toggle" [class.active]="profileForm.value.selectedShift === 'Tarde'" (click)="selectShift('Tarde')">Tarde</button>
-              <button type="button" class="toggle" [class.active]="profileForm.value.selectedShift === 'Noche'" (click)="selectShift('Noche')">Noche</button>
+              <button type="button" class="toggle" [class.active]="isShiftSelected('Mañana')" (click)="toggleShift('Mañana')">Mañana</button>
+              <button type="button" class="toggle" [class.active]="isShiftSelected('Tarde')" (click)="toggleShift('Tarde')">Tarde</button>
+              <button type="button" class="toggle" [class.active]="isShiftSelected('Noche')" (click)="toggleShift('Noche')">Noche</button>
             </div>
           </div>
         </div>
 
         <div class="section-label">DÍAS DISPONIBLES</div>
         <div class="days-grid">
-          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'L'" (click)="selectDay('L')">L</button>
-          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'M'" (click)="selectDay('M')">M</button>
-          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'Mi'" (click)="selectDay('Mi')">Mi</button>
-          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'J'" (click)="selectDay('J')">J</button>
-          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'V'" (click)="selectDay('V')">V</button>
-          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'S'" (click)="selectDay('S')">S</button>
-          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'D'" (click)="selectDay('D')">D</button>
+          <button type="button" class="day" [class.active]="isDaySelected('L')" (click)="toggleDay('L')">L</button>
+          <button type="button" class="day" [class.active]="isDaySelected('M')" (click)="toggleDay('M')">M</button>
+          <button type="button" class="day" [class.active]="isDaySelected('Mi')" (click)="toggleDay('Mi')">Mi</button>
+          <button type="button" class="day" [class.active]="isDaySelected('J')" (click)="toggleDay('J')">J</button>
+          <button type="button" class="day" [class.active]="isDaySelected('V')" (click)="toggleDay('V')">V</button>
+          <button type="button" class="day" [class.active]="isDaySelected('S')" (click)="toggleDay('S')">S</button>
+          <button type="button" class="day" [class.active]="isDaySelected('D')" (click)="toggleDay('D')">D</button>
         </div>
 
         <div class="section-label">FRANJA HORARIA PREFERIDA</div>
-        <div class="field-row">
-          <label class="field-group">
-            <span>Desde</span>
-            <input type="time" formControlName="fromTime" />
+        <div class="field-row preferred-time">
+          <label class="time-pill">
+            <span class="pill-label">Desde</span>
+            <input
+              type="time"
+              formControlName="fromTime"
+              (change)="onPreferredTimeChange()"
+            />
           </label>
-          <label class="field-group">
-            <span>Hasta</span>
-            <input type="time" formControlName="toTime" />
+
+          <label class="time-pill">
+            <span class="pill-label">Hasta</span>
+            <input
+              type="time"
+              formControlName="toTime"
+              (change)="onPreferredTimeChange()"
+            />
           </label>
         </div>
 
@@ -102,7 +111,7 @@
           <textarea rows="4" placeholder="Describe tu metodología, años de experiencia y lo que te motiva..." formControlName="bio"></textarea>
         </label>
 
-        <p class="form-feedback" *ngIf="feedbackMessage">{{ feedbackMessage }}</p>
+        <!-- feedback will be shown in modal -->
 
         <div class="form-actions">
           <button type="button" class="btn-primary" (click)="goToCertificado()">Continuar →</button>
@@ -111,3 +120,14 @@
     </div>
   </div>
 </section>
+
+  <!-- Modal for reminders and feedback -->
+  <div class="modal-backdrop" *ngIf="showModal">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-body">
+        <h2 *ngIf="!feedbackMessage">Aviso</h2>
+        <p>{{ modalMessage || feedbackMessage }}</p>
+        <button class="btn-primary" (click)="closeModal()">Ok</button>
+      </div>
+    </div>
+  </div>

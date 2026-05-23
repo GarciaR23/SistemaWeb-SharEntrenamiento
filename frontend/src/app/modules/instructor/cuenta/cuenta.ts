@@ -3,6 +3,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../../../services/auth';
+import { DayCode } from '../../../data/registration.models';
 import { FormStateService } from '../../../services/form-state.service';
 
 @Component({
@@ -15,6 +17,8 @@ import { FormStateService } from '../../../services/form-state.service';
 export class Cuenta implements OnInit, OnDestroy {
   accountForm!: FormGroup;
   showPassword = false;
+  isSubmitting = false;
+  photoFileName = '';
 
   feedbackMessage = '';
   private subscription?: Subscription;
@@ -23,6 +27,7 @@ export class Cuenta implements OnInit, OnDestroy {
     public formState: FormStateService,
     private fb: FormBuilder,
     private router: Router,
+    private authService: AuthService,
   ) {
     this.accountForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -54,6 +59,45 @@ export class Cuenta implements OnInit, OnDestroy {
     this.showPassword = !this.showPassword;
   }
 
+  onPhotoChange(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0] ?? null;
+    this.photoFileName = file?.name ?? '';
+  }
+
+  dayLabel(day: DayCode): string {
+    const labels: Record<DayCode, string> = {
+      L: 'Lunes',
+      M: 'Martes',
+      Mi: 'Miércoles',
+      J: 'Jueves',
+      V: 'Viernes',
+      S: 'Sábado',
+      D: 'Domingo',
+    };
+
+    return labels[day] ?? day;
+  }
+
+  formatTime12h(value: string): string {
+    if (!value) {
+      return '--:--';
+    }
+
+    const [hourText, minuteText] = value.split(':');
+    const hour = Number(hourText);
+    const minutes = minuteText ?? '00';
+
+    if (Number.isNaN(hour)) {
+      return '--:--';
+    }
+
+    const suffix = hour >= 12 ? 'PM' : 'AM';
+    const normalizedHour = hour % 12 || 12;
+
+    return `${normalizedHour.toString().padStart(2, '0')}:${minutes} ${suffix}`;
+  }
+
   finalizarRegistro(): void {
     this.accountForm.markAllAsTouched();
 
@@ -70,13 +114,23 @@ export class Cuenta implements OnInit, OnDestroy {
       return;
     }
 
-    const payload = this.formState.buildRegistrationPayload();
-    console.log('Formulario completo listo para guardar:', payload);
+    this.isSubmitting = true;
 
-    // Show modal and reset state
-    this.showModal = true;
-    this.formState.resetRegistration();
-    this.accountForm.reset();
+    this.authService.register({
+      email: this.formState.state.profile.email,
+      password: this.formState.state.profile.password,
+      rol: 'instructor',
+    }).subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        this.showModal = true;
+      },
+      error: (error) => {
+        this.isSubmitting = false;
+        const backendMessage = error?.error?.message;
+        this.feedbackMessage = backendMessage || 'No se pudo completar el registro. Intenta nuevamente.';
+      },
+    });
   }
 
   // Modal control
@@ -85,6 +139,8 @@ export class Cuenta implements OnInit, OnDestroy {
   closeModal(): void {
     this.showModal = false;
     this.feedbackMessage = '';
+    this.formState.resetRegistration();
+    this.accountForm.reset();
     this.router.navigate(['/login']);
   }
 }
