@@ -45,6 +45,21 @@
             </div>
 
             <div class="form-group">
+                <label>Distrito</label>
+                <select [(ngModel)]="distrito" name="distrito">
+                    <option value="" disabled selected>Selecciona tu distrito</option>
+                    <option *ngFor="let d of allDistricts" [value]="d.code">
+                        {{ d.district | titlecase }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Dirección</label>
+                <input [(ngModel)]="direccion" name="direccion" placeholder="Ej. Av. Principal 123">
+            </div>
+
+            <div class="form-group">
                 <label>Condición / Diagnóstico</label>
                 <input [(ngModel)]="condicion" name="condicion" placeholder="Ej. TEA, PC...">
             </div>
@@ -73,21 +88,6 @@
                 <label>Edad</label>
                 <input [(ngModel)]="edad" name="edad" type="number" placeholder="Ej. 24">
             </div>
-
-            <div class="form-group">
-                <label>Distrito</label>
-                <select [(ngModel)]="distrito" name="distrito">
-                    <option value="" disabled selected>Selecciona tu distrito</option>
-                    <option *ngFor="let d of allDistricts" [value]="d.code">
-                        {{ d.district | titlecase }}
-                    </option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Dirección</label>
-                <input [(ngModel)]="direccion" name="direccion" placeholder="Ej. Av. Principal 123">
-            </div>
         </div>
 
         <div class="actions">
@@ -101,18 +101,27 @@
         <p class="section-label">SENSIBILIDADES</p>
 
         <div class="grid-2">
-            <div class="check" [class.selected]="estaSeleccionada('Ruidos fuertes')" (click)="toggleSensibilidad('Ruidos fuertes')">Ruidos fuertes</div>
-            <div class="check" [class.selected]="estaSeleccionada('Contacto físico')" (click)="toggleSensibilidad('Contacto físico')">Contacto físico</div>
-            <div class="check" [class.selected]="estaSeleccionada('Luces brillantes')" (click)="toggleSensibilidad('Luces brillantes')">Luces brillantes</div>
-            <div class="check" [class.selected]="estaSeleccionada('Multitudes')" (click)="toggleSensibilidad('Multitudes')">Multitudes</div>
-            <div class="check" [class.selected]="estaSeleccionada('Cambios de rutina')" (click)="toggleSensibilidad('Cambios de rutina')">Cambios de rutina</div>
-            <div class="check" [class.selected]="estaSeleccionada('Texturas específicas')" (click)="toggleSensibilidad('Texturas específicas')">Texturas específicas</div>
-            <div class="check" [class.selected]="estaSeleccionada('Olores intensos')" (click)="toggleSensibilidad('Olores intensos')">Olores intensos</div>
-            <div class="check" [class.selected]="estaSeleccionada('Espacios cerrados')" (click)="toggleSensibilidad('Espacios cerrados')">Espacios cerrados</div>
+            <div class="check" [class.selected]="estaSeleccionada('Ruidos fuertes')"
+                (click)="toggleSensibilidad('Ruidos fuertes')">Ruidos fuertes</div>
+            <div class="check" [class.selected]="estaSeleccionada('Contacto físico')"
+                (click)="toggleSensibilidad('Contacto físico')">Contacto físico</div>
+            <div class="check" [class.selected]="estaSeleccionada('Luces brillantes')"
+                (click)="toggleSensibilidad('Luces brillantes')">Luces brillantes</div>
+            <div class="check" [class.selected]="estaSeleccionada('Multitudes')"
+                (click)="toggleSensibilidad('Multitudes')">Multitudes</div>
+            <div class="check" [class.selected]="estaSeleccionada('Cambios de rutina')"
+                (click)="toggleSensibilidad('Cambios de rutina')">Cambios de rutina</div>
+            <div class="check" [class.selected]="estaSeleccionada('Texturas específicas')"
+                (click)="toggleSensibilidad('Texturas específicas')">Texturas específicas</div>
+            <div class="check" [class.selected]="estaSeleccionada('Olores intensos')"
+                (click)="toggleSensibilidad('Olores intensos')">Olores intensos</div>
+            <div class="check" [class.selected]="estaSeleccionada('Espacios cerrados')"
+                (click)="toggleSensibilidad('Espacios cerrados')">Espacios cerrados</div>
         </div>
 
         <p class="section-label">PROTOCOLO DE EMERGENCIA</p>
-        <textarea [(ngModel)]="protocoloEmergencia" name="protocoloEmergencia" placeholder="Instrucciones específicas en caso de colapso..."></textarea>
+        <textarea [(ngModel)]="protocoloEmergencia" name="protocoloEmergencia"
+            placeholder="Instrucciones específicas en caso de colapso..."></textarea>
 
         <div class="actions between">
             <button type="button" class="back-btn" (click)="atras()">← Atrás</button>
@@ -156,7 +165,7 @@
     <div class="form-card step-4" *ngIf="paso === 4">
         <h1>Crear tu cuenta</h1>
         <p class="subtitle">Define tus credenciales de acceso para ingresar como tutor.</p>
-        
+
         <p class="section-label">CREDENCIALES DE ACCESO</p>
         <div class="account-form">
             <div class="form-group">
@@ -175,9 +184,15 @@
                 <input type="file" accept="image/*" (change)="onFotoChange($event)" hidden>
                 <div class="upload-content">
                     <div class="upload-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
                     </div>
-                    <span class="upload-title">{{ fotoPacienteNombre ? fotoPacienteNombre : 'Click para subir o arrastra y suelta' }}</span>
+                    <span class="upload-title">{{ fotoPacienteNombre ? fotoPacienteNombre : 'Click para subir o arrastra
+                        y suelta' }}</span>
                     <span class="upload-subtitle" *ngIf="!fotoPacienteNombre">PNG, JPG hasta 5MB</span>
                 </div>
             </label>
@@ -186,7 +201,13 @@
         <div class="summary-modern">
             <div class="summary-header">
                 <div class="header-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="8" y1="12" x2="16" y2="12"></line><line x1="8" y1="16" x2="16" y2="16"></line><line x1="8" y1="8" x2="10" y2="8"></line></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="8" y1="12" x2="16" y2="12"></line>
+                        <line x1="8" y1="16" x2="16" y2="16"></line>
+                        <line x1="8" y1="8" x2="10" y2="8"></line>
+                    </svg>
                 </div>
                 <h3>Resumen de Registro</h3>
             </div>
@@ -195,7 +216,12 @@
                 <div class="summary-item">
                     <div class="item-label-group">
                         <div class="item-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
                         </div>
                         <span>Nombre Completo</span>
                     </div>
@@ -205,7 +231,11 @@
                 <div class="summary-item">
                     <div class="item-label-group">
                         <div class="item-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                            </svg>
                         </div>
                         <span>Condición</span>
                     </div>
@@ -215,7 +245,11 @@
                 <div class="summary-item">
                     <div class="item-label-group">
                         <div class="item-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
                         </div>
                         <span>Grado de Autismo</span>
                     </div>
@@ -225,7 +259,14 @@
                 <div class="summary-item">
                     <div class="item-label-group">
                         <div class="item-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
                         </div>
                         <span>Tutor a Cargo</span>
                     </div>

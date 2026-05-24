@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { statusGuard } from './core/guards/status.guard';
+
 import { LandingComponent } from './modules/landing/landing.component';
 import { Login } from './modules/auth/login/login';
 import { RecuperarContrasena } from './modules/auth/recuperar-contrasena/recuperar-contrasena';
@@ -12,63 +14,33 @@ import { SeleccionRolComponent } from './modules/auth/seleccion-rol/seleccion-ro
 import { FormularioTutor } from './modules/tutor/formulario-tutor/formulario-tutor';
 
 export const routes: Routes = [
+  { path: '', component: LandingComponent },
+  { path: 'metodologia', component: LandingComponent },
+  { path: 'testimonios', component: LandingComponent },
+  { path: 'seguridad', component: LandingComponent },
+  { path: 'soporte', component: LandingComponent },
+
   {
     path: '',
-    component: LandingComponent
+    canActivate: [statusGuard], 
+    children: [
+      // Autenticación
+      { path: 'login', component: Login },
+      { path: 'seleccion-rol', component: SeleccionRolComponent },
+      { path: 'recuperar-contrasena', component: RecuperarContrasena },
+      { path: 'token-contrasena', component: TokenContrasena },
+      { path: 'restaurar-contrasena', component: RestaurarContrasena },
+
+      // Perfiles y formularios de Instructores
+      { path: 'formulario', component: Perfil },
+      { path: 'certificado', component: Certificado },
+      { path: 'cuenta', component: Cuenta },
+
+      // Vistas y formularios de Tutores
+      { path: 'tutor', component: Tutor },
+      { path: 'formulario-tutor', component: FormularioTutor }
+    ]
   },
-  {
-    path: 'metodologia',
-    component: LandingComponent // Será reemplazado por metodologia component
-  },
-  {
-    path: 'testimonios',
-    component: LandingComponent // Será reemplazado por testimonios component
-  },
-  {
-    path: 'seguridad',
-    component: LandingComponent // Será reemplazado por seguridad component
-  },
-  {
-    path: 'soporte',
-    component: LandingComponent // Será reemplazado por soporte component
-  },
-  {
-    path: 'login',
-    component: Login
-  },
-  {
-    path: 'recuperar-contrasena',
-    component: RecuperarContrasena
-  },
-  {
-    path: 'token-contrasena',
-    component: TokenContrasena
-  },
-  {
-    path: 'restaurar-contrasena',
-    component: RestaurarContrasena
-  },
-  {
-    path: 'formulario',
-    component: Perfil
-  },
-  {
-    path: 'certificado',
-    component: Certificado
-  },
-  {
-    path: 'cuenta',
-    component: Cuenta
-  },
-  {
-  path: 'tutor',
-  component: Tutor
-},
-{
-  path: 'seleccion-rol',
-  component: SeleccionRolComponent
-},
-{ path: 'formulario-tutor',
-   component: FormularioTutor
-}
+
+  { path: '**', redirectTo: '' }
 ];
