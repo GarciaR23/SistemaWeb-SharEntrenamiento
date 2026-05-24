@@ -1,1 +1,0 @@
-# Exception\n\nCarpeta para manejo de errores personalizados.
