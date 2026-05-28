@@ -6,6 +6,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { Location, Ubication } from '../../../services/location';
 import { Subscription } from 'rxjs';
 
+import { RegistrationApiService } from '../../../services/registration-api.service';
+
 @Component({
   selector: 'app-formulario-tutor',
   standalone: true,
@@ -43,10 +45,13 @@ export class FormularioTutor implements OnInit, OnDestroy {
   contrasena = '';
   fotoPaciente: File | null = null;
   fotoPacienteNombre = '';
+  loading = false;
+  errorMessage = '';
 
   constructor(
     private router: Router,
-    private locationService: Location
+    private locationService: Location,
+    private registrationApiService: RegistrationApiService,
   ) { }
 
   ngOnInit(): void {
@@ -139,26 +144,35 @@ export class FormularioTutor implements OnInit, OnDestroy {
     }
   }
 
-  finalizar() {
-    // Aquí irá la lógica para guardar los datos
-    console.log('Formulario completo:', {
-      nombreTutor: this.nombreTutor,
-      nombrePaciente: this.nombrePaciente,
-      condicion: this.condicion,
-      gradoAutismo: this.gradoAutismo,
-      genero: this.genero,
-      edad: this.edad,
-      distrito: this.distrito,
-      direccion: this.direccion,
-      protocoloEmergencia: this.protocoloEmergencia,
-      sensibilidades: this.sensibilidadesSeleccionadas,
-      nombreContacto: this.nombreContacto,
-      telefonoContacto: this.telefonoContacto,
-      relacionContacto: this.relacionContacto,
-      correo: this.correo,
-      fotoPaciente: this.fotoPacienteNombre,
-    });
+  async finalizar() {
+    if (!this.isStep4Valid() || this.loading || this.edad == null) {
+      return;
+    }
 
-    this.router.navigate(['/tutor']);
+    this.loading = true;
+    this.errorMessage = '';
+
+    try {
+      await this.registrationApiService.registrarTutorConPaciente({
+        tutorNombre: this.nombreTutor,
+        pacienteNombre: this.nombrePaciente,
+        condicion: this.condicion,
+        gradoAutismo: this.gradoAutismo,
+        genero: this.genero,
+        edad: this.edad,
+        distrito: this.distrito,
+        direccion: this.direccion,
+        correo: this.correo,
+        clave: this.contrasena,
+        fotoPaciente: this.fotoPaciente,
+      });
+
+      localStorage.setItem('rolSeleccionado', 'TUTOR');
+      this.router.navigate(['/tutor']);
+    } catch (error: any) {
+      this.errorMessage = error?.error?.message ?? error?.message ?? 'No se pudo completar el registro';
+    } finally {
+      this.loading = false;
+    }
   }
 }

@@ -2,6 +2,17 @@
   <div class="login-background">
   </div>
 
+  @if (showSuccessModal) {
+    <div class="modal-backdrop" role="presentation">
+      <div class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+        <p class="modal-kicker">Inicio de sesión correcto</p>
+        <h3 id="welcome-title">{{ successMessage }}</h3>
+        <p class="modal-text">Tu acceso fue validado correctamente.</p>
+        <button type="button" class="btn-primary modal-button" (click)="closeSuccessModal()">Continuar</button>
+      </div>
+    </div>
+  }
+
   <div class="login-card">
     <div class="login-header">
       <h2>Bienvenido</h2>
