@@ -7,6 +7,8 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
+import { AuthApiService } from '../../../services/auth-api.service';
+
 @Component({
   selector: 'app-token-contrasena',
   standalone: true,
@@ -22,10 +24,13 @@ export class TokenContrasena implements OnDestroy {
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private authApiService = inject(AuthApiService);
 
   // Temporizador de reenvío
   countdown = 30;
   private intervalId: any;
+  loading = false;
+  errorMessage = '';
 
   tokenForm = this.fb.group({
     token1: [
@@ -107,21 +112,32 @@ export class TokenContrasena implements OnDestroy {
   }
 
   onSubmit(): void {
-    if (this.tokenForm.valid) {
-
-      const token = Object.values(
-        this.tokenForm.getRawValue()
-      ).join('');
-
-      console.log('Token:', token);
-
-      this.router.navigate([
-        '/restaurar-contrasena'
-      ]);
-
-    } else {
+    if (this.tokenForm.invalid || this.loading) {
       this.tokenForm.markAllAsTouched();
+      return;
     }
+
+    const email = localStorage.getItem('recoveryEmail') ?? '';
+    if (!email) {
+      this.errorMessage = 'Sesión de recuperación expirada. Vuelve a solicitar un token.';
+      return;
+    }
+
+    const token = Object.values(this.tokenForm.getRawValue()).join('');
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.authApiService.verifyRecoveryToken(email, token).subscribe({
+      next: () => {
+        this.loading = false;
+        localStorage.setItem('recoveryToken', token);
+        this.router.navigate(['/restaurar-contrasena']);
+      },
+      error: (error) => {
+        this.loading = false;
+        this.errorMessage = error?.error?.message ?? 'Token inválido o expirado';
+      },
+    });
   }
 
   startCountdown(): void {
@@ -139,12 +155,24 @@ export class TokenContrasena implements OnDestroy {
   }
 
   resendCode(): void {
-    console.log('Reenviando token...');
+    const email = localStorage.getItem('recoveryEmail') ?? '';
+    if (!email || this.loading || this.countdown > 0) {
+      return;
+    }
 
-    // Aquí luego conectas el backend
-    // this.authService.resendToken()
+    this.loading = true;
+    this.errorMessage = '';
 
-    this.startCountdown();
+    this.authApiService.forgotPassword(email).subscribe({
+      next: () => {
+        this.loading = false;
+        this.startCountdown();
+      },
+      error: (error) => {
+        this.loading = false;
+        this.errorMessage = error?.error?.message ?? 'No se pudo reenviar el token';
+      },
+    });
   }
 
   ngOnDestroy(): void {

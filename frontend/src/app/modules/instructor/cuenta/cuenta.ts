@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FormStateService } from '../../../services/form-state.service';
+import { RegistrationApiService } from '../../../services/registration-api.service';
 
 @Component({
   selector: 'app-cuenta',
@@ -17,12 +18,14 @@ export class Cuenta implements OnInit, OnDestroy {
   showPassword = false;
 
   feedbackMessage = '';
+  loading = false;
   private subscription?: Subscription;
 
   constructor(
     public formState: FormStateService,
     private fb: FormBuilder,
     private router: Router,
+    private registrationApiService: RegistrationApiService,
   ) {
     this.accountForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -38,11 +41,6 @@ export class Cuenta implements OnInit, OnDestroy {
         email: value.email ?? '',
         password: value.password ?? '',
       };
-
-      console.log('Cuenta reactiva:', {
-        email: this.formState.state.profile.email,
-        password: this.formState.state.profile.password,
-      });
     });
   }
 
@@ -54,7 +52,7 @@ export class Cuenta implements OnInit, OnDestroy {
     this.showPassword = !this.showPassword;
   }
 
-  finalizarRegistro(): void {
+  async finalizarRegistro(): Promise<void> {
     this.accountForm.markAllAsTouched();
 
     const missing = this.formState.getMissingRegistrationFields();
@@ -70,13 +68,34 @@ export class Cuenta implements OnInit, OnDestroy {
       return;
     }
 
-    const payload = this.formState.buildRegistrationPayload();
-    console.log('Formulario completo listo para guardar:', payload);
+    this.loading = true;
+    this.feedbackMessage = '';
 
-    // Show modal and reset state
-    this.showModal = true;
-    this.formState.resetRegistration();
-    this.accountForm.reset();
+    try {
+      await this.registrationApiService.registrarInstructorConDocumentos({
+        nombreCompleto: this.formState.state.profile.fullName,
+        especialidad: this.formState.state.profile.specialty,
+        biografia: this.formState.state.profile.bio,
+        distrito: this.formState.state.profile.district,
+        direccion: this.formState.state.profile.address,
+        email: this.formState.state.profile.email,
+        clave: this.formState.state.profile.password,
+        documentos: {
+          certificacion: this.formState.state.documents.certificacion.file,
+          dni: this.formState.state.documents.dni.file,
+          titulo: this.formState.state.documents.titulo.file,
+          antecedentes: this.formState.state.documents.antecedentes.file,
+        },
+      });
+
+      this.showModal = true;
+      this.formState.resetRegistration();
+      this.accountForm.reset();
+    } catch (error: any) {
+      this.feedbackMessage = error?.error?.message ?? error?.message ?? 'No se pudo completar el registro';
+    } finally {
+      this.loading = false;
+    }
   }
 
   // Modal control

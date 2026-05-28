@@ -45,7 +45,7 @@ export class Perfil implements OnInit, OnDestroy {
       this.allDistricts = list.sort((a,b) => a.district.localeCompare(b.district));
     });
     this.profileForm.patchValue(this.formState.state.profile);
-    
+
     this.subscription = this.profileForm.valueChanges.subscribe((value) => {
       this.formState.state.profile = {
         ...this.formState.state.profile,
@@ -62,8 +62,6 @@ export class Perfil implements OnInit, OnDestroy {
         email: this.formState.state.profile.email,
         password: this.formState.state.profile.password,
       };
-
-      console.log('Perfil reactivo:', this.formState.state.profile);
     });
   }
 
