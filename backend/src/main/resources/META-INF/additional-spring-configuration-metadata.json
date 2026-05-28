@@ -1,0 +1,39 @@
+{
+    "properties": [
+        {
+            "name": "application.jwt.secret-key",
+            "type": "java.lang.String",
+            "description": "A description for 'application.jwt.secret-key'"
+        },
+        {
+            "name": "application.jwt.token-prefix",
+            "type": "java.lang.String",
+            "description": "A description for 'application.jwt.token-prefix'"
+        },
+        {
+            "name": "application.jwt.token-expiration-days",
+            "type": "java.lang.String",
+            "description": "A description for 'application.jwt.token-expiration-days'"
+        },
+        {
+            "name": "application.jwt.refresh-token-expiration-days",
+            "type": "java.lang.String",
+            "description": "A description for 'application.jwt.refresh-token-expiration-days'"
+        },
+        {
+            "name": "app.debug",
+            "type": "java.lang.String",
+            "description": "A description for 'app.debug'"
+        },
+        {
+            "name": "cloudinary.api-secret",
+            "type": "java.lang.String",
+            "description": "Cloudinary API secret loaded from environment fallback"
+        },
+        {
+            "name": "cloudinary.api-key",
+            "type": "java.lang.String",
+            "description": "Cloudinary API key loaded from environment fallback"
+        }
+    ]
+}
