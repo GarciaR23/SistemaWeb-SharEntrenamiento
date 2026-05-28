@@ -16,6 +16,7 @@ import { RegistrationApiService } from '../../../services/registration-api.servi
 export class Cuenta implements OnInit, OnDestroy {
   accountForm!: FormGroup;
   showPassword = false;
+  profileImagePreview = '';
 
   feedbackMessage = '';
   loading = false;
@@ -42,6 +43,12 @@ export class Cuenta implements OnInit, OnDestroy {
         password: value.password ?? '',
       };
     });
+
+    // Nombre de Archivo
+    const existing = this.formState.state.profile.profileImageFile;
+    if (existing) {
+      this.profileImagePreview = existing.name;
+    }
   }
 
   ngOnDestroy(): void {
@@ -50,6 +57,13 @@ export class Cuenta implements OnInit, OnDestroy {
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
+  }
+
+  SeleccionarImagenPerfil(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    this.formState.state.profile.profileImageFile = file;
+    this.profileImagePreview = file ? file.name : '';
   }
 
   async finalizarRegistro(): Promise<void> {
@@ -78,6 +92,7 @@ export class Cuenta implements OnInit, OnDestroy {
         biografia: this.formState.state.profile.bio,
         distrito: this.formState.state.profile.district,
         direccion: this.formState.state.profile.address,
+        profileImageFile: this.formState.state.profile.profileImageFile ?? null,
         email: this.formState.state.profile.email,
         clave: this.formState.state.profile.password,
         documentos: {

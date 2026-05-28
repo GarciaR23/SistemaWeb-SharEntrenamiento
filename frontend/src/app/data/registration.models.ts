@@ -19,6 +19,7 @@ export interface ProfileState {
   bio: string;
   email: string;
   password: string;
+  profileImageFile?: File | null;
 }
 
 export interface RegistrationState {

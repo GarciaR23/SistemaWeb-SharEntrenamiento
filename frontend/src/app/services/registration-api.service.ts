@@ -127,6 +127,7 @@ export class RegistrationApiService {
     biografia: string;
     distrito: string;
     direccion: string;
+    profileImageFile?: File | null;
     email: string;
     clave: string;
     documentos: Record<DocumentKey, File | null>;
@@ -139,11 +140,17 @@ export class RegistrationApiService {
       throw new Error(registerResult.message || 'No se pudo registrar el usuario instructor');
     }
 
+    let urlImagenPerfil: string | null = null;
+    if (payload.profileImageFile) {
+      const uploadedImage = await firstValueFrom(this.fileService.uploadImage(payload.profileImageFile));
+      urlImagenPerfil = uploadedImage.url;
+    }
+
     const instructor = await firstValueFrom(
       this.http.post<InstructorResponse>(this.instructorUrl, {
         idUsuario: registerResult.usuario.idUsuario,
         nombreCompleto: payload.nombreCompleto,
-        urlImagenPerfil: null,
+        urlImagenPerfil,
         especialidad: payload.especialidad,
         biografia: payload.biografia,
         distrito: payload.distrito,
