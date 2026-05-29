@@ -48,7 +48,7 @@
             <span>Distrito</span>
             <select formControlName="district" (change)="onDistrictChange($event)">
               <option value="">Selecciona tu distrito</option>
-              <option *ngFor="let d of allDistricts" [value]="d.code">{{ d.district | titlecase }}</option>
+              <option *ngFor="let d of allDistricts" [value]="d.district">{{ d.district | titlecase }}</option>
             </select>
           </label>
 

@@ -133,6 +133,7 @@ export class FormStateService {
         bio: '',
         email: '',
         password: '',
+        profileImageFile: null,
       },
       documents: {
         certificacion: { file: null, fileName: '', status: 'PENDIENTE' },

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -16,6 +16,7 @@ import { Location, Ubication } from '../../../services/location';
 export class Perfil implements OnInit, OnDestroy {
   profileForm!: FormGroup;
   allDistricts: Ubication[] = [];
+  private titleCase = new TitleCasePipe();
 
   feedbackMessage = '';
   private subscription?: Subscription;
@@ -51,7 +52,7 @@ export class Perfil implements OnInit, OnDestroy {
         ...this.formState.state.profile,
         fullName: value.fullName ?? '',
         specialty: value.specialty ?? '',
-        district: value.district ?? '',
+        district: value.district ? this.titleCase.transform(value.district) : '',
         address: value.address ?? '',
         rate: value.rate ?? '',
         selectedShift: value.selectedShift ?? '',
@@ -98,6 +99,7 @@ export class Perfil implements OnInit, OnDestroy {
 
   onDistrictChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
-    const code = target.value;
+    const value = target.value;
+    this.formState.state.profile.district = value ? this.titleCase.transform(value) : '';
   }
 }

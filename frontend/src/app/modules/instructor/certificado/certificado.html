@@ -38,8 +38,7 @@
           </div>
           <button type="button" class="btn-upload" (click)="certificacionInput.click()">
             <img src="assets/icons/Icon_update.png" alt="Icono de documento"/> Subir</button>
-          <input type="file" #certificacionInput (change)="getFile(document.key, $event)" hidden>
-          <input type="file" #certificacionInput accept=".pdf,application/pdf" (change)="getFile(document.key, $event)" hidden>
+          <input type="file" #certificacionInput accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg" (change)="getFile(document.key, $event)" hidden>
           <small *ngIf="getFileName(document.key)">Archivo: {{ getFileName(document.key) }}</small>
         </article>
       </div>
