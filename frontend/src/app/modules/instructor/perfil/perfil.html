@@ -31,9 +31,9 @@
       <button
         type="button"
         class="step"
-        routerLink="/cuenta"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }">
+        [class.disabled]="profileForm.invalid || formState.getMissingDocumentFields().length > 0"
+        [disabled]="profileForm.invalid || formState.getMissingDocumentFields().length > 0"
+        (click)="goToCuentaFromPerfil()">
 
         <span>3</span>
         <small>CUENTA</small>
@@ -328,6 +328,18 @@
         </div>
 
       </form>
+
+      <div class="modal-backdrop" *ngIf="showValidationModal">
+        <div class="validation-modal">
+          <button type="button" class="modal-close" (click)="closeValidationModal()">×</button>
+          <p class="modal-kicker error-kicker">Campos incompletos</p>
+          <h3>Completa los siguientes campos antes de continuar</h3>
+          <ul class="validation-list">
+            <li *ngFor="let item of validationMissingFields">{{ item }}</li>
+          </ul>
+          <button type="button" class="btn-primary modal-button" (click)="closeValidationModal()">Volver</button>
+        </div>
+      </div>
 
     </div>
   </div>

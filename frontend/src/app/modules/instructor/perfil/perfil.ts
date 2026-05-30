@@ -489,6 +489,32 @@ export class Perfil implements OnInit, OnDestroy {
     this.router.navigate(['/certificado']);
   }
 
+  goToCuentaFromPerfil(): void {
+    this.profileForm.markAllAsTouched();
+
+    const missingProfile = this.formState.getMissingProfileFields();
+    const missingDocs = this.formState.getMissingDocumentFields();
+
+    if (this.timeValidationMessage) {
+      this.validationMissingFields = [this.timeValidationMessage];
+      this.showValidationModal = true;
+      return;
+    }
+
+    const missing = [...missingProfile, ...missingDocs];
+    if (missing.length > 0) {
+      this.validationMissingFields = missing;
+      this.showValidationModal = true;
+      return;
+    }
+
+    if (this.profileForm.invalid) {
+      return;
+    }
+
+    this.router.navigate(['/cuenta']);
+  }
+
   closeValidationModal(): void {
     this.showValidationModal =
       false;

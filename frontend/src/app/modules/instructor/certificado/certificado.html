@@ -8,14 +8,15 @@
         <small>PERFIL</small>
       </button>
       <div class="step-separator"></div>
-      <button type="button" class="step active" routerLink="/certificado" routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }">
+      <button type="button" class="step active">
         <span>2</span>
         <small>CERTIFICADOS</small>
       </button>
       <div class="step-separator"></div>
-      <button type="button" class="step" routerLink="/cuenta" routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }">
+      <button type="button" class="step"
+        [class.disabled]="hasMissingDocuments"
+        [disabled]="hasMissingDocuments"
+        (click)="goToCuenta()">
         <span>3</span>
         <small>CUENTA</small>
       </button>
