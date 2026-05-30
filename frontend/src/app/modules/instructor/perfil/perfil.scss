@@ -1,7 +1,6 @@
 @use 'variables' as *;
 @use 'mixins' as *;
 
-
 .perfil-page {
   @include onboarding-page;
   padding-top: $spacing-2xl;
@@ -106,6 +105,7 @@
 
 .toggle {
   @include button-base;
+  font-size: 14px;
   padding: 10px 16px;
   background: transparent;
   color: $color-text-secondary;
@@ -129,17 +129,18 @@
 .days-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: $spacing-md;
+  gap: 85px;
 }
 
 .day {
   @include button-base;
   min-height: 48px;
+  width: 50px;
   padding: 0;
   background: rgba(24, 32, 52, 0.95);
   color: $color-text-secondary;
   border: 1px solid rgba($color-text-primary, 0.06);
-  border-radius: $border-radius-md;
+  border-radius: $border-radius-lg;
   font-weight: $font-weight-semibold;
   letter-spacing: 0.02em;
 
@@ -150,7 +151,7 @@
   }
 
   &.active {
-    background: linear-gradient(135deg, #0c67b3 0%, #0b8dcb 100%);
+    background: $color-secondary;
     color: #ffffff;
     border-color: rgba(12, 103, 179, 0.55);
     box-shadow: 0 14px 30px rgba(12, 103, 179, 0.2);
@@ -217,4 +218,3 @@
     min-width: 0;
   }
 }
-

@@ -45,6 +45,12 @@
           </label>
         </div>
 
+        <label class="field-group">
+          <span>Foto de perfil</span>
+          <input type="file" accept="image/*" (change)="SeleccionarImagenPerfil($event)" />
+          <small *ngIf="profileImagePreview">Archivo: {{ profileImagePreview }}</small>
+        </label>
+
         <div class="resumen-card">
           <div class="resumen-title">
             <strong>Resumen de Registro</strong>

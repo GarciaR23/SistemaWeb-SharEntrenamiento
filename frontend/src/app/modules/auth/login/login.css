@@ -1,4 +1,5 @@
 .login-page {
+  position: relative;
   min-height: 100vh;
   display: grid;
   place-items: center;
@@ -8,45 +9,65 @@
               linear-gradient(180deg, #0b1117 0%, #13191f 100%);
 }
 
-.login-background {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
+            .modal-backdrop {
+              position: fixed;
+              inset: 0;
+              display: grid;
+              place-items: center;
+              padding: 24px;
+              background: rgba(3, 8, 16, 0.68);
+              backdrop-filter: blur(10px);
+              z-index: 20;
+            }
 
-.circle {
-  position: absolute;
-  filter: blur(70px);
-  opacity: 0.7;
-}
+            .welcome-modal {
+              width: min(420px, 100%);
+              border-radius: 20px;
+              padding: 32px 28px;
+              background: linear-gradient(180deg, rgba(16, 22, 34, 0.98), rgba(12, 17, 26, 0.98));
+              border: 1px solid rgba(255, 255, 255, 0.08);
+              box-shadow: 0 30px 90px rgba(0, 0, 0, 0.4);
+              text-align: center;
+            }
 
-.circle-left {
-  width: 320px;
-  height: 320px;
-  background: rgba(0, 212, 170, 0.24);
-  top: -80px;
-  left: -80px;
-}
+            .modal-kicker {
+              margin: 0 0 8px;
+              color: #00E5A0;
+              text-transform: uppercase;
+              letter-spacing: 0.12em;
+              font-size: 0.78rem;
+              font-weight: 700;
+            }
 
-.circle-right {
-  width: 360px;
-  height: 360px;
-  background: rgba(30, 126, 255, 0.16);
-  bottom: -100px;
-  right: -80px;
-}
+            .welcome-modal h3 {
+              margin: 0;
+              color: #f5f9ff;
+              font-size: 1.8rem;
+              line-height: 1.2;
+            }
+
+            .modal-text {
+              margin: 12px 0 24px;
+              color: #94A3B8;
+              font-size: 0.98rem;
+            }
+
+            .modal-button {
+              min-width: 180px;
+            }
 
 .login-card {
-  position: relative;
-  z-index: 1;
   width: min(420px, 100%);
   padding: 40px 32px;
-  border-radius: 28px;
+  border-radius: 12px;
   background: rgba(16, 22, 34, 0.92);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+  border-top: 2px solid #00e2b5;
+  box-shadow: 0 -4px 20px rgba(0, 226, 181, 0.15), 0 28px 80px rgba(0, 0, 0, 0.28);
   backdrop-filter: blur(18px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .login-header {
@@ -55,13 +76,16 @@
 }
 
 .login-header h2 {
-  font-size: 2.4rem;
-  letter-spacing: 0.01em;
+  font-size: 48px;
+  font-weight: bold;
+  line-height: 1.2;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #DFE2F3;
   margin-bottom: 10px;
 }
 
 .login-header p {
-  color: #97a2b6;
+  color: #94A3B8;
   font-size: 0.96rem;
 }
 
@@ -74,7 +98,7 @@
   display: grid;
   gap: 10px;
   font-size: 0.85rem;
-  color: #b6c0d2;
+  color: #94A3B8;
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }
@@ -129,7 +153,7 @@
 }
 
 .secondary-link {
-  color: #8ea7c5;
+  color: #94A3B8;
   font-size: 0.9rem;
 }
 
@@ -146,7 +170,7 @@
   padding: 14px 20px;
   border: none;
   border-radius: 9999px;
-  background: linear-gradient(135deg, #00e2b5 0%, #00c7ff 100%);
+  background: linear-gradient(135deg, #00E5A0);
   color: #07121d;
   font-weight: 700;
   font-size: 1rem;
@@ -162,12 +186,12 @@
 .register-link {
   text-align: center;
   margin-top: 14px;
-  color: #8ea7c5;
+  color: #94A3B8;
   font-size: 0.95rem;
 }
 
 .register-link a {
-  color: #6dffe0;
+  color: #00E5A0;
   font-weight: 600;
 }
 
@@ -184,4 +208,3 @@
     font-size: 2rem;
   }
 }
-

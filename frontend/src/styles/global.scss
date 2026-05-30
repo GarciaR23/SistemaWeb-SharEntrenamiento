@@ -17,6 +17,7 @@ body {
   color: $color-text-primary;
   font-family: $font-family-primary;
   font-size: $font-size-base;
+  font-weight: $font-weight-normal;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -26,15 +27,15 @@ body {
 // Tipografía
 h1 {
   font-size: $font-size-3xl;
-  font-weight: $font-weight-bold;
-  line-height: 1.2;
+  font-weight: $font-weight-extrabold;
+  line-height: 1.1;
   margin-bottom: $spacing-md;
 }
 
 h2 {
   font-size: $font-size-2xl;
   font-weight: $font-weight-bold;
-  line-height: 1.3;
+  line-height: 1.2;
   margin-bottom: $spacing-md;
 }
 

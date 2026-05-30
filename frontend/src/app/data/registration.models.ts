@@ -9,6 +9,8 @@ export interface RegistrationDocumentState {
 export interface ProfileState {
   fullName: string;
   specialty: string;
+  district: string;
+  address: string;
   rate: string;
   selectedShift: string;
   selectedDay: string;
@@ -17,6 +19,7 @@ export interface ProfileState {
   bio: string;
   email: string;
   password: string;
+  profileImageFile?: File | null;
 }
 
 export interface RegistrationState {
