@@ -2,16 +2,28 @@
   <div class="login-background">
   </div>
 
-  @if (showSuccessModal) {
+  <ng-container *ngIf="showSuccessModal">
     <div class="modal-backdrop" role="presentation">
-      <div class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+      <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
         <p class="modal-kicker">Inicio de sesión correcto</p>
         <h3 id="welcome-title">{{ successMessage }}</h3>
         <p class="modal-text">Tu acceso fue validado correctamente.</p>
         <button type="button" class="btn-primary modal-button" (click)="closeSuccessModal()">Continuar</button>
       </div>
     </div>
-  }
+  </ng-container>
+
+  <ng-container *ngIf="showErrorModal">
+    <div class="modal-backdrop" role="presentation" (click)="closeErrorModal()">
+      <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title" (click)="$event.stopPropagation()">
+        <button type="button" class="modal-close" aria-label="Cerrar mensaje" (click)="closeErrorModal()">×</button>
+        <p class="modal-kicker error-kicker">Error de autenticación</p>
+        <h3 id="auth-modal-title">{{ errorTitle }}</h3>
+        <p class="modal-text">{{ errorMessage }}</p>
+        <button type="button" class="btn-primary modal-button" (click)="closeErrorModal()">Intentar de nuevo</button>
+      </div>
+    </div>
+  </ng-container>
 
   <div class="login-card">
     <div class="login-header">
@@ -28,6 +40,10 @@
              <img src="assets/icons/Icon_email.png" alt="Icono de correo" />
           </span>
         </div>
+        <div class="field-error" *ngIf="loginForm.controls.email.touched && loginForm.controls.email.invalid">
+          <small *ngIf="loginForm.controls.email.errors?.['required']">El correo es obligatorio.</small>
+          <small *ngIf="loginForm.controls.email.errors?.['email']">Ingresa un correo válido.</small>
+        </div>
       </label>
 
       <label class="form-label">
@@ -36,13 +52,16 @@
           <input [type]="showPassword ? 'text': 'password'" formControlName="password" placeholder="********" autocomplete="current-password" />
           <button type="button" (click)="togglePassword()" class="icon-button" aria-label="Mostrar contraseña">👁</button>
         </div>
+        <div class="field-error" *ngIf="loginForm.controls.password.touched && loginForm.controls.password.invalid">
+          <small>La contraseña es obligatoria.</small>
+        </div>
       </label>
 
       <div class="form-footer">
         <a routerLink="/recuperar-contrasena" class="secondary-link">¿Olvidaste tu contraseña?</a>
       </div>
 
-      <button type="submit" [disabled]="loginForm.invalid" class="btn-primary">Iniciar Sesión</button>
+      <button type="submit" [disabled]="loginForm.invalid || loading" class="btn-primary">{{ loading ? 'Iniciando...' : 'Iniciar Sesión' }}</button>
 
       <p class="register-link">
         ¿No tienes una cuenta? <a [routerLink]="['/seleccion-rol']" routerLinkActive="router-link-active" (click)="closeMenu()">Registrarse</a>
