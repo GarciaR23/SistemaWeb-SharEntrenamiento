@@ -3,11 +3,12 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { DocumentKey, FormStateService } from '../../../services/form-state.service';
+import { HeaderComponent } from "../../../layouts/header/header.component";
 
 @Component({
   selector: 'app-certificado',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, HeaderComponent],
   templateUrl: './certificado.html',
   styleUrls: ['./certificado.scss'],
 })

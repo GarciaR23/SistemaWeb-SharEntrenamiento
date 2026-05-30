@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators, ɵInternalFormsSharedModu
 import { Router } from '@angular/router';
 
 import { AuthApiService } from '../../../services/auth-api.service';
+import { HeaderComponent } from "../../../layouts/header/header.component";
 
 function matchPasswords(controlName: string, confirmName: string) {
   return (formGroup: any) => {
@@ -25,7 +26,7 @@ function matchPasswords(controlName: string, confirmName: string) {
 @Component({
   selector: 'app-restaurar-contrasena',
   standalone: true,
-  imports: [ɵInternalFormsSharedModule, ReactiveFormsModule, CommonModule],
+  imports: [ɵInternalFormsSharedModule, ReactiveFormsModule, CommonModule, HeaderComponent],
   templateUrl: './restaurar-contrasena.html',
   styleUrls: ['./restaurar-contrasena.css'],
 })

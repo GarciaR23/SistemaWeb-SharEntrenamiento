@@ -7,11 +7,12 @@ import { Location, Ubication } from '../../../services/location';
 import { Subscription } from 'rxjs';
 
 import { RegistrationApiService } from '../../../services/registration-api.service';
+import { HeaderComponent } from "../../../layouts/header/header.component";
 
 @Component({
   selector: 'app-formulario-tutor',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, HttpClientModule, HeaderComponent],
   providers: [Location],
   templateUrl: './formulario-tutor.html',
   styleUrl: './formulario-tutor.css',

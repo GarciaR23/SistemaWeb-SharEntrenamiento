@@ -4,11 +4,12 @@ import { FormBuilder, ReactiveFormsModule, Validators, ɵInternalFormsSharedModu
 import { Router, RouterLink } from '@angular/router';
 
 import { AuthApiService } from '../../../services/auth-api.service';
+import { HeaderComponent } from "../../../layouts/header/header.component";
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ɵInternalFormsSharedModule, ReactiveFormsModule,CommonModule,RouterLink],
+  imports: [ɵInternalFormsSharedModule, ReactiveFormsModule, CommonModule, RouterLink, HeaderComponent],
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
 })
@@ -69,7 +70,11 @@ export class Login {
         }
 
         if (response.usuario.rol === 'instructor') {
-          this.pendingRedirectUrl = '/formulario';
+          this.pendingRedirectUrl = '/instructor';
+        }
+
+        if(response.usuario.rol == 'admin'){
+          this.pendingRedirectUrl = '/admin'
         }
 
         this.successMessage = 'Bienvenido, Usuario';

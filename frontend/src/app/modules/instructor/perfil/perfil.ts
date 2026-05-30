@@ -5,11 +5,12 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FormStateService } from '../../../services/form-state.service';
 import { Location, Ubication } from '../../../services/location';
+import { HeaderComponent } from "../../../layouts/header/header.component";
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, HeaderComponent],
   templateUrl: './perfil.html',
   styleUrls: ['./perfil.scss'],
 })

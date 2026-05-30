@@ -9,7 +9,7 @@
 }
 
 .header.scrolled {
-  position: fixed; 
+  position: fixed;
   background: #0a0e1a;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
   transition: background 0.3s ease, box-shadow 0.3s ease;
@@ -195,6 +195,25 @@
   background: #20a856;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(40, 199, 104, 0.5);
+}
+
+/* Estilo base para el botón de Cerrar Sesión */
+.btn-logout {
+  display: inline-block;
+  background-color: #ef4444;
+  color: #ffffff !important;
+  padding: 10px 24px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: none !important;
+  cursor: pointer;
+}
+
+.btn-logout:hover {
+  background-color: #ef4444 !important;
+  transform: translateY(-2px);
 }
 
 /* Hamburger Menu */
