@@ -22,6 +22,13 @@
   min-width: 140px;
 }
 
+.step.disabled,
+.step[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .step-separator {
   @include onboarding-separator;
   margin: 0 $spacing-sm;

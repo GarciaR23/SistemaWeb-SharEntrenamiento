@@ -1,17 +1,21 @@
 <section class="certificado-page fade-in">
   <div class="certificado-shell">
+
     <nav class="certificado-steps" aria-label="Progreso de perfil">
-      <button type="button" class="step" routerLink="/formulario" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <button type="button" class="step" routerLink="/formulario" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
         <span>1</span>
         <small>PERFIL</small>
       </button>
       <div class="step-separator"></div>
-      <button type="button" class="step" routerLink="/certificado" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <button type="button" class="step active" routerLink="/certificado" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
         <span>2</span>
         <small>CERTIFICADOS</small>
       </button>
       <div class="step-separator"></div>
-      <button type="button" class="step" routerLink="/cuenta" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <button type="button" class="step" routerLink="/cuenta" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
         <span>3</span>
         <small>CUENTA</small>
       </button>
@@ -19,42 +23,106 @@
 
     <div class="certificado-card">
       <header class="certificado-header">
-        <div>
-          <h1>Certificaciones y Documentos</h1>
-          <p>Sube tus documentos para obtener el sello de verificación.</p>
-        </div>
+        <h1>Certificaciones y Documentos</h1>
+        <p>Subes tus documentos para obtener el sello de verificación.</p>
       </header>
 
       <div class="certificado-list">
         <article class="document-item" *ngFor="let document of documents">
-          <div class="document-info">
-            <span class="document-icon">🪪</span>
-            <div>
-              <strong>{{ document.title }}</strong>
-              <span class="status" [class.pending]="getStatusLabel(document.key) === 'PENDIENTE'" [class.delivered]="getStatusLabel(document.key) === 'ENTREGADO'">
-                {{ getStatusLabel(document.key) }}
+          <div class="document-content">
+            <div class="document-icon-wrapper" [ngSwitch]="document.key">
+              <svg *ngSwitchCase="'dni'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="16" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <circle cx="12" cy="11" r="3"></circle>
+                <path d="M17 18c0-2.2-2.2-4-5-4s-5 1.8-5 4"></path>
+              </svg>
+              <svg *ngSwitchCase="'titulo'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+              </svg>
+              <svg *ngSwitchCase="'antecedentes'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <svg *ngSwitchCase="'certificacion'" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-3"></path>
+                <path d="M6 6H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"></path>
+                <rect x="6" y="4" width="12" height="16" rx="2"></rect>
+              </svg>
+            </div>
+
+            <div class="document-text">
+              <div class="title-row">
+                <strong>{{ document.title }}</strong>
+                <span class="status" [class.pending]="getStatusLabel(document.key) === 'PENDIENTE'"
+                  [class.completed]="getStatusLabel(document.key) === 'ENTREGADO'">
+                  {{ getStatusLabel(document.key) }}
+                </span>
+              </div>
+
+              <span class="document-file" *ngIf="getFileName(document.key)" [title]="getFileName(document.key)">
+                {{ getFileName(document.key) }}
+              </span>
+
+              <span class="document-placeholder" *ngIf="!getFileName(document.key)">
+                No hay archivo adjunto
               </span>
             </div>
           </div>
-          <button type="button" class="btn-upload" (click)="certificacionInput.click()">
-            <img src="assets/icons/Icon_update.png" alt="Icono de documento"/> Subir</button>
-          <input type="file" #certificacionInput accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg" (change)="getFile(document.key, $event)" hidden>
-          <small *ngIf="getFileName(document.key)">Archivo: {{ getFileName(document.key) }}</small>
+
+          <div class="document-actions">
+            <button type="button" class="btn-upload" (click)="triggerFileInput(document.key)">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              Subir
+            </button>
+            <input type="file" [id]="'file-' + document.key" accept=".pdf,.png,.jpg,.jpeg"
+              (change)="getFile(document.key, $event)" hidden>
+          </div>
         </article>
       </div>
 
-      <p class="form-feedback" *ngIf="feedbackMessage">{{ feedbackMessage }}</p>
-
       <div class="certificado-note">
-        <p>
-          Los documentos serán revisados por el equipo de SharEntrenamiento en un plazo máximo de 48 horas hábiles.
-          Recibirás una notificación una vez validados.
-        </p>
+        <svg class="note-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <p>Los documentos serán revisados por el equipo de ShareEntrenamiento en un plazo máximo de 48 horas hábiles.
+          Recibirás una notificación una vez validados.</p>
+      </div>
+
+      <div class="modal-backdrop" *ngIf="showValidationModal">
+        <div class="validation-modal">
+          <button type="button" class="modal-close" (click)="closeValidationModal()">×</button>
+          <p class="modal-kicker error-kicker">Documentos incompletos</p>
+          <h3>Completa los siguientes archivos antes de continuar</h3>
+          <ul class="validation-list">
+            <li *ngFor="let item of missingDocuments">{{ item }}</li>
+          </ul>
+          <button type="button" class="btn-primary modal-button" (click)="closeValidationModal()">Volver a subir
+            archivos</button>
+        </div>
       </div>
 
       <div class="form-actions">
-        <button type="button" class="btn-secondary" routerLink="/formulario">← Atrás</button>
-        <button type="button" class="btn-primary" (click)="goToCuenta()">Continuar →</button>
+        <button type="button" class="btn-text" routerLink="/formulario">← Atrás</button>
+        <button type="button" class="btn-primary glow-btn" [disabled]="hasMissingDocuments"
+          (click)="goToCuenta()">Continuar →</button>
       </div>
     </div>
   </div>

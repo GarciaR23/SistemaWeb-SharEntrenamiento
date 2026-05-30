@@ -1,6 +1,6 @@
+
 <section class="perfil-page fade-in">
   <div class="perfil-shell">
-
     <nav class="perfil-steps" aria-label="Progreso de perfil">
       <button
         type="button"
@@ -18,9 +18,9 @@
       <button
         type="button"
         class="step"
-        routerLink="/certificado"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }">
+        [class.disabled]="isContinueDisabled"
+        [disabled]="isContinueDisabled"
+        (click)="goToCertificado()">
 
         <span>2</span>
         <small>CERTIFICADOS</small>
