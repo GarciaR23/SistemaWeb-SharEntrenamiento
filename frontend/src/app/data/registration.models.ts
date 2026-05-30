@@ -12,8 +12,8 @@ export interface ProfileState {
   district: string;
   address: string;
   rate: string;
-  selectedShift: string;
-  selectedDay: string;
+  selectedShift: string[];
+  selectedDay: string[];
   fromTime: string;
   toTime: string;
   bio: string;

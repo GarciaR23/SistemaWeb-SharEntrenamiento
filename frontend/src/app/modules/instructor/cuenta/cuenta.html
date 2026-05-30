@@ -69,7 +69,7 @@
           </div>
           <div class="resumen-item">
             <span> Disponibilidad</span>
-            <strong>{{ formState.state.profile.selectedDay }} , {{ formState.state.profile.selectedShift }} : {{ formState.state.profile.fromTime }} - {{ formState.state.profile.toTime }}</strong>
+            <strong>{{ formState.state.profile.selectedDay.join(', ') || 'No especificado' }} , {{ formState.state.profile.selectedShift.join(', ') || 'No especificado' }} : {{ formState.state.profile.fromTime }} - {{ formState.state.profile.toTime }}</strong>
           </div>
           <div class="resumen-item">
             <span> Documentos</span>
