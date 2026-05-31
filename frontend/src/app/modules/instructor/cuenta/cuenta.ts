@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -21,6 +22,12 @@ export class Cuenta implements OnInit, OnDestroy {
 
   feedbackMessage = '';
   loading = false;
+  showModal = false;
+  modalType: 'success' | 'error' | null = null;
+  modalTitle = '';
+  modalMessage = '';
+  missingFields: string[] = [];
+
   private subscription?: Subscription;
 
   constructor(
@@ -36,7 +43,10 @@ export class Cuenta implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.accountForm.patchValue(this.formState.state.profile);
+    const email = this.formState.state.profile.email ?? '';
+    if (email) {
+      this.accountForm.patchValue({ email });
+    }
     this.subscription = this.accountForm.valueChanges.subscribe((value) => {
       this.formState.state.profile = {
         ...this.formState.state.profile,
@@ -70,14 +80,15 @@ export class Cuenta implements OnInit, OnDestroy {
   async finalizarRegistro(): Promise<void> {
     this.accountForm.markAllAsTouched();
 
-    const missing = this.formState.getMissingRegistrationFields();
-    if (missing.length > 0) {
-      this.feedbackMessage = `Faltan completar: ${missing.join(', ')}`;
-      console.warn(this.feedbackMessage);
+    this.missingFields = this.formState.getMissingRegistrationFields();
+    if (this.missingFields.length > 0) {
+      this.modalType = 'error';
+      this.modalTitle = 'Faltan campos por completar';
+      this.modalMessage = 'Corrige los siguientes datos para continuar con tu registro:';
+      this.showModal = true;
       return;
     }
 
-    //confirmacion antes de enviar
     const ok = window.confirm('¿Confirmas que deseas enviar el formulario de registro?');
     if (!ok) {
       return;
@@ -104,22 +115,44 @@ export class Cuenta implements OnInit, OnDestroy {
         },
       });
 
+      this.modalType = 'success';
+      this.modalTitle = 'Solicitud exitosa';
+      this.modalMessage = 'Tu solicitud se ha enviado correctamente. Espera de 48 a 72 horas hábiles para la activación de la cuenta por comprobación de documentos.';
       this.showModal = true;
       this.formState.resetRegistration();
       this.accountForm.reset();
+      this.profileImagePreview = '';
     } catch (error: any) {
-      this.feedbackMessage = error?.error?.message ?? error?.message ?? 'No se pudo completar el registro';
+      this.modalType = 'error';
+      this.modalTitle = 'Error de conexión o servidor';
+
+      if (error instanceof HttpErrorResponse) {
+        console.error('HTTP Error al enviar registro:', error);
+        const detailMessage = error.error?.detail ?? error.error?.message ?? error.message;
+        this.modalMessage = `Error ${error.status} en ${error.url}: ${detailMessage}`;
+      } else {
+        console.error('Error inesperado al enviar registro:', error);
+        this.modalMessage = error?.message ?? 'Hubo un problema al enviar tu solicitud. Intenta nuevamente más tarde.';
+      }
+
+      this.showModal = true;
     } finally {
       this.loading = false;
     }
   }
 
-  // Modal control
-  showModal = false;
-
   closeModal(): void {
+    const goToLogin = this.modalType === 'success';
+
     this.showModal = false;
+    this.modalType = null;
+    this.modalTitle = '';
+    this.modalMessage = '';
+    this.missingFields = [];
     this.feedbackMessage = '';
-    this.router.navigate(['/login']);
+
+    if (goToLogin) {
+      this.router.navigate(['/login']);
+    }
   }
 }

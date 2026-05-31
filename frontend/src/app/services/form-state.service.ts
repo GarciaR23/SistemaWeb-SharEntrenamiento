@@ -14,8 +14,8 @@ export class FormStateService {
       district: '',
       address: '',
       rate: '',
-      selectedShift: '',
-      selectedDay: 'L',
+      selectedShift: [],
+      selectedDay: ['L'],
       fromTime: '08:00',
       toTime: '17:00',
       bio: '',
@@ -63,8 +63,8 @@ export class FormStateService {
     if (!profile.district.trim()) missing.push('Distrito');
     if (!profile.address.trim()) missing.push('Dirección');
     if (!profile.rate.trim()) missing.push('Tarifa por hora');
-    if (!profile.selectedShift.trim()) missing.push('Horario disponible');
-    if (!profile.selectedDay.trim()) missing.push('Día disponible');
+    if (!profile.selectedShift.length) missing.push('Horario disponible');
+    if (!profile.selectedDay.length) missing.push('Días disponibles');
     if (!profile.fromTime.trim()) missing.push('Hora desde');
     if (!profile.toTime.trim()) missing.push('Hora hasta');
     if (!profile.bio.trim()) missing.push('Biografía profesional');
@@ -126,8 +126,8 @@ export class FormStateService {
         district: '',
         address: '',
         rate: '',
-        selectedShift: '',
-        selectedDay: 'L',
+        selectedShift: [],
+        selectedDay: ['L'],
         fromTime: '08:00',
         toTime: '17:00',
         bio: '',
