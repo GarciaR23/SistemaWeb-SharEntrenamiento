@@ -27,7 +27,7 @@ export interface ApiMessage {
 export class AuthApiService {
   private readonly baseUrl = 'http://localhost:8080/api/auth';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   login(email: string, clave: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.baseUrl}/login`, { email, clave });
@@ -47,5 +47,10 @@ export class AuthApiService {
 
   resetPassword(email: string, token: string, nuevaClave: string): Observable<ApiMessage> {
     return this.http.post<ApiMessage>(`${this.baseUrl}/password/reset`, { email, token, nuevaClave });
+  }
+
+  getUsuarioLogueado(): UsuarioAuth | null {
+    const userJson = localStorage.getItem('authUser');
+    return userJson ? JSON.parse(userJson) : null;
   }
 }

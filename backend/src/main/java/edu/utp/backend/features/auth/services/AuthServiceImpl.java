@@ -76,7 +76,7 @@ public class AuthServiceImpl implements AuthService {
 
     private UsuarioResponse toResponse(Usuario usuario) {
         return new UsuarioResponse(
-                usuario.getUsuario(),
+                usuario.getIdUsuario(),
                 usuario.getEmail(),
                 usuario.getRol(),
                 usuario.getEstadoCuenta(),
