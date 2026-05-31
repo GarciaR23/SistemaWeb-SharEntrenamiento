@@ -6,11 +6,12 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FormStateService } from '../../../services/form-state.service';
 import { RegistrationApiService } from '../../../services/registration-api.service';
+import { HeaderComponent } from "../../../layouts/header/header.component";
 
 @Component({
   selector: 'app-cuenta',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, HeaderComponent],
   templateUrl: './cuenta.html',
   styleUrls: ['./cuenta.scss'],
 })

@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +28,12 @@ public class CloudinaryService {
     }
 
     public CloudinaryUploadResponse uploadFile(MultipartFile file) {
+        String contentType = file.getContentType();
+
+        if (contentType != null && contentType.equalsIgnoreCase("application/pdf")) {
+            return upload(file, "image", "file");
+        }
+
         return upload(file, "raw", "file");
     }
 
@@ -50,8 +54,18 @@ public class CloudinaryService {
         try {
             validateFile(file, resourceType);
 
-            String safePublicId = folderPrefix + "_" + sanitizePublicId(file.getOriginalFilename()) + "_"
-                    + System.currentTimeMillis();
+            String originalFilename = file.getOriginalFilename();
+            String extension = "";
+            if (originalFilename != null && originalFilename.contains(".")) {
+                extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+            }
+
+            String baseSanitizada = sanitizePublicId(originalFilename);
+
+            String safePublicId = folderPrefix + "_" + baseSanitizada + "_" + System.currentTimeMillis();
+            if ("raw".equals(resourceType)) {
+                safePublicId += extension;
+            }
 
             Object uploader = invoke(cloudinary(), "uploader");
             Map<String, Object> options = new java.util.HashMap<>();
@@ -69,7 +83,13 @@ public class CloudinaryService {
             String publicId = resultMap.get("public_id").toString();
             String detectedType = resultMap.get("resource_type").toString();
 
-            return new CloudinaryUploadResponse(url, publicId, detectedType, file.getOriginalFilename());
+            String contentType = file.getContentType();
+            if (contentType != null && contentType.equalsIgnoreCase("application/pdf")
+                    && !url.toLowerCase().endsWith(".pdf")) {
+                url += ".pdf";
+            }
+
+            return new CloudinaryUploadResponse(url, publicId, detectedType, originalFilename);
         } catch (IOException e) {
             throw new RuntimeException("No se pudo leer el archivo para subirlo a Cloudinary", e);
         } catch (Exception e) {
@@ -79,7 +99,8 @@ public class CloudinaryService {
 
     private Object cloudinary() {
         if (cloudinary == null) {
-            throw new IllegalStateException("Cloudinary no está disponible en runtime. Revisa que la dependencia esté cargada en el classpath.");
+            throw new IllegalStateException(
+                    "Cloudinary no está disponible en runtime. Revisa que la dependencia esté cargada en el classpath.");
         }
         return cloudinary;
     }
@@ -136,7 +157,6 @@ public class CloudinaryService {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     private Map<?, ?> asMap(Object value) {
         if (value instanceof Map<?, ?> map) {
             return map;
@@ -159,12 +179,17 @@ public class CloudinaryService {
             throw new IllegalArgumentException("No se pudo determinar el tipo del archivo");
         }
 
-        if ("image".equals(resourceType) && !contentType.startsWith(IMAGE_MIME_PREFIX)) {
-            throw new IllegalArgumentException("El archivo debe ser una imagen");
+        if ("image".equals(resourceType)) {
+            boolean isImage = contentType.startsWith(IMAGE_MIME_PREFIX);
+            boolean isPdf = contentType.equalsIgnoreCase("application/pdf");
+            if (!isImage && !isPdf) {
+                throw new IllegalArgumentException("El archivo debe ser una imagen o un documento PDF");
+            }
         }
 
-        if ("raw".equals(resourceType) && contentType.startsWith(IMAGE_MIME_PREFIX)) {
-            throw new IllegalArgumentException("El archivo debe ser un documento, no una imagen");
+        if ("raw".equals(resourceType)
+                && (contentType.startsWith(IMAGE_MIME_PREFIX) || contentType.equalsIgnoreCase("application/pdf"))) {
+            throw new IllegalArgumentException("El archivo debe ser un documento de texto o plantilla (docx, xlsx)");
         }
 
         long maxSizeBytes = "image".equals(resourceType) ? 5L * 1024 * 1024 : 15L * 1024 * 1024;

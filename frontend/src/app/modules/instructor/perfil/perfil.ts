@@ -21,6 +21,7 @@ import {
   Location,
   Ubication
 } from '../../../services/location';
+import { HeaderComponent } from '../../../layouts/header/header.component';
 
 @Component({
   selector: 'app-perfil',
@@ -29,11 +30,13 @@ import {
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
-    RouterLinkActive
+    RouterLinkActive,
+    HeaderComponent
   ],
   templateUrl: './perfil.html',
   styleUrls: ['./perfil.scss']
 })
+
 export class Perfil implements OnInit, OnDestroy {
 
   profileForm!: FormGroup;
@@ -363,8 +366,8 @@ export class Perfil implements OnInit, OnDestroy {
 
     const lastTime =
       this.availableTimeSlots[
-        this.availableTimeSlots
-          .length - 1
+      this.availableTimeSlots
+        .length - 1
       ] ?? '';
 
     if (!this.availableTimeSlots.length) {

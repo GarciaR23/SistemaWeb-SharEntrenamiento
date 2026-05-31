@@ -65,7 +65,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private void ensureEmailAvailable(String email, Long currentId) {
         usuarioRepository.findByEmail(email).ifPresent(usuario -> {
-            if (currentId == null || !currentId.equals(usuario.getUsuario())) {
+            if (currentId == null || !currentId.equals(usuario.getIdUsuario())) {
                 throw new IllegalArgumentException("Ya existe un usuario con ese correo");
             }
         });
@@ -80,7 +80,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     private UsuarioResponse toResponse(Usuario usuario) {
         return new UsuarioResponse(
-                usuario.getUsuario(),
+                usuario.getIdUsuario(),
                 usuario.getEmail(),
                 usuario.getRol(),
                 usuario.getEstadoCuenta(),

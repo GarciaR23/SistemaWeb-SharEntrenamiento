@@ -1,0 +1,162 @@
+<div class="dashboard-container">
+
+    <header class="dashboard-header">
+        <h1>Bienvenido de nuevo, Admin.</h1>
+        <p>Gestione las operaciones de la plataforma, supervise el rendimiento de los instructores y mantenga la
+            integridad del sistema desde este panel central.</p>
+    </header>
+
+    <section class="cards-grid">
+
+        <div class="card active-card">
+            <div class="card-bg-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
+                    stroke-linejoin="round" class="lucide lucide-clipboard-list">
+                    <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                    <path d="M9 12h6" />
+                    <path d="M9 16h6" />
+                </svg>
+            </div>
+
+            <div class="card-icon-wrapper">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-list">
+                    <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                    <path d="M9 12h6" />
+                    <path d="M9 16h6" />
+                </svg>
+            </div>
+            <h2>Solicitudes de Registro</h2>
+            <span class="counter alert-text">12 Pendientes</span>
+            <p class="card-desc">Hay solicitudes de nuevos instructores esperando revisión técnica y de credenciales.
+            </p>
+            <a routerLink="/admin/instructores" class="btn-primary">VER SOLICITUDES</a>
+        </div>
+
+        <div class="card">
+            <div class="card-bg-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
+                    stroke-linejoin="round" class="lucide lucide-users">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+            </div>
+
+            <div class="card-icon-wrapper">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+            </div>
+            <h2>Gestión de Instructores</h2>
+            <span class="counter default-text">142 Activos</span>
+            <p class="card-desc">Supervise la actividad, sesiones programadas y valoraciones de los profesionales en
+                activo.</p>
+            <a routerLink="/admin/reporte-instructor" class="btn-secondary">IR A INSTRUCTORES</a>
+        </div>
+
+        <div class="card">
+            <div class="card-bg-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
+                    stroke-linejoin="round" class="lucide lucide-trending-up">
+                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                    <polyline points="16 7 22 7 22 13" />
+                </svg>
+            </div>
+
+            <div class="card-icon-wrapper">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up">
+                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                    <polyline points="16 7 22 7 22 13" />
+                </svg>
+            </div>
+            <h2>Control de Pacientes</h2>
+            <span class="counter success-text">+18% <small>crecimiento mensual</small></span>
+            <p class="card-desc">Una herramienta diseñada para supervisar la información de tus clientes, facilitando
+                una atención más eficiente.</p>
+            <a routerLink="/admin/reporte-paciente" class="btn-secondary">IR A CLIENTES</a>
+        </div>
+
+    </section>
+
+    <div class="toolbar-actions">
+        <div class="date-picker-mock">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar"
+                style="margin-right: 6px; vertical-align: -2px;">
+                <path d="M8 2v4" />
+                <path d="M16 2v4" />
+                <rect width="18" height="18" x="3" y="4" rx="2" />
+                <path d="M3 10h18" />
+            </svg>
+            Oct 01 - Oct 31, 2023
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"
+                style="margin-left: 6px; color: #64748b;">
+                <path d="m6 9 6 6 6-6" />
+            </svg>
+        </div>
+        <button class="btn-export">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"
+                style="margin-right: 6px; vertical-align: -2px;">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" x2="12" y1="15" y2="3" />
+            </svg>
+            Exportar Data
+        </button>
+    </div>
+
+    <section class="analytics-grid">
+
+        <div class="analytics-card chart-main">
+            <div class="analytics-header">
+                <div>
+                    <h3>Crecimiento de Instructores</h3>
+                    <p>Evolución mensual de registros verificados</p>
+                </div>
+                <span class="badge-percentage">+12.4% este mes</span>
+            </div>
+            <div class="chart-placeholder">
+                <div class="mock-line-chart"></div>
+            </div>
+        </div>
+
+        <div class="analytics-card chart-side">
+            <h3>Estado de Solicitudes</h3>
+            <div class="donut-chart-wrapper">
+                <div class="mock-donut">
+                    <div class="donut-center">
+                        <span class="donut-number">1,284</span>
+                        <span class="donut-label">TOTAL</span>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="chart-legend">
+                <li>
+                    <span class="dot approved"></span> Aprobadas
+                    <strong class="legend-val">70%</strong>
+                </li>
+                <li>
+                    <span class="dot pending"></span> Pendientes
+                    <strong class="legend-val">20%</strong>
+                </li>
+                <li>
+                    <span class="dot rejected"></span> Rechazadas
+                    <strong class="legend-val">10%</strong>
+                </li>
+            </ul>
+        </div>
+
+    </section>
+</div>
