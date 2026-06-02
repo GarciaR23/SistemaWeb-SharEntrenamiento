@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
+import edu.utp.backend.core.security.jwt.services.JwtService;
 import edu.utp.backend.features.auth.dtos.LoginRequest;
 import edu.utp.backend.features.auth.dtos.LoginResponse;
 import edu.utp.backend.features.auth.dtos.RegisterRequest;
@@ -26,6 +27,7 @@ public class AuthServiceImpl implements AuthService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final CorreoService correoService;
+    private final JwtService jwtService;
 
     @Override
     public LoginResponse login(LoginRequest request) {
@@ -33,12 +35,12 @@ public class AuthServiceImpl implements AuthService {
                 .filter(usuario -> passwordEncoder.matches(request.clave(), usuario.getClave()))
                 .map(usuario -> {
                     if (usuario.getEstadoCuenta() != EstadoCuenta.activo) {
-                        return new LoginResponse(false, "Cuenta pendiente de validación", null);
+                        return new LoginResponse(false, "Cuenta pendiente de validación", null, null);
                     }
-
-                    return new LoginResponse(true, "Autenticación exitosa", toResponse(usuario));
+                    String token = jwtService.GenerarToken(usuario);
+                    return new LoginResponse(true, "Autenticación exitosa", token, toResponse(usuario));
                 })
-                .orElse(new LoginResponse(false, "Credenciales inválidas", null));
+                .orElse(new LoginResponse(false, "Credenciales inválidas", null, null));
     }
 
     @Override
@@ -62,7 +64,8 @@ public class AuthServiceImpl implements AuthService {
             LOGGER.warn("No se pudo enviar el correo de bienvenida a {}: {}", saved.getEmail(), ex.getMessage());
         }
 
-        return new LoginResponse(true, "Usuario registrado correctamente", toResponse(saved));
+        String token = jwtService.GenerarToken(saved);
+        return new LoginResponse(true, "Usuario registrado correctamente", token, toResponse(saved));
     }
 
     private String buildDisplayName(String email) {

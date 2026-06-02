@@ -1,4 +1,4 @@
-package edu.utp.backend.core.security;
+package edu.utp.backend.core.security.jwt;
 
 import java.nio.charset.StandardCharsets;
 
