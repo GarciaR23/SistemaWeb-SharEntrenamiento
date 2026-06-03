@@ -71,9 +71,9 @@
           Empezar Ahora
         </a>
 
-        <a *ngIf="modo !== 'landing'" routerLink="/" class="btn-logout" (click)="closeMenu()">
-          Cerrar Sesión
-        </a>
+          <a *ngIf="modo !== 'landing'" (click)="logoutClick.emit(); closeMenu()" class="btn-logout">
+            Cerrar Sesión
+          </a>
       </div>
 
     </div>

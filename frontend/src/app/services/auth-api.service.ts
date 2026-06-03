@@ -13,6 +13,7 @@ export interface UsuarioAuth {
 export interface LoginResponse {
   success: boolean;
   message: string;
+  token: string;
   usuario: UsuarioAuth | null;
 }
 
@@ -33,10 +34,6 @@ export class AuthApiService {
     return this.http.post<LoginResponse>(`${this.baseUrl}/login`, { email, clave });
   }
 
-  register(email: string, clave: string, rol: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.baseUrl}/register`, { email, clave, rol });
-  }
-
   forgotPassword(email: string): Observable<ApiMessage> {
     return this.http.post<ApiMessage>(`${this.baseUrl}/password/forgot`, { email });
   }
@@ -50,7 +47,33 @@ export class AuthApiService {
   }
 
   getUsuarioLogueado(): UsuarioAuth | null {
-    const userJson = localStorage.getItem('authUser');
+    const sesion = this.getSesionActiva();
+    return sesion ? sesion.usuario : null;
+  }
+
+  getUsuarioLogueadoPorRol(rol: string): UsuarioAuth | null {
+    const userJson = localStorage.getItem(`authUser_${rol}`);
     return userJson ? JSON.parse(userJson) : null;
+  }
+
+  getToken(rol: string): string | null {
+    return localStorage.getItem(`authToken_${rol}`);
+  }
+
+  getSesionActiva(): { rol: string; usuario: UsuarioAuth } | null {
+    const roles = ['admin', 'tutor', 'instructor'];
+    for (const rol of roles) {
+      const token = localStorage.getItem(`authToken_${rol}`);
+      const userJson = localStorage.getItem(`authUser_${rol}`);
+      if (token && userJson) {
+        return { rol, usuario: JSON.parse(userJson) };
+      }
+    }
+    return null;
+  }
+
+  logout(rol: string): void {
+    localStorage.removeItem(`authToken_${rol}`);
+    localStorage.removeItem(`authUser_${rol}`);
   }
 }

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './core/guards/auth.guard';
 import { statusGuard } from './core/guards/status.guard';
 
 import { LandingComponent } from './modules/landing/landing.component';
@@ -34,28 +35,25 @@ export const routes: Routes = [
   { path: 'testimonios', component: LandingComponent },
   { path: 'seguridad', component: LandingComponent },
   { path: 'soporte', component: LandingComponent },
-  { path: 'tutor', component: Tutor },
-  { path: 'formulario-tutor', component: FormularioTutor },
 
   {
     path: '',
     canActivate: [statusGuard],
     children: [
-      // Autenticación
       { path: 'login', component: Login },
       { path: 'seleccion-rol', component: SeleccionRolComponent },
       { path: 'recuperar-contrasena', component: RecuperarContrasena },
       { path: 'token-contrasena', component: TokenContrasena },
       { path: 'restaurar-contrasena', component: RestaurarContrasena },
-
-      // Perfiles y formularios de Instructores
       { path: 'formulario', component: Perfil },
       { path: 'certificado', component: Certificado },
       { path: 'cuenta', component: Cuenta },
+      { path: 'formulario-tutor', component: FormularioTutor },
 
       {
         path: 'admin',
         component: Admin,
+        canActivate: [AuthGuard],
         children: [
           { path: '', redirectTo: 'inicio', pathMatch: 'full' },
           { path: 'inicio', component: AdminInicio },
@@ -68,6 +66,7 @@ export const routes: Routes = [
       {
         path: 'instructor',
         component: Instructor,
+        canActivate: [AuthGuard],
         children: [
           { path: '', redirectTo: 'inicio', pathMatch: 'full' },
           { path: 'inicio', component: InstructorInicio },
@@ -80,15 +79,15 @@ export const routes: Routes = [
       {
         path: 'tutor',
         component: Tutor,
+        canActivate: [AuthGuard],
         children: [
           { path: '', redirectTo: 'inicio', pathMatch: 'full' },
           { path: 'inicio', component: TutorInicio },
           { path: 'catalogo-instructor', component: CatalogoInstructor },
           { path: 'sesion', component: Sesion },
-          { path: 'progreso', component: Progreso },
+          { path: 'progreso', component: Progreso }
         ]
       }
-
     ]
   },
 
