@@ -1,8 +1,10 @@
 package edu.utp.backend.features.auth.controllers;
 
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,12 +13,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import edu.utp.backend.features.auth.dtos.LoginRequest;
 import edu.utp.backend.features.auth.dtos.LoginResponse;
+import edu.utp.backend.features.auth.dtos.RegistroInstructorRequest;
+import edu.utp.backend.core.security.jwt.services.JwtService;
 import edu.utp.backend.features.auth.dtos.ForgotPasswordRequest;
-import edu.utp.backend.features.auth.dtos.RegisterRequest;
 import edu.utp.backend.features.auth.dtos.ResetPasswordRequest;
+import edu.utp.backend.features.auth.dtos.UsuarioResponse;
 import edu.utp.backend.features.auth.dtos.VerifyTokenRequest;
 import edu.utp.backend.features.auth.services.AuthService;
 import edu.utp.backend.features.auth.services.PasswordRecoveryService;
+import edu.utp.backend.features.auth.usuario.entities.Usuario;
+import edu.utp.backend.features.auth.usuario.enums.EstadoCuenta;
+import edu.utp.backend.features.auth.usuario.enums.Rol;
+import edu.utp.backend.features.auth.usuario.repositories.UsuarioRepository;
+import edu.utp.backend.features.instructor.entities.Instructor;
+import edu.utp.backend.features.instructor.repositories.InstructorRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -28,15 +39,51 @@ public class AuthController {
 
     private final AuthService authService;
     private final PasswordRecoveryService passwordRecoveryService;
+    private final UsuarioRepository usuarioRepository;
+    private final InstructorRepository instructorRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<LoginResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request));
+    @PostMapping("/register/instructor")
+    @Transactional
+    public ResponseEntity<LoginResponse> registrarInstructor(@Valid @RequestBody RegistroInstructorRequest request) {
+
+        usuarioRepository.findByEmail(request.email()).ifPresent(u -> {
+            throw new IllegalArgumentException("Ya existe un usuario con ese correo");
+        });
+
+        Usuario usuario = new Usuario();
+        usuario.setEmail(request.email());
+        usuario.setClave(passwordEncoder.encode(request.clave()));
+        usuario.setRol(Rol.instructor);
+        usuario.setEstadoCuenta(EstadoCuenta.pendiente_validacion);
+        usuario.setFechaRegistro(ZonedDateTime.now());
+        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+
+        Instructor instructor = new Instructor();
+        instructor.setIdUsuario(usuarioGuardado.getIdUsuario());
+        instructor.setNombreCompleto(request.nombreCompleto());
+        instructor.setUrlImagenPerfil(request.urlImagenPerfil());
+        instructor.setEspecialidad(request.especialidad());
+        instructor.setBiografia(request.biografia());
+        instructor.setDistrito(request.distrito());
+        instructor.setDireccion(request.direccion());
+        instructorRepository.save(instructor);
+
+        String token = jwtService.GenerarToken(usuarioGuardado);
+        UsuarioResponse usuarioResponse = new UsuarioResponse(
+                usuarioGuardado.getIdUsuario(),
+                usuarioGuardado.getEmail(),
+                usuarioGuardado.getRol(),
+                usuarioGuardado.getEstadoCuenta(),
+                usuarioGuardado.getFechaRegistro());
+
+        return ResponseEntity.ok(new LoginResponse(true, "Registro exitoso", token, usuarioResponse));
     }
 
     @PostMapping("/password/forgot")
@@ -63,7 +110,8 @@ public class AuthController {
 
     @PostMapping("/password/reset")
     public ResponseEntity<Map<String, Object>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
-        boolean changed = passwordRecoveryService.restablecerClave(request.email(), request.token(), request.nuevaClave());
+        boolean changed = passwordRecoveryService.restablecerClave(request.email(), request.token(),
+                request.nuevaClave());
         if (!changed) {
             return ResponseEntity.badRequest().body(Map.of(
                     "success", false,

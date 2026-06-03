@@ -23,7 +23,8 @@ import edu.utp.backend.features.auth.usuario.services.CustomUserDetailsService;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter)
+            throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
@@ -33,7 +34,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/cloudinary/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/instructores", "/api/tutores", "/api/pacientes",
-                         "/api/documentos").permitAll()
+                                "/api/documentos")
+                        .permitAll()
+                        .requestMatchers("/api/admin/**").hasAuthority("admin")
+                        .requestMatchers("/api/instructor/**").hasAnyAuthority("instructor", "admin")
+                        .requestMatchers("/api/tutor/**").hasAnyAuthority("tutor", "admin")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
@@ -43,6 +48,7 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService(CustomUserDetailsService customUserDetailsService) {
         return customUserDetailsService;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
