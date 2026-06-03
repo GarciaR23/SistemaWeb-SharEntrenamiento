@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import edu.utp.backend.features.auth.dtos.LoginRequest;
 import edu.utp.backend.features.auth.dtos.LoginResponse;
 import edu.utp.backend.features.auth.dtos.RegistroInstructorRequest;
-import edu.utp.backend.core.security.jwt.services.JwtService;
+import edu.utp.backend.features.auth.dtos.RegistroInstructorResponse;
 import edu.utp.backend.features.auth.dtos.ForgotPasswordRequest;
 import edu.utp.backend.features.auth.dtos.ResetPasswordRequest;
 import edu.utp.backend.features.auth.dtos.UsuarioResponse;
@@ -42,7 +42,6 @@ public class AuthController {
     private final UsuarioRepository usuarioRepository;
     private final InstructorRepository instructorRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
@@ -51,7 +50,8 @@ public class AuthController {
 
     @PostMapping("/register/instructor")
     @Transactional
-    public ResponseEntity<LoginResponse> registrarInstructor(@Valid @RequestBody RegistroInstructorRequest request) {
+    public ResponseEntity<RegistroInstructorResponse> registrarInstructor(
+            @Valid @RequestBody RegistroInstructorRequest request) {
 
         usuarioRepository.findByEmail(request.email()).ifPresent(u -> {
             throw new IllegalArgumentException("Ya existe un usuario con ese correo");
@@ -73,9 +73,8 @@ public class AuthController {
         instructor.setBiografia(request.biografia());
         instructor.setDistrito(request.distrito());
         instructor.setDireccion(request.direccion());
-        instructorRepository.save(instructor);
+        Instructor instructorGuardado = instructorRepository.save(instructor);
 
-        String token = jwtService.GenerarToken(usuarioGuardado);
         UsuarioResponse usuarioResponse = new UsuarioResponse(
                 usuarioGuardado.getIdUsuario(),
                 usuarioGuardado.getEmail(),
@@ -83,7 +82,8 @@ public class AuthController {
                 usuarioGuardado.getEstadoCuenta(),
                 usuarioGuardado.getFechaRegistro());
 
-        return ResponseEntity.ok(new LoginResponse(true, "Registro exitoso", token, usuarioResponse));
+        return ResponseEntity.ok(new RegistroInstructorResponse(
+                true, "Registro exitoso", usuarioResponse, instructorGuardado.getIdInstructor()));
     }
 
     @PostMapping("/password/forgot")
@@ -102,7 +102,6 @@ public class AuthController {
                     "success", false,
                     "message", "Token invalido o expirado"));
         }
-
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "message", "Token valido"));
@@ -117,7 +116,6 @@ public class AuthController {
                     "success", false,
                     "message", "No se pudo restablecer la contrasena"));
         }
-
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "message", "Contrasena actualizada correctamente"));

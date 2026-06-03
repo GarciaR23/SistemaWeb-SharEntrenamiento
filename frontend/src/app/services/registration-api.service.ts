@@ -4,23 +4,31 @@ import { firstValueFrom } from 'rxjs';
 
 import { DocumentKey } from './form-state.service';
 import { FileService } from './fileservice';
-import { LoginResponse } from './auth-api.service';
 
-interface InstructorResponse {
+interface RegistroInstructorResponse {
+  success: boolean;
+  message: string;
+  usuario: {
+    idUsuario: number;
+    email: string;
+    rol: string;
+    estadoCuenta: string;
+    fechaRegistro: string;
+  };
   idInstructor: number;
-  idUsuario: number;
-  nombreCompleto: string;
-  urlImagenPerfil: string | null;
-  especialidad: string;
-  biografia: string;
-  distrito: string;
-  direccion: string;
 }
 
-interface TutorDto {
-  idTutor: number | null;
-  idUsuario: number;
-  nombreCompleto: string;
+interface RegistroTutorResponse {
+  success: boolean;
+  message: string;
+  usuario: {
+    idUsuario: number;
+    email: string;
+    rol: string;
+    estadoCuenta: string;
+    fechaRegistro: string;
+  };
+  idTutor: number;
 }
 
 interface PacienteDto {
@@ -51,7 +59,6 @@ interface DocumentoDto {
 export class RegistrationApiService {
   private readonly registroUrl = 'http://localhost:8080/api/auth/register';
   private readonly pacienteUrl = 'http://localhost:8080/api/pacientes';
-  private readonly instructorUrl = 'http://localhost:8080/api/instructores';
   private readonly documentoUrl = 'http://localhost:8080/api/documentos';
 
   constructor(
@@ -79,7 +86,7 @@ export class RegistrationApiService {
     }
 
     const registerResult = await firstValueFrom(
-      this.http.post<LoginResponse>(`${this.registroUrl}/tutor`, {
+      this.http.post<RegistroTutorResponse>(`${this.registroUrl}/tutor`, {
         email: payload.correo,
         clave: payload.clave,
         nombreCompleto: payload.tutorNombre,
@@ -90,18 +97,12 @@ export class RegistrationApiService {
       throw new Error(registerResult.message || 'No se pudo registrar');
     }
 
-    const tutores = await firstValueFrom(
-      this.http.get<TutorDto[]>(`http://localhost:8080/api/tutores`)
-    );
-    const tutor = tutores.find(t => t.idUsuario === registerResult.usuario!.idUsuario);
-    if (!tutor) {
-      throw new Error('No se encontró el tutor creado');
-    }
+    const idTutor = registerResult.idTutor;
 
     await firstValueFrom(
       this.http.post<PacienteDto>(this.pacienteUrl, {
         idPaciente: null,
-        idTutor: tutor.idTutor,
+        idTutor: idTutor,
         nombreCompleto: payload.pacienteNombre,
         urlImagenPaciente: fotoUrl,
         condicion: payload.condicion,
@@ -132,7 +133,7 @@ export class RegistrationApiService {
     }
 
     const registerResult = await firstValueFrom(
-      this.http.post<LoginResponse>(`${this.registroUrl}/instructor`, {
+      this.http.post<RegistroInstructorResponse>(`${this.registroUrl}/instructor`, {
         email: payload.email,
         clave: payload.clave,
         nombreCompleto: payload.nombreCompleto,
@@ -148,13 +149,7 @@ export class RegistrationApiService {
       throw new Error(registerResult.message || 'No se pudo registrar');
     }
 
-    const instructores = await firstValueFrom(
-      this.http.get<InstructorResponse[]>(this.instructorUrl)
-    );
-    const instructor = instructores.find(i => i.idUsuario === registerResult.usuario!.idUsuario);
-    if (!instructor) {
-      throw new Error('No se encontró el instructor creado');
-    }
+    const idInstructor = registerResult.idInstructor;
 
     const documentNames: Record<DocumentKey, string> = {
       dni: 'DNI',
@@ -171,7 +166,7 @@ export class RegistrationApiService {
       await firstValueFrom(
         this.http.post<DocumentoDto>(this.documentoUrl, {
           idDocumento: null,
-          idInstructor: instructor.idInstructor,
+          idInstructor: idInstructor,
           nombreDocumento: documentNames[key],
           urlArchivo: uploaded.url,
           estadoAprobacion: 'pendiente',
