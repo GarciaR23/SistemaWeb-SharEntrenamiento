@@ -27,6 +27,11 @@ import edu.utp.backend.features.auth.usuario.enums.Rol;
 import edu.utp.backend.features.auth.usuario.repositories.UsuarioRepository;
 import edu.utp.backend.features.instructor.entities.Instructor;
 import edu.utp.backend.features.instructor.repositories.InstructorRepository;
+import edu.utp.backend.core.security.jwt.services.JwtService;
+import edu.utp.backend.features.auth.dtos.RegistroTutorRequest;
+import edu.utp.backend.features.auth.dtos.RegistroTutorResponse;
+import edu.utp.backend.features.tutor.entities.Tutor;
+import edu.utp.backend.features.tutor.repositories.TutorRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +47,8 @@ public class AuthController {
     private final UsuarioRepository usuarioRepository;
     private final InstructorRepository instructorRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TutorRepository tutorRepository;
+    private final JwtService jwtService;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
@@ -84,6 +91,47 @@ public class AuthController {
 
         return ResponseEntity.ok(new RegistroInstructorResponse(
                 true, "Registro exitoso", usuarioResponse, instructorGuardado.getIdInstructor()));
+    }
+
+    @PostMapping("/register/tutor")
+    @Transactional
+    public ResponseEntity<RegistroTutorResponse> registrarTutor(
+            @Valid @RequestBody RegistroTutorRequest request) {
+
+        usuarioRepository.findByEmail(request.email()).ifPresent(u -> {
+            throw new IllegalArgumentException("Ya existe un usuario con ese correo");
+        });
+
+        Usuario usuario = new Usuario();
+        usuario.setEmail(request.email());
+        usuario.setClave(passwordEncoder.encode(request.clave()));
+        usuario.setRol(Rol.tutor);
+        usuario.setEstadoCuenta(EstadoCuenta.activo);
+        usuario.setFechaRegistro(ZonedDateTime.now());
+
+        Usuario usuarioGuardado = usuarioRepository.save(usuario);
+
+        Tutor tutor = new Tutor();
+        tutor.setIdUsuario(usuarioGuardado.getIdUsuario());
+        tutor.setNombreCompleto(request.nombreCompleto());
+
+        Tutor tutorGuardado = tutorRepository.save(tutor);
+
+        UsuarioResponse usuarioResponse = new UsuarioResponse(
+                usuarioGuardado.getIdUsuario(),
+                usuarioGuardado.getEmail(),
+                usuarioGuardado.getRol(),
+                usuarioGuardado.getEstadoCuenta(),
+                usuarioGuardado.getFechaRegistro());
+
+        String token = jwtService.GenerarToken(usuarioGuardado);
+
+        return ResponseEntity.ok(new RegistroTutorResponse(
+                true,
+                "Registro exitoso",
+                token,
+                usuarioResponse,
+                tutorGuardado.getIdTutor()));
     }
 
     @PostMapping("/password/forgot")

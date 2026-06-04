@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import edu.utp.backend.features.tutor.repositories.TutorRepository;
+import edu.utp.backend.features.tutor.entities.Tutor;
 import edu.utp.backend.features.tutor.dtos.TutorDto;
 import edu.utp.backend.features.tutor.services.TutorService;
 import jakarta.validation.Valid;
@@ -27,6 +28,21 @@ public class TutorController {
     @GetMapping
     public ResponseEntity<List<TutorDto>> findAll() {
         return ResponseEntity.ok(tutorService.findAll());
+    }
+
+    private final TutorRepository tutorRepository;
+
+    @GetMapping("/usuario/{idUsuario}")
+    public ResponseEntity<TutorDto> findByIdUsuario(@PathVariable Long idUsuario) {
+        Tutor tutor = tutorRepository.findByIdUsuario(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Tutor no encontrado para el usuario: " + idUsuario));
+
+        TutorDto response = new TutorDto(
+                tutor.getIdTutor(),
+                tutor.getIdUsuario(),
+                tutor.getNombreCompleto());
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -49,4 +65,5 @@ public class TutorController {
         tutorService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
 }
