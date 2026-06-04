@@ -21,6 +21,7 @@ interface RegistroInstructorResponse {
 interface RegistroTutorResponse {
   success: boolean;
   message: string;
+  token: string;
   usuario: {
     idUsuario: number;
     email: string;
@@ -79,11 +80,7 @@ export class RegistrationApiService {
     clave: string;
     fotoPaciente: File | null;
   }): Promise<void> {
-    let fotoUrl: string | null = null;
-    if (payload.fotoPaciente) {
-      const uploaded = await firstValueFrom(this.fileService.uploadImage(payload.fotoPaciente));
-      fotoUrl = uploaded.url;
-    }
+    let fotoUrl: string | null = 'https://via.placeholder.com/300';
 
     const registerResult = await firstValueFrom(
       this.http.post<RegistroTutorResponse>(`${this.registroUrl}/tutor`, {
@@ -98,6 +95,15 @@ export class RegistrationApiService {
     }
 
     const idTutor = registerResult.idTutor;
+    const gradoAutismoMap: Record<string, string> = {
+      Leve: 'uno',
+      Moderado: 'dos',
+      Severo: 'tres',
+      leve: 'uno',
+      moderado: 'dos',
+      severo: 'tres',
+    };
+
 
     await firstValueFrom(
       this.http.post<PacienteDto>(this.pacienteUrl, {
@@ -106,13 +112,15 @@ export class RegistrationApiService {
         nombreCompleto: payload.pacienteNombre,
         urlImagenPaciente: fotoUrl,
         condicion: payload.condicion,
-        gradoAutismo: payload.gradoAutismo.toLowerCase(),
+        gradoAutismo: gradoAutismoMap[payload.gradoAutismo] ?? payload.gradoAutismo,
         genero: payload.genero.toLowerCase(),
         edad: payload.edad,
         distrito: payload.distrito,
         direccion: payload.direccion,
       }),
     );
+    localStorage.setItem('authToken_tutor', registerResult.token);
+    localStorage.setItem('authUser_tutor', JSON.stringify(registerResult.usuario));
   }
 
   async registrarInstructorConDocumentos(payload: {
