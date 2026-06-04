@@ -1,8 +1,12 @@
 <div class="page-container">
     <section class="hero">
         <div class="hero-card">
-            <h1>¡Hola, Ana!</h1>
-            <h2>Impulsa el desarrollo de Mateo.</h2>
+            <h1>¡Hola, {{ obtenerPrimerNombre(tutor?.nombreCompleto) || 'Tutor' }}!</h1>
+
+            <h2>
+                Impulsa el desarrollo de
+                {{ obtenerPrimerNombre(paciente?.nombreCompleto) || 'tu paciente' }}.
+            </h2>
             <p>
                 Monitorea el progreso de hoy y encuentra el mejor apoyo
                 especializado para el entrenamiento de esta semana.
@@ -80,47 +84,20 @@
             <h3>Sugerencias de Confianza</h3>
             <a>Explorar Todos ›</a>
         </div>
-
         <div class="trainer-list">
-
-            <div class="trainer-card">
+            <div class="trainer-card" *ngFor="let instructor of instructores">
                 <div class="trainer-img">
-                    <img src="assets/instructores/instructor1.jpg" />
+                    <img [src]="instructor.urlImagenPerfil || 'assets/instructores/default.jpg'"
+                        [alt]="instructor.nombreCompleto" />
                     <span class="verified">✔ VERIFICADO</span>
                 </div>
-                <h4>Elena Rossi</h4>
-                <p>Especialista Conductual</p>
-                <small>☆ <strong>4.9</strong> (120 sesiones)</small>
-            </div>
 
-            <div class="trainer-card">
-                <div class="trainer-img">
-                    <img src="assets/instructores/instructor2.jpg" />
-                    <span class="verified">✔ VERIFICADO</span>
-                </div>
-                <h4>Marcos Silva</h4>
-                <p>Boxeo</p>
-                <small>☆ <strong>5.0</strong> (85 sesiones)</small>
-            </div>
+                <h4>{{ instructor.nombreCompleto }}</h4>
+                <p>{{ instructor.especialidad }}</p>
 
-            <div class="trainer-card">
-                <div class="trainer-img">
-                    <img src="assets/instructores/instructor3.jpg" />
-                    <span class="verified">✔ VERIFICADO</span>
-                </div>
-                <h4>Lucía Fernández</h4>
-                <p>Natación</p>
-                <small>☆ <strong>4.8</strong> (210 sesiones)</small>
-            </div>
-
-            <div class="trainer-card">
-                <div class="trainer-img">
-                    <img src="assets/instructores/instructor4.jpg" />
-                    <span class="verified">✔ VERIFICADO</span>
-                </div>
-                <h4>Roberto Jasso</h4>
-                <p>Psicomotricidad</p>
-                <small>☆ <strong>4.9</strong> (56 sesiones)</small>
+                <small>
+                    ☆ <strong>5.0</strong> (0 sesiones)
+                </small>
             </div>
         </div>
     </section>

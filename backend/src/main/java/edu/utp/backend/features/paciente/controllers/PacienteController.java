@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import edu.utp.backend.features.paciente.entities.Paciente;
+import edu.utp.backend.features.paciente.repositories.PacienteRepository;
 import edu.utp.backend.features.paciente.dtos.PacienteDto;
 import edu.utp.backend.features.paciente.services.PacienteService;
 import jakarta.validation.Valid;
@@ -27,6 +28,28 @@ public class PacienteController {
     @GetMapping
     public ResponseEntity<List<PacienteDto>> findAll() {
         return ResponseEntity.ok(pacienteService.findAll());
+    }
+
+    private final PacienteRepository pacienteRepository;
+
+    @GetMapping("/tutor/{idTutor}")
+    public ResponseEntity<List<PacienteDto>> findByIdTutor(@PathVariable Integer idTutor) {
+        List<PacienteDto> pacientes = pacienteRepository.findByIdTutor(idTutor)
+                .stream()
+                .map(paciente -> new PacienteDto(
+                        paciente.getIdPaciente(),
+                        paciente.getIdTutor(),
+                        paciente.getNombreCompleto(),
+                        paciente.getUrlImagenPaciente(),
+                        paciente.getCondicion(),
+                        paciente.getGradoAutismo(),
+                        paciente.getGenero(),
+                        paciente.getEdad(),
+                        paciente.getDistrito(),
+                        paciente.getDireccion()))
+                .toList();
+
+        return ResponseEntity.ok(pacientes);
     }
 
     @GetMapping("/{id}")
