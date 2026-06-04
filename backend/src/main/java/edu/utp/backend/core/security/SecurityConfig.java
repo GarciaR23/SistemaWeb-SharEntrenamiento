@@ -48,8 +48,8 @@ public class SecurityConfig {
                                 "/api/documentos")
                         .permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority("admin")
-                        .requestMatchers("/api/instructor/**").hasAnyAuthority("instructor", "admin")
-                        .requestMatchers("/api/tutor/**").hasAnyAuthority("tutor", "admin")
+                        .requestMatchers("/api/instructores/**").hasAnyAuthority("instructor", "admin")
+                        .requestMatchers("/api/tutores/**").hasAnyAuthority("tutor", "admin")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
