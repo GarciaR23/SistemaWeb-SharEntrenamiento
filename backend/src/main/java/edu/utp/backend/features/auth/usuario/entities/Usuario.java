@@ -26,14 +26,14 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario")
-    private Long usuario;
+    private Long idUsuario;
 
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String clave;
-    
+
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(nullable = false, columnDefinition = "tipo_rol")
@@ -44,6 +44,6 @@ public class Usuario {
     @Column(name = "estado_cuenta", columnDefinition = "tipo_estado")
     private EstadoCuenta estadoCuenta = EstadoCuenta.pendiente_validacion;
 
-    @Column(name = "fecha_registro", updatable = false, insertable = false)
-    private ZonedDateTime fechaRegistro;
+    @Column(name = "fecha_registro", updatable = false)
+    private ZonedDateTime fechaRegistro = ZonedDateTime.now();
 }

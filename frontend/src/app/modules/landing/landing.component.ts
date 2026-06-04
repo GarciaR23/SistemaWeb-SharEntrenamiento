@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { HeroComponent } from './components/hero/hero.component';
 import { HeaderComponent } from '../../layouts/header/header.component';
@@ -24,12 +24,15 @@ import { FaqComponent } from './components/faq/faq.component';
     CommunityComponent,
     BenefitsComponent,
     FaqComponent,
-],
+  ],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.css']
 })
 export class LandingComponent implements OnInit {
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.route.fragment.subscribe((fragment) => {
@@ -53,5 +56,16 @@ export class LandingComponent implements OnInit {
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }, 0);
+  }
+
+  // ✅ NUEVO: Redirigir según rol
+  irAPanel(rol: 'tutor' | 'instructor'): void {
+    const token = localStorage.getItem(`authToken_${rol}`);
+
+    if (token) {
+      this.router.navigate([`/${rol}/inicio`]);
+    } else {
+      this.router.navigate(['/login']);
+    }
   }
 }

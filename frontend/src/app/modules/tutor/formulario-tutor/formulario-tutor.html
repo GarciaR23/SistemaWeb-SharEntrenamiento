@@ -1,3 +1,5 @@
+<app-header></app-header>
+
 <div class="tutor-form-page">
 
     <div class="steps">
@@ -46,10 +48,12 @@
 
             <div class="form-group">
                 <label>Distrito</label>
+
                 <select [(ngModel)]="distrito" name="distrito">
-                    <option value="" disabled selected>Selecciona tu distrito</option>
-                    <option *ngFor="let d of allDistricts" [value]="d.code">
-                        {{ d.district | titlecase }}
+                    <option value="" disabled>Selecciona tu distrito</option>
+
+                    <option *ngFor="let distritoItem of distritosFallback" [value]="distritoItem">
+                        {{ distritoItem }}
                     </option>
                 </select>
             </div>
@@ -277,7 +281,12 @@
 
         <div class="actions between">
             <button type="button" class="back-btn" (click)="atras()">← Atrás</button>
-            <button type="button" (click)="finalizar()">Finalizar Registro →</button>
+            <p *ngIf="errorMessage" style="color: red; margin-top: 15px;">
+                {{ errorMessage }}
+            </p>
+            <button type="button" (click)="finalizar()" [disabled]="loading">
+                {{ loading ? 'Registrando...' : 'Finalizar Registro →' }}
+            </button>
         </div>
     </div>
 </div>

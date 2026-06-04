@@ -1,23 +1,49 @@
+
+<app-header></app-header>
+
 <section class="perfil-page fade-in">
   <div class="perfil-shell">
     <nav class="perfil-steps" aria-label="Progreso de perfil">
-      <button type="button" class="step" routerLink="/formulario" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <button
+        type="button"
+        class="step"
+        routerLink="/formulario"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+
         <span>1</span>
         <small>PERFIL</small>
       </button>
+
       <div class="step-separator"></div>
-      <button type="button" class="step" routerLink="/certificado" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+
+      <button
+        type="button"
+        class="step"
+        [class.disabled]="isContinueDisabled"
+        [disabled]="isContinueDisabled"
+        (click)="goToCertificado()">
+
         <span>2</span>
         <small>CERTIFICADOS</small>
       </button>
+
       <div class="step-separator"></div>
-      <button type="button" class="step" routerLink="/cuenta" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+
+      <button
+        type="button"
+        class="step"
+        [class.disabled]="profileForm.invalid || formState.getMissingDocumentFields().length > 0"
+        [disabled]="profileForm.invalid || formState.getMissingDocumentFields().length > 0"
+        (click)="goToCuentaFromPerfil()">
+
         <span>3</span>
         <small>CUENTA</small>
       </button>
     </nav>
 
     <div class="perfil-card">
+
       <header class="perfil-header">
         <div>
           <h1>Perfil Profesional</h1>
@@ -25,89 +51,298 @@
         </div>
       </header>
 
-      <form class="perfil-form" [formGroup]="profileForm" autocomplete="off">
+      <form
+        class="perfil-form"
+        [formGroup]="profileForm"
+        autocomplete="off">
+
+        <!-- NOMBRE Y ESPECIALIDAD -->
         <div class="field-row">
-          <label class="field-group">
+
+          <label class="field-group" [class.invalid]="isInvalid('fullName')">
             <span>Nombre Completo</span>
-            <input type="text" placeholder="Ej. Alex Rivera" formControlName="fullName" />
+
+            <input
+              type="text"
+              placeholder="Ej. Alex Rivera"
+              formControlName="fullName" />
+
+            <p class="invalid-note" *ngIf="fieldError('fullName')">
+              {{ fieldError('fullName') }}
+            </p>
           </label>
 
-          <label class="field-group">
+          <label class="field-group" [class.invalid]="isInvalid('specialty')">
             <span>Especialidad</span>
+
             <select formControlName="specialty">
-              <option value="">Selecciona tu área</option>
-              <option value="Entrenamiento funcional">Entrenamiento funcional</option>
-              <option value="Fitness general">Fitness general</option>
-              <option value="Pilates">Pilates</option>
+              <option value="">
+                Selecciona tu área
+              </option>
+
+              <option value="Entrenamiento funcional">
+                Entrenamiento funcional
+              </option>
+
+              <option value="Fitness general">
+                Fitness general
+              </option>
+
+              <option value="Pilates">
+                Pilates
+              </option>
             </select>
+
+            <p class="invalid-note" *ngIf="fieldError('specialty')">
+              {{ fieldError('specialty') }}
+            </p>
           </label>
+
         </div>
 
+        <!-- DISTRITO Y DIRECCIÓN -->
         <div class="field-row">
-          <label class="field-group">
+
+          <label class="field-group" [class.invalid]="isInvalid('district')">
             <span>Distrito</span>
-            <select formControlName="district" (change)="onDistrictChange($event)">
-              <option value="">Selecciona tu distrito</option>
-              <option *ngFor="let d of allDistricts" [value]="d.district">{{ d.district | titlecase }}</option>
+
+            <select
+              formControlName="district"
+              (change)="onDistrictChange($event)">
+
+              <option value="">
+                Selecciona tu distrito
+              </option>
+
+              <option
+                *ngFor="let d of allDistricts"
+                [value]="d.district">
+
+                {{ d.district | titlecase }}
+
+              </option>
+            </select>
+
+            <p class="invalid-note" *ngIf="fieldError('district')">
+              {{ fieldError('district') }}
+            </p>
+          </label>
+
+          <label class="field-group" [class.invalid]="isInvalid('address')">
+            <span>Dirección</span>
+
+            <input
+              type="text"
+              placeholder="Ej. Av. Girasol"
+              formControlName="address" />
+
+            <p class="invalid-note" *ngIf="fieldError('address')">
+              {{ fieldError('address') }}
+            </p>
+          </label>
+
+        </div>
+
+        <!-- TARIFA Y HORARIOS -->
+        <div class="field-row">
+
+          <label class="field-group" [class.invalid]="isInvalid('rate')">
+            <span>Tarifa por hora (USD)</span>
+
+            <input
+              type="text"
+              placeholder="$45.00"
+              formControlName="rate" />
+
+            <p class="invalid-note" *ngIf="fieldError('rate')">
+              {{ fieldError('rate') }}
+            </p>
+          </label>
+
+          <div class="field-group" [class.invalid]="isInvalid('selectedShift')">
+            <span>Horario disponible</span>
+
+            <div class="toggle-group">
+
+              <button
+                type="button"
+                class="toggle"
+                [class.active]="isShiftActive('Mañana')"
+                (click)="toggleShift('Mañana')">
+
+                Mañana
+              </button>
+
+              <button
+                type="button"
+                class="toggle"
+                [class.active]="isShiftActive('Tarde')"
+                (click)="toggleShift('Tarde')">
+
+                Tarde
+              </button>
+
+              <button
+                type="button"
+                class="toggle"
+                [class.active]="isShiftActive('Noche')"
+                (click)="toggleShift('Noche')">
+
+                Noche
+              </button>
+
+            </div>
+
+            <p
+              class="field-note"
+              *ngIf="selectedShift.length">
+
+              {{ selectedShift.join(' • ') }}
+
+            </p>
+
+            <p
+              class="invalid-note"
+              *ngIf="fieldError('selectedShift')">
+
+              {{ fieldError('selectedShift') }}
+
+            </p>
+          </div>
+
+        </div>
+
+        <!-- DÍAS -->
+        <div class="section-label">
+          DÍAS DISPONIBLES
+        </div>
+
+        <div class="days-grid" [class.invalid]="isInvalid('selectedDay')">
+
+          <button
+            *ngFor="let day of availableDays"
+            type="button"
+            class="day"
+            [class.active]="isDayActive(day.code)"
+            (click)="toggleDay(day.code)">
+
+            {{ day.label }}
+          </button>
+
+        </div>
+
+        <p
+          class="invalid-note"
+          *ngIf="fieldError('selectedDay')">
+
+          {{ fieldError('selectedDay') }}
+
+        </p>
+
+        <!-- HORARIOS EXACTOS -->
+        <div class="section-label">
+          HORARIO ESPECÍFICO
+        </div>
+
+        <div class="field-row">
+
+          <label class="field-group" [class.invalid]="isInvalid('fromTime')">
+            <span>Desde</span>
+
+            <select formControlName="fromTime">
+
+              <option value="">
+                Selecciona hora
+              </option>
+
+              <option
+                *ngFor="let hour of availableTimeSlots"
+                [value]="hour">
+
+                {{ formatHour(hour) }}
+
+              </option>
+
             </select>
           </label>
 
-          <label class="field-group">
-            <span>Dirección</span>
-            <input type="text" placeholder="Ej. Av. Girasol" formControlName="address" />
-          </label>
-        </div>
-
-        <div class="field-row">
-          <label class="field-group">
-            <span>Tarifa por hora (USD)</span>
-            <input type="text" placeholder="$ 45.00" formControlName="rate" />
-          </label>
-
-          <div class="field-group">
-            <span>Horario disponible</span>
-            <div class="toggle-group">
-              <button type="button" class="toggle" [class.active]="profileForm.value.selectedShift === 'Mañana'" (click)="selectShift('Mañana')">Mañana</button>
-              <button type="button" class="toggle" [class.active]="profileForm.value.selectedShift === 'Tarde'" (click)="selectShift('Tarde')">Tarde</button>
-              <button type="button" class="toggle" [class.active]="profileForm.value.selectedShift === 'Noche'" (click)="selectShift('Noche')">Noche</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="section-label">DÍAS DISPONIBLES</div>
-        <div class="days-grid">
-          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'L'" (click)="selectDay('L')">L</button>
-          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'M'" (click)="selectDay('M')">M</button>
-          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'Mi'" (click)="selectDay('Mi')">Mi</button>
-          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'J'" (click)="selectDay('J')">J</button>
-          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'V'" (click)="selectDay('V')">V</button>
-          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'S'" (click)="selectDay('S')">S</button>
-          <button type="button" class="day" [class.active]="profileForm.value.selectedDay === 'D'" (click)="selectDay('D')">D</button>
-        </div>
-
-        <div class="section-label">FRANJA HORARIA PREFERIDA</div>
-        <div class="field-row">
-          <label class="field-group">
-            <span>Desde</span>
-            <input type="time" formControlName="fromTime" />
-          </label>
-          <label class="field-group">
+          <label class="field-group" [class.invalid]="isInvalid('toTime')">
             <span>Hasta</span>
-            <input type="time" formControlName="toTime" />
+
+            <select formControlName="toTime">
+
+              <option value="">
+                Selecciona hora
+              </option>
+
+              <option
+                *ngFor="let hour of availableTimeSlots"
+                [value]="hour">
+
+                {{ formatHour(hour) }}
+
+              </option>
+
+            </select>
+            <p class="invalid-note" *ngIf="fieldError('toTime')">
+              {{ fieldError('toTime') }}
+            </p>
           </label>
+
         </div>
 
-        <label class="field-group bio-group">
+        <p
+          class="time-error"
+          *ngIf="timeValidationMessage">
+
+          {{ timeValidationMessage }}
+
+        </p>
+
+        <!-- BIO -->
+        <label class="field-group bio-group" [class.invalid]="isInvalid('bio')">
           <span>Biografía profesional</span>
-          <textarea rows="4" placeholder="Describe tu metodología, años de experiencia y lo que te motiva..." formControlName="bio"></textarea>
+
+          <textarea
+            rows="4"
+            formControlName="bio"
+            placeholder="Describe tu metodología, años de experiencia y experiencia profesional...">
+          </textarea>
+
+          <p class="invalid-note" *ngIf="fieldError('bio')">
+            {{ fieldError('bio') }}
+          </p>
         </label>
 
-        <p class="form-feedback" *ngIf="feedbackMessage">{{ feedbackMessage }}</p>
-
+        <!-- BOTÓN -->
         <div class="form-actions">
-          <button type="button" class="btn-primary" (click)="goToCertificado()">Continuar →</button>
+
+          <button
+            type="button"
+            class="btn-primary"
+            [disabled]="isContinueDisabled"
+            (click)="goToCertificado()">
+
+            Continuar →
+
+          </button>
+
         </div>
+
       </form>
+
+      <div class="modal-backdrop" *ngIf="showValidationModal">
+        <div class="validation-modal">
+          <button type="button" class="modal-close" (click)="closeValidationModal()">×</button>
+          <p class="modal-kicker error-kicker">Campos incompletos</p>
+          <h3>Completa los siguientes campos antes de continuar</h3>
+          <ul class="validation-list">
+            <li *ngFor="let item of validationMissingFields">{{ item }}</li>
+          </ul>
+          <button type="button" class="btn-primary modal-button" (click)="closeValidationModal()">Volver</button>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import edu.utp.backend.features.documento.dtos.DocumentoDto;
+import edu.utp.backend.features.documento.dtos.InstructorModalDto;
 import edu.utp.backend.features.documento.entities.Documento;
 import edu.utp.backend.features.documento.repositories.DocumentoRepository;
 import lombok.RequiredArgsConstructor;
@@ -66,5 +67,17 @@ public class DocumentoServiceImpl implements DocumentoService {
                 documento.getUrlArchivo(),
                 documento.getEstadoAprobacion(),
                 documento.getFechaSubida());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public InstructorModalDto obtenerDocumentosParaModal(Long idInstructor) {
+        List<Documento> documentos = documentoRepository.findByIdInstructor(idInstructor);
+
+        List<DocumentoDto> documentosDto = documentos.stream()
+                .map(this::toDto)
+                .toList();
+
+        return new InstructorModalDto(idInstructor, documentosDto);
     }
 }

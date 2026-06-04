@@ -19,11 +19,10 @@
 
     <!-- BOTONES -->
     <div class="buttons">
-      <button class="primary" routerLink="/login" (click)="closeMenu()">
+      <button class="primary" (click)="irAPanel('tutor')">
         <span>Soy Tutor / Padre</span>
       </button>
-
-      <button class="secondary" routerLink="/login" (click)="closeMenu()">
+      <button class="secondary" (click)="irAPanel('instructor')">
         Soy Instructor
       </button>
     </div>
@@ -38,10 +37,8 @@
   <!-- DERECHA: IMAGEN -->
   <div class="hero-image">
 
-    <img
-      src="https://public.readdy.ai/ai/img_res/edited_5dbbed92018d6e1c91b77859fdd1638e_7c6acd08.jpg"
-      alt="Entrenamiento"
-    />
+    <img src="https://public.readdy.ai/ai/img_res/edited_5dbbed92018d6e1c91b77859fdd1638e_7c6acd08.jpg"
+      alt="Entrenamiento" />
 
     <div class="image-overlay"></div>
 

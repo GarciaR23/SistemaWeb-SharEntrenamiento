@@ -7,11 +7,12 @@ import { Location, Ubication } from '../../../services/location';
 import { Subscription } from 'rxjs';
 
 import { RegistrationApiService } from '../../../services/registration-api.service';
+import { HeaderComponent } from "../../../layouts/header/header.component";
 
 @Component({
   selector: 'app-formulario-tutor',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, HttpClientModule, HeaderComponent],
   providers: [Location],
   templateUrl: './formulario-tutor.html',
   styleUrl: './formulario-tutor.css',
@@ -55,7 +56,6 @@ export class FormularioTutor implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    this.loadDistricts();
   }
 
   ngOnDestroy(): void {
@@ -65,10 +65,37 @@ export class FormularioTutor implements OnInit, OnDestroy {
   }
 
   loadDistricts(): void {
-    this.subscription = this.locationService.getDistrictsByUbigeoPrefix('1401').subscribe(list => {
+    this.subscription = this.locationService.getDistrictsByUbigeoPrefix('1501').subscribe(list => {
       this.allDistricts = list.sort((a, b) => a.district.localeCompare(b.district));
     });
   }
+  distritosFallback: string[] = [
+    'Ate',
+    'Barranco',
+    'Breña',
+    'Callao',
+    'Chorrillos',
+    'Comas',
+    'Jesús María',
+    'La Molina',
+    'La Victoria',
+    'Lince',
+    'Los Olivos',
+    'Miraflores',
+    'Pueblo Libre',
+    'San Borja',
+    'San Isidro',
+    'San Juan de Lurigancho',
+    'San Juan de Miraflores',
+    'San Luis',
+    'San Martín de Porres',
+    'San Miguel',
+    'Santa Anita',
+    'Santiago de Surco',
+    'Surquillo',
+    'Villa El Salvador',
+    'Villa María del Triunfo'
+  ];
 
   // Validación de campos obligatorios
   isStep1Valid(): boolean {
@@ -145,7 +172,29 @@ export class FormularioTutor implements OnInit, OnDestroy {
   }
 
   async finalizar() {
-    if (!this.isStep4Valid() || this.loading || this.edad == null) {
+    console.log('Botón Finalizar presionado');
+
+    if (this.loading) {
+      return;
+    }
+
+    if (!this.correo.trim()) {
+      this.errorMessage = 'Debes ingresar un correo electrónico';
+      return;
+    }
+
+    if (!this.contrasena.trim()) {
+      this.errorMessage = 'Debes ingresar una contraseña';
+      return;
+    }
+
+    if (!this.fotoPaciente) {
+      this.errorMessage = 'Debes subir una foto del paciente';
+      return;
+    }
+
+    if (this.edad == null) {
+      this.errorMessage = 'Debes ingresar la edad del paciente';
       return;
     }
 
@@ -167,10 +216,15 @@ export class FormularioTutor implements OnInit, OnDestroy {
         fotoPaciente: this.fotoPaciente,
       });
 
-      localStorage.setItem('rolSeleccionado', 'TUTOR');
-      this.router.navigate(['/tutor']);
+      localStorage.setItem('rolSeleccionado', 'tutor');
+      this.router.navigate(['/tutor/inicio']);
+
     } catch (error: any) {
-      this.errorMessage = error?.error?.message ?? error?.message ?? 'No se pudo completar el registro';
+      console.error('Error al registrar tutor:', error);
+      this.errorMessage =
+        error?.error?.message ??
+        error?.message ??
+        'No se pudo completar el registro';
     } finally {
       this.loading = false;
     }

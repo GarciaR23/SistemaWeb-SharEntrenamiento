@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import edu.utp.backend.features.auth.dtos.UsuarioRequest;
 import edu.utp.backend.features.auth.dtos.UsuarioResponse;
-import edu.utp.backend.features.auth.services.UsuarioService;
+import edu.utp.backend.features.auth.usuario.services.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 

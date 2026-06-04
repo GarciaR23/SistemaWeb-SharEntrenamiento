@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.utp.backend.features.documento.dtos.DocumentoDto;
+import edu.utp.backend.features.documento.dtos.InstructorModalDto;
 import edu.utp.backend.features.documento.services.DocumentoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,12 @@ public class DocumentoController {
     @GetMapping("/{id}")
     public ResponseEntity<DocumentoDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(documentoService.findById(id));
+    }
+
+    @GetMapping("/instructor/{idInstructor}/modal")
+    public ResponseEntity<InstructorModalDto> getDocumentosParaModal(
+            @PathVariable Long idInstructor) {                                                                                                   
+        return ResponseEntity.ok(documentoService.obtenerDocumentosParaModal(idInstructor));
     }
 
     @PostMapping

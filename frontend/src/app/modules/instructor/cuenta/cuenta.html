@@ -1,3 +1,5 @@
+<app-header></app-header>
+
 <section class="cuenta-page fade-in">
   <div class="cuenta-shell">
     <nav class="cuenta-steps" aria-label="Progreso de perfil">
@@ -11,7 +13,7 @@
         <small>CERTIFICADOS</small>
       </button>
       <div class="step-separator"></div>
-      <button type="button" class="step" routerLink="/cuenta" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <button type="button" class="step active" routerLink="/cuenta" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         <span>3</span>
         <small>CUENTA</small>
       </button>
@@ -26,75 +28,114 @@
       </header>
 
       <form class="cuenta-form" [formGroup]="accountForm" autocomplete="off">
+        
         <div class="field-row">
           <label class="field-group">
-            <span>Correo electrónico</span>
+            <span class="label-text">CORREO ELECTRÓNICO</span>
             <div class="input-wrapper">
               <input type="email" placeholder="ejemplo@entreno.com" formControlName="email" autocomplete="email" />
               <span class="input-icon">
-                <img src="assets/icons/Icon_email.png" alt="Icono de correo" />
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
               </span>
             </div>
           </label>
+          
           <label class="field-group">
-            <span>Contraseña</span>
+            <span class="label-text">CONTRASEÑA</span>
             <div class="input-wrapper">
               <input [type]="showPassword ? 'text' : 'password'" placeholder="********" formControlName="password" autocomplete="current-password" />
-              <button type="button" (click)="togglePassword()" class="icon-button" aria-label="Mostrar contraseña">👁</button>
+              <button type="button" (click)="togglePassword()" class="icon-button" aria-label="Mostrar contraseña">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
             </div>
           </label>
         </div>
 
-        <label class="field-group">
-          <span>Foto de perfil</span>
-          <input type="file" accept="image/*" (change)="SeleccionarImagenPerfil($event)" />
-          <small *ngIf="profileImagePreview">Archivo: {{ profileImagePreview }}</small>
+        <label class="field-group upload-group">
+          <span class="label-text">SUBIR FOTO DEL INSTRUCTOR</span>
+          <div class="upload-card dashed-box">
+            <input type="file" accept="image/*" (change)="SeleccionarImagenPerfil($event)" />
+            <div class="upload-placeholder">
+              <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+              <strong>Click para subir o arrastra y suelta</strong>
+              <small>PNG, JPG hasta 5MB</small>
+            </div>
+          </div>
+          <small class="file-name" *ngIf="profileImagePreview">Archivo seleccionado: {{ profileImagePreview }}</small>
         </label>
 
         <div class="resumen-card">
           <div class="resumen-title">
+            <div class="icon-square">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            </div>
             <strong>Resumen de Registro</strong>
           </div>
+          
           <div class="resumen-item">
-            <span> Nombre Completo</span>
+            <span class="item-label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              Nombre Completo
+            </span>
             <strong>{{ formState.state.profile.fullName || 'No especificado' }}</strong>
           </div>
+          
           <div class="resumen-item">
-            <span> Especialidad</span>
+            <span class="item-label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6.5 17.5L17.5 6.5M5 13L11 19M13 5L19 11M3.5 15.5L8.5 20.5M15.5 3.5L20.5 8.5M8 6L18 16"></path></svg>
+              Especialidad
+            </span>
             <strong>{{ formState.state.profile.specialty || 'No especificado' }}</strong>
           </div>
+          
           <div class="resumen-item">
-            <span> Certificación</span>
-            <strong>{{ formState.state.profile.bio ? 'Certificado agregado' : 'Sin descripción' }}</strong>
+            <span class="item-label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15l-2 5l9-9l-9-9l2 5l-9 4l9 4z" stroke-linejoin="round"></path></svg>
+              Certificación
+            </span>
+            <strong>{{ formState.state.documents.certificacion.status === 'ENTREGADO' ? 'Certificado agregado' : 'Pendiente' }}</strong>
           </div>
+          
           <div class="resumen-item">
-            <span> Disponibilidad</span>
-            <strong>{{ formState.state.profile.selectedDay }} , {{ formState.state.profile.selectedShift }} : {{ formState.state.profile.fromTime }} - {{ formState.state.profile.toTime }}</strong>
-          </div>
-          <div class="resumen-item">
-            <span> Documentos</span>
-            <strong>{{ formState.state.documents.certificacion.status }} / {{ formState.state.documents.dni.status }} / {{ formState.state.documents.titulo.status }} / {{ formState.state.documents.antecedentes.status }}</strong>
+            <span class="item-label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              Disponibilidad
+            </span>
+            <strong>{{ formState.state.profile.selectedDay.join(', ') || 'No especificado' }}, {{ formState.state.profile.fromTime || '00:00' }} - {{ formState.state.profile.toTime || '00:00' }}</strong>
           </div>
         </div>
 
         <p class="form-feedback" *ngIf="feedbackMessage">{{ feedbackMessage }}</p>
 
         <div class="form-actions">
-          <button type="button" class="btn-secondary" routerLink="/certificado">← Atrás</button>
-          <button type="button" class="btn-primary" (click)="finalizarRegistro()">Continuar →</button>
+          <button type="button" class="btn-text" routerLink="/certificado">← Atrás</button>
+          <button type="button" class="btn-primary glow-btn" [disabled]="loading" (click)="finalizarRegistro()">
+            {{ loading ? 'Procesando...' : 'Continuar →' }}
+          </button>
         </div>
       </form>
     </div>
   </div>
 </section>
 
-<!-- Enviado modal -->
 <div class="modal-backdrop" *ngIf="showModal">
   <div class="modal" role="dialog" aria-modal="true">
     <div class="modal-body">
-      <div class="modal-check">✓</div>
-      <h2>Creado</h2>
-      <button class="btn-primary" (click)="closeModal()">Ok</button>
+      <div class="modal-icon" [ngClass]="{ success: modalType === 'success', error: modalType === 'error' }">
+        <svg *ngIf="modalType === 'success'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <svg *ngIf="modalType === 'error'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line><circle cx="12" cy="12" r="10"></circle></svg>
+      </div>
+
+      <h2>{{ modalTitle }}</h2>
+      <p class="modal-text">{{ modalMessage }}</p>
+
+      <ul class="modal-errors" *ngIf="modalType === 'error' && missingFields.length">
+        <li *ngFor="let field of missingFields">{{ field }}</li>
+      </ul>
+
+      <button class="btn-primary glow-btn" (click)="closeModal()">
+        {{ modalType === 'success' ? 'Aceptar' : 'Corregir' }}
+      </button>
     </div>
   </div>
 </div>

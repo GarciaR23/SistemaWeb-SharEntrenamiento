@@ -4,11 +4,12 @@ import { FormBuilder, ReactiveFormsModule, Validators, ɵInternalFormsSharedModu
 import { RouterLink, Router } from '@angular/router';
 
 import { AuthApiService } from '../../../services/auth-api.service';
+import { HeaderComponent } from "../../../layouts/header/header.component";
 
 @Component({
   selector: 'app-recuperar-contrasena',
   standalone: true,
-  imports: [ɵInternalFormsSharedModule, ReactiveFormsModule, CommonModule, RouterLink],
+  imports: [ɵInternalFormsSharedModule, ReactiveFormsModule, CommonModule, RouterLink, HeaderComponent],
   templateUrl: './recuperar-contrasena.html',
   styleUrls: ['./recuperar-contrasena.css'],
 })

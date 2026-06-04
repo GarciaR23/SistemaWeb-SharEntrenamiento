@@ -13,6 +13,7 @@ export interface UsuarioAuth {
 export interface LoginResponse {
   success: boolean;
   message: string;
+  token: string;
   usuario: UsuarioAuth | null;
 }
 
@@ -27,14 +28,10 @@ export interface ApiMessage {
 export class AuthApiService {
   private readonly baseUrl = 'http://localhost:8080/api/auth';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   login(email: string, clave: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.baseUrl}/login`, { email, clave });
-  }
-
-  register(email: string, clave: string, rol: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.baseUrl}/register`, { email, clave, rol });
   }
 
   forgotPassword(email: string): Observable<ApiMessage> {
@@ -47,5 +44,36 @@ export class AuthApiService {
 
   resetPassword(email: string, token: string, nuevaClave: string): Observable<ApiMessage> {
     return this.http.post<ApiMessage>(`${this.baseUrl}/password/reset`, { email, token, nuevaClave });
+  }
+
+  getUsuarioLogueado(): UsuarioAuth | null {
+    const sesion = this.getSesionActiva();
+    return sesion ? sesion.usuario : null;
+  }
+
+  getUsuarioLogueadoPorRol(rol: string): UsuarioAuth | null {
+    const userJson = localStorage.getItem(`authUser_${rol}`);
+    return userJson ? JSON.parse(userJson) : null;
+  }
+
+  getToken(rol: string): string | null {
+    return localStorage.getItem(`authToken_${rol}`);
+  }
+
+  getSesionActiva(): { rol: string; usuario: UsuarioAuth } | null {
+    const roles = ['admin', 'tutor', 'instructor'];
+    for (const rol of roles) {
+      const token = localStorage.getItem(`authToken_${rol}`);
+      const userJson = localStorage.getItem(`authUser_${rol}`);
+      if (token && userJson) {
+        return { rol, usuario: JSON.parse(userJson) };
+      }
+    }
+    return null;
+  }
+
+  logout(rol: string): void {
+    localStorage.removeItem(`authToken_${rol}`);
+    localStorage.removeItem(`authUser_${rol}`);
   }
 }

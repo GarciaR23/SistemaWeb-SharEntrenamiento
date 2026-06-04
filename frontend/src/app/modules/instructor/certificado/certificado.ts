@@ -3,16 +3,19 @@ import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { DocumentKey, FormStateService } from '../../../services/form-state.service';
+import { HeaderComponent } from "../../../layouts/header/header.component";
 
 @Component({
   selector: 'app-certificado',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, HeaderComponent],
   templateUrl: './certificado.html',
   styleUrls: ['./certificado.scss'],
 })
 export class Certificado {
   feedbackMessage = '';
+  showValidationModal = false;
+  missingDocuments: string[] = [];
 
   readonly documents = [
     { key: 'dni', title: 'DNI / Documento de identidad' },
@@ -24,7 +27,19 @@ export class Certificado {
   constructor(
     public formState: FormStateService,
     private router: Router,
-  ) {}
+  ) { }
+
+  get hasMissingDocuments(): boolean {
+    return this.formState.getMissingDocumentFields().length > 0;
+  }
+
+  // Activa el input file dinámico
+  triggerFileInput(key: string): void {
+    const fileInput = document.getElementById(`file-${key}`) as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  }
 
   getFile(key: DocumentKey, $event: Event): void {
     const input = $event.target as HTMLInputElement;
@@ -48,13 +63,19 @@ export class Certificado {
     const missing = this.formState.getMissingDocumentFields();
 
     if (missing.length > 0) {
-      this.feedbackMessage = `Faltan documentos por subir: ${missing.join(', ')}`;
-      console.warn(this.feedbackMessage);
+      this.feedbackMessage = '';
+      this.missingDocuments = missing;
+      this.showValidationModal = true;
       return;
     }
 
     console.log('Enviando certificados reactivos:', this.formState.state.documents);
     this.feedbackMessage = '';
     this.router.navigate(['/cuenta']);
+  }
+
+  closeValidationModal(): void {
+    this.showValidationModal = false;
+    this.missingDocuments = [];
   }
 }
