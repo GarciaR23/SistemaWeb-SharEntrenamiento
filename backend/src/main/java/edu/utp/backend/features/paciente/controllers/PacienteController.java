@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import edu.utp.backend.features.paciente.entities.Paciente;
 import edu.utp.backend.features.paciente.repositories.PacienteRepository;
 import edu.utp.backend.features.paciente.dtos.PacienteDto;
 import edu.utp.backend.features.paciente.services.PacienteService;
@@ -30,6 +29,7 @@ public class PacienteController {
         return ResponseEntity.ok(pacienteService.findAll());
     }
 
+    /*NO DEBERÍA DE IR REPOSITORY EN CONTROLLER SI NO EN SERVICES - CORREGIR ELLO */
     private final PacienteRepository pacienteRepository;
 
     @GetMapping("/tutor/{idTutor}")
