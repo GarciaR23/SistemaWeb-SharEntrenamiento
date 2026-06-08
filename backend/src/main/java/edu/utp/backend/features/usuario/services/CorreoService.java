@@ -1,4 +1,4 @@
-package edu.utp.backend.features.auth.usuario.services;
+package edu.utp.backend.features.usuario.services;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;

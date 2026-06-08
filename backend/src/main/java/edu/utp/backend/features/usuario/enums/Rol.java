@@ -1,4 +1,4 @@
-package edu.utp.backend.features.auth.usuario.enums;
+package edu.utp.backend.features.usuario.enums;
 
 public enum Rol {
     admin,

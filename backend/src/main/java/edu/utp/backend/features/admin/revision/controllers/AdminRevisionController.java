@@ -1,4 +1,4 @@
-package edu.utp.backend.features.admin.revision.controller;
+package edu.utp.backend.features.admin.revision.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

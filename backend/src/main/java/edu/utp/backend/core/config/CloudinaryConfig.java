@@ -1,4 +1,4 @@
-package edu.utp.backend.core.config.Cloudinary;
+package edu.utp.backend.core.config;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;

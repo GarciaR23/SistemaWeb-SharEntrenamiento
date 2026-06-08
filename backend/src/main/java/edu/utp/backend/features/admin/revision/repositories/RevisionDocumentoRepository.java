@@ -1,4 +1,4 @@
-package edu.utp.backend.features.admin.revision.repository;
+package edu.utp.backend.features.admin.revision.repositories;
 
 import java.util.List;
 

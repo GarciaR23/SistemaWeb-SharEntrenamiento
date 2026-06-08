@@ -1,4 +1,4 @@
-package edu.utp.backend.core.config.Cloudinary;
+package edu.utp.backend.core.infra.cloudinary;
 
 public record CloudinaryUploadResponse(
         String url,

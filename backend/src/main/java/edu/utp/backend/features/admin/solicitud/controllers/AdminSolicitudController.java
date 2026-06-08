@@ -1,4 +1,4 @@
-package edu.utp.backend.features.admin.solicitud.controller;
+package edu.utp.backend.features.admin.solicitud.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

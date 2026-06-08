@@ -1,9 +1,7 @@
-package edu.utp.backend.features.auth.usuario.entities;
+package edu.utp.backend.features.usuario.entities;
 
 import java.time.ZonedDateTime;
 
-import edu.utp.backend.features.auth.usuario.enums.EstadoCuenta;
-import edu.utp.backend.features.auth.usuario.enums.Rol;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,6 +12,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+
+import edu.utp.backend.features.usuario.enums.EstadoCuenta;
+import edu.utp.backend.features.usuario.enums.Rol;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

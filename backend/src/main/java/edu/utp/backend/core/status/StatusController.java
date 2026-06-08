@@ -1,4 +1,4 @@
-package edu.utp.backend.core.config;
+package edu.utp.backend.core.status;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
