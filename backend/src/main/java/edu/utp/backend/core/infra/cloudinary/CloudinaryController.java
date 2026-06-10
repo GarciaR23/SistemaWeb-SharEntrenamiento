@@ -1,4 +1,4 @@
-package edu.utp.backend.core.config.Cloudinary;
+package edu.utp.backend.core.infra.cloudinary;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

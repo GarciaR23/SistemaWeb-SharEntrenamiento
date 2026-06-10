@@ -1,4 +1,4 @@
-package edu.utp.backend.features.auth.usuario.services;
+package edu.utp.backend.features.usuario.services;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -7,8 +7,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import edu.utp.backend.features.auth.usuario.entities.Usuario;
-import edu.utp.backend.features.auth.usuario.repositories.UsuarioRepository;
+import edu.utp.backend.features.usuario.entities.Usuario;
+import edu.utp.backend.features.usuario.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;

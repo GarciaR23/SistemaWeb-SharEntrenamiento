@@ -2,13 +2,13 @@ package edu.utp.backend.features.auth.services;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import edu.utp.backend.core.security.jwt.services.JwtService;
+import edu.utp.backend.core.security.jwt.JwtService;
 import edu.utp.backend.features.auth.dtos.LoginRequest;
 import edu.utp.backend.features.auth.dtos.LoginResponse;
 import edu.utp.backend.features.auth.dtos.UsuarioResponse;
-import edu.utp.backend.features.auth.usuario.entities.Usuario;
-import edu.utp.backend.features.auth.usuario.enums.EstadoCuenta;
-import edu.utp.backend.features.auth.usuario.repositories.UsuarioRepository;
+import edu.utp.backend.features.usuario.entities.Usuario;
+import edu.utp.backend.features.usuario.enums.EstadoCuenta;
+import edu.utp.backend.features.usuario.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service

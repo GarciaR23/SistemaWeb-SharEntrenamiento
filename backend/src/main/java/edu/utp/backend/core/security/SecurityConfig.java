@@ -19,7 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import edu.utp.backend.core.security.jwt.JwtAccessDeniedHandler;
 import edu.utp.backend.core.security.jwt.JwtAuthEntryPoint;
 import edu.utp.backend.core.security.jwt.JwtAuthenticationFilter;
-import edu.utp.backend.features.auth.usuario.services.CustomUserDetailsService;
+import edu.utp.backend.features.usuario.services.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 
 @Configuration

@@ -1,9 +1,9 @@
-package edu.utp.backend.features.rendimiento.rutina.enums;
+// package edu.utp.backend.features.rendimiento.rutina.enums;
 
-public enum TipoCategoriaEjercicio {
-    CARDIO,
-    FUERZA,
-    FLEXIBILIDAD,
-    MOVILIDAD,
-    RESISTENCIA
-}
+// public enum TipoCategoriaEjercicio {
+//     CARDIO,
+//     FUERZA,
+//     FLEXIBILIDAD,
+//     MOVILIDAD,
+//     RESISTENCIA
+// }

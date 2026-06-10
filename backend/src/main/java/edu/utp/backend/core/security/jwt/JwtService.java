@@ -1,4 +1,4 @@
-package edu.utp.backend.core.security.jwt.services;
+package edu.utp.backend.core.security.jwt;
 
 import java.util.Date;
 
@@ -6,9 +6,9 @@ import javax.crypto.SecretKey;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import edu.utp.backend.features.usuario.entities.Usuario;
 import lombok.RequiredArgsConstructor;
-import edu.utp.backend.core.security.jwt.JwtConfig;
-import edu.utp.backend.features.auth.usuario.entities.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 

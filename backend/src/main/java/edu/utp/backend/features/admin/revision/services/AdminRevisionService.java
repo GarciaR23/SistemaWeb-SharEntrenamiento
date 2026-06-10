@@ -9,13 +9,13 @@ import lombok.RequiredArgsConstructor;
 
 import edu.utp.backend.features.admin.revision.entities.RevisionDocumento;
 import edu.utp.backend.features.admin.revision.enums.TipoAprobacion;
-import edu.utp.backend.features.admin.revision.repository.RevisionDocumentoRepository;
+import edu.utp.backend.features.admin.revision.repositories.RevisionDocumentoRepository;
 import edu.utp.backend.features.documento.entities.Documento;
 import edu.utp.backend.features.documento.repositories.DocumentoRepository;
-import edu.utp.backend.features.auth.usuario.entities.Usuario;
-import edu.utp.backend.features.auth.usuario.enums.EstadoCuenta;
-import edu.utp.backend.features.auth.usuario.repositories.UsuarioRepository;
 import edu.utp.backend.features.instructor.repositories.InstructorRepository;
+import edu.utp.backend.features.usuario.entities.Usuario;
+import edu.utp.backend.features.usuario.enums.EstadoCuenta;
+import edu.utp.backend.features.usuario.repositories.UsuarioRepository;
 
 @Service
 @RequiredArgsConstructor

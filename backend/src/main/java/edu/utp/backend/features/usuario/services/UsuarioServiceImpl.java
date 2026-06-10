@@ -1,4 +1,4 @@
-package edu.utp.backend.features.auth.usuario.services;
+package edu.utp.backend.features.usuario.services;
 
 import java.util.List;
 
@@ -8,10 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.utp.backend.features.auth.dtos.UsuarioRequest;
 import edu.utp.backend.features.auth.dtos.UsuarioResponse;
-import edu.utp.backend.features.auth.usuario.entities.Usuario;
-import edu.utp.backend.features.auth.usuario.enums.EstadoCuenta;
-import edu.utp.backend.features.auth.usuario.enums.Rol;
-import edu.utp.backend.features.auth.usuario.repositories.UsuarioRepository;
+import edu.utp.backend.features.usuario.entities.Usuario;
+import edu.utp.backend.features.usuario.enums.EstadoCuenta;
+import edu.utp.backend.features.usuario.enums.Rol;
+import edu.utp.backend.features.usuario.repositories.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service

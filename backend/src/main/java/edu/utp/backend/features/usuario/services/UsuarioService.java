@@ -1,4 +1,4 @@
-package edu.utp.backend.features.auth.usuario.services;
+package edu.utp.backend.features.usuario.services;
 
 import java.util.List;
 

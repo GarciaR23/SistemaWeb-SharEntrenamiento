@@ -1,14 +1,14 @@
-package edu.utp.backend.features.rendimiento.hoja_ruta.services;
+// package edu.utp.backend.features.rendimiento.hoja_ruta.services;
 
-import java.util.List;
+// import java.util.List;
 
-import edu.utp.backend.features.rendimiento.hoja_ruta.dtos.HojaRutaRequestDTO;
-import edu.utp.backend.features.rendimiento.hoja_ruta.dtos.HojaRutaResponseDTO;
+// import edu.utp.backend.features.rendimiento.hoja_ruta.dtos.HojaRutaRequestDTO;
+// import edu.utp.backend.features.rendimiento.hoja_ruta.dtos.HojaRutaResponseDTO;
 
-public interface HojaRutaService {
-    List<HojaRutaResponseDTO> findAll();
+// public interface HojaRutaService {
+//     List<HojaRutaResponseDTO> findAll();
 
-    HojaRutaResponseDTO findById(Integer id);
+//     HojaRutaResponseDTO findById(Integer id);
 
-    HojaRutaResponseDTO create(HojaRutaRequestDTO request);
-}
+//     HojaRutaResponseDTO create(HojaRutaRequestDTO request);
+// }
