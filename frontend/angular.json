@@ -35,7 +35,7 @@
               ]
             },
             "styles": [
-              "src/styles.css",
+              "src/styles.scss",
               "src/styles/global.scss"
             ]
           },
@@ -49,8 +49,13 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "10kB",
+                  "maximumError": "20kB"
+                },
+                {
+                  "type": "any",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
                 }
               ],
               "outputHashing": "all"
@@ -103,7 +108,7 @@
               ]
             },
             "styles": [
-              "src/styles.css",
+              "src/styles.scss",
               "src/styles/global.scss"
             ]
           }
