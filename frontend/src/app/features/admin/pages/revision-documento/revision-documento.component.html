@@ -18,7 +18,7 @@
 
         <div class="revision-modal-body">
 
-            <div class="documento-revision-row" *ngFor="let doc of listaDocumentosRevision">
+            <div class="documento-revision-row" *ngFor="let doc of listaDocumentosRevision" [class.approved]="doc.estadoAprobacion === 'aprobado'">
 
                 <div class="documento-meta">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -35,7 +35,7 @@
 
                 <div class="documento-actions-group">
 
-                    <button class="btn-action-neon btn-view" (click)="verDocumentoUrl(doc.urlArchivo)"
+                    <button class="btn-action-neon btn-view" [class.revisado]="doc.revisado" (click)="verDocumentoUrl(doc)"
                         title="Visualizar Documento">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye">
@@ -46,12 +46,13 @@
                     </button>
 
                     <button class="btn-action-neon btn-approve" [class.selected]="doc.estadoAprobacion === 'aprobado'"
-                        (click)="marcarEstadoDocumento(doc, 'aprobado')" title="Aprobar">
+                        (click)="marcarEstadoDocumento(doc, 'aprobado')" title="Siguiente">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" class="icon-check">
                             <circle cx="12" cy="12" r="10" />
                             <path d="m9 12 2 2 4-4" />
                         </svg>
+                        <span class="btn-text">Siguiente</span>
                     </button>
 
                     <button class="btn-action-neon btn-reject" [class.selected]="doc.estadoAprobacion === 'rechazado'"
@@ -72,6 +73,17 @@
         <div class="revision-modal-footer">
             <button class="btn-foot-cancel" (click)="cerrarRevisionModal()">Cancelar</button>
             <button class="btn-foot-submit-approve">Aprobar Instructor</button>
+        </div>
+    </div>
+
+    <div class="modal-confirm-backdrop" *ngIf="confirmApproveModalOpen">
+        <div class="modal-confirm-container">
+            <h3>Confirmar aprobación</h3>
+            <p>¿Estás seguro de aprobar este documento?</p>
+            <div class="modal-confirm-actions">
+                <button class="btn-foot-cancel" (click)="confirmApproveModalOpen = false; documentoAprobar = null">Cancelar</button>
+                <button class="btn-foot-submit-approve" (click)="confirmarAprobacion()">Confirmar</button>
+            </div>
         </div>
     </div>
 
