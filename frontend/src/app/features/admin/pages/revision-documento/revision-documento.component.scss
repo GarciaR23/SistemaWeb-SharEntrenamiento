@@ -108,7 +108,16 @@
     border-radius: 12px;
     margin-bottom: 12px;
     border: 1px solid transparent;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.documento-revision-row.approved {
+    border-color: #2ecc71;
+    box-shadow: 0 0 0 1px rgba(46, 204, 113, 0.12);
+}
+
+.btn-view.revisado svg {
+    color: #ffffff;
 }
 
 /* Borde coral si el documento está rechazado */
@@ -216,6 +225,47 @@
 
 .btn-foot-submit-approve:hover {
     background-color: #3cd070;
+}
+
+.modal-confirm-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.65);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1100;
+}
+
+.modal-confirm-container {
+    background: #0f1522;
+    border: 1px solid #202a3f;
+    border-radius: 18px;
+    padding: 28px 24px;
+    width: min(420px, calc(100vw - 40px));
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    text-align: center;
+}
+
+.modal-confirm-container h3 {
+    margin: 0 0 12px;
+    color: #5effad;
+    font-size: 1.2rem;
+}
+
+.modal-confirm-container p {
+    margin: 0 0 22px;
+    color: #cbd5e1;
+    line-height: 1.5;
+}
+
+.modal-confirm-actions {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
 }
 
 /* ==========================================================================

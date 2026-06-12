@@ -11,6 +11,10 @@ interface HistorialRechazo {
   comentario: string;
 }
 
+interface DocumentoRevision extends DocumentoDto {
+  revisado?: boolean;
+}
+
 @Component({
   selector: 'app-revision-documento',
   standalone: true,
@@ -26,8 +30,10 @@ export class RevisionDocumento {
 
   nombreInstructorModal: string = '';
   idInstructorActual!: number;
-  listaDocumentosRevision: DocumentoDto[] = [];
+  listaDocumentosRevision: DocumentoRevision[] = [];
   historialRechazos: HistorialRechazo[] = [];
+  confirmApproveModalOpen = false;
+  documentoAprobar: DocumentoRevision | null = null;
 
   constructor(
     private readonly revisionService: RevisionDocumentoService,
@@ -41,22 +47,33 @@ export class RevisionDocumento {
     this.nombreInstructorModal = nombreCompleto;
     this.revisionService.obtenerRevisionPorInstructorId(idInstructor).subscribe({
       next: (response: { documentos: DocumentoDto[] }) => {
-        this.listaDocumentosRevision = response.documentos;
+        this.listaDocumentosRevision = response.documentos.map(doc => ({ ...doc, revisado: false }));
         this.isRevisionModalOpen = true;
       },
       error: (err: any) => console.error('Error al recuperar documentos:', err)
     });
   }
 
-  marcarEstadoDocumento(documento: DocumentoDto, estado: string): void {
+  marcarEstadoDocumento(documento: DocumentoRevision, estado: string): void {
     if (estado === 'aprobado') {
-      this.enviarEvaluacion(documento, 'aprobado', '');
-    } else {
-      this.docARechazar = documento;
-      this.comentarioRechazo = '';
-      this.cargarHistorialDocumento(documento.idDocumento); 
-      this.showRechazoModal = true;
+      this.documentoAprobar = documento;
+      this.confirmApproveModalOpen = true;
+      return;
     }
+
+    this.docARechazar = documento;
+    this.comentarioRechazo = '';
+    this.cargarHistorialDocumento(documento.idDocumento);
+    this.showRechazoModal = true;
+  }
+
+  confirmarAprobacion(): void {
+    if (!this.documentoAprobar) {
+      return;
+    }
+    this.enviarEvaluacion(this.documentoAprobar, 'aprobado', '');
+    this.confirmApproveModalOpen = false;
+    this.documentoAprobar = null;
   }
 
   private cargarHistorialDocumento(idDocumento: number): void {
@@ -88,7 +105,7 @@ export class RevisionDocumento {
     }
   }
 
-  private enviarEvaluacion(doc: DocumentoDto, estado: string, comentario: string): void {
+  private enviarEvaluacion(doc: DocumentoRevision, estado: string, comentario: string): void {
     const usuario = this.authService.getUsuarioLogueado();
     const idAdmin = usuario ? usuario.idUsuario : 0;
 
@@ -96,6 +113,9 @@ export class RevisionDocumento {
       .subscribe({
         next: () => {
           doc.estadoAprobacion = estado;
+          if (estado === 'aprobado') {
+            doc.revisado = true;
+          }
 
           this.showRechazoModal = false;
           this.comentarioRechazo = '';
@@ -111,9 +131,10 @@ export class RevisionDocumento {
     this.historialRechazos = [];
   }
 
-  verDocumentoUrl(url: string): void {
-    if (url) {
-      window.open(url, '_blank');
+  verDocumentoUrl(doc: DocumentoRevision): void {
+    if (doc.urlArchivo) {
+      doc.revisado = true;
+      window.open(doc.urlArchivo, '_blank');
     }
   }
 
