@@ -2,32 +2,32 @@ import { Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { statusGuard } from './core/guards/status.guard';
 
-import { LandingComponent } from './modules/landing/landing.component';
-import { Login } from './modules/auth/login/login';
-import { RecuperarContrasena } from './modules/auth/recuperar-contrasena/recuperar-contrasena';
-import { TokenContrasena } from './modules/auth/token-contrasena/token-contrasena';
-import { RestaurarContrasena } from './modules/auth/restaurar-contrasena/restaurar-contrasena';
-import { Perfil } from './modules/instructor/perfil/perfil';
-import { Certificado } from './modules/instructor/certificado/certificado';
-import { Cuenta } from './modules/instructor/cuenta/cuenta';
-import { SeleccionRolComponent } from './modules/auth/seleccion-rol/seleccion-rol';
+import { LandingComponent } from './features/landing/landing.component';
+import { Login } from './features/auth/login/login.component';
+import { RecuperarContrasena } from './features/auth/recuperar-contrasena/recuperar-contrasena.component';
+import { TokenContrasena } from './features/auth/token-contrasena/token-contrasena.component';
+import { RestaurarContrasena } from './features/auth/restaurar-contrasena/restaurar-contrasena.component';
+import { Perfil } from './features/instructor/pages/perfil/perfil.component';
+import { Certificado } from './features/instructor/pages/certificado/certificado.component';
+import { Cuenta } from './features/instructor/pages/cuenta/cuenta.component';
+import { SeleccionRolComponent } from './features/auth/seleccion-rol/seleccion-rol.component';
 
-import { ReporteInstructor } from './modules/admin/reporte-instructor/reporte-instructor';
-import { ReportePaciente } from './modules/admin/reporte-paciente/reporte-paciente';
-import { Inicio as AdminInicio } from './modules/admin/inicio/inicio';
-import { Inicio as InstructorInicio } from './modules/instructor/inicio/inicio';
-import { Inicio as TutorInicio } from './modules/tutor/inicio/inicio';
-import { Solicitud } from './modules/admin/solicitud/solicitud';
-import { Admin } from './modules/admin/admin';
-import { Sede } from './modules/instructor/sede/sede';
-import { Bitacora } from './modules/instructor/bitacora/bitacora';
-import { Pago } from './modules/instructor/pago/pago';
-import { Instructor } from './modules/instructor/instructor';
-import { Tutor } from './modules/tutor/tutor';
-import { CatalogoInstructor } from './modules/tutor/catalogo-instructor/catalogo-instructor';
-import { Sesion } from './modules/tutor/sesion/sesion';
-import { Progreso } from './modules/tutor/progreso/progreso';
-import { FormularioTutor } from './modules/tutor/formulario-tutor/formulario-tutor';
+import { ReporteInstructor } from './features/admin/pages/reporte-instructor/reporte-instructor.component';
+import { ReportePaciente } from './features/admin/pages/reporte-paciente/reporte-paciente.component';
+import { Inicio as AdminInicio } from './features/admin/pages/dashboard-admin/admin.component';
+import { Inicio as InstructorInicio } from './features/instructor/pages/dashboard-instructor/instructor.component';
+import { Inicio as TutorInicio } from './features/tutor/pages/dashboard-tutor/tutor.component';
+import { Solicitud } from './features/admin/pages/solicitud-registro/solicitud.component';
+import { Admin } from './features/admin/admin';
+import { Sede } from './features/instructor/pages/sede/sede.component';
+import { Bitacora } from './features/instructor/pages/bitacora/bitacora.component';
+import { Pago } from './features/instructor/pages/pago/pago.component';
+import { Instructor } from './features/instructor/instructor';
+import { Tutor } from './features/tutor/tutor';
+import { CatalogoInstructor } from './features/tutor/pages/catalogo-instructor/catalogo-instructor.component';
+import { Sesion } from './features/tutor/pages/sesion-paciente/sesion.component';
+import { Progreso } from './features/tutor/pages/progreso-paciente/progreso.component';
+import { FormularioTutor } from './features/tutor/pages/formulario-tutor/formulario-tutor.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
