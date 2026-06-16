@@ -214,6 +214,11 @@ export class FormularioTutor implements OnInit, OnDestroy {
         correo: this.correo,
         clave: this.contrasena,
         fotoPaciente: this.fotoPaciente,
+        protocoloEmergencia: this.protocoloEmergencia,
+        sensibilidades: this.sensibilidadesSeleccionadas,
+        nombreContacto: this.nombreContacto,
+        telefonoContacto: this.telefonoContacto,
+        relacionContacto: this.relacionContacto,
       });
 
       localStorage.setItem('rolSeleccionado', 'tutor');

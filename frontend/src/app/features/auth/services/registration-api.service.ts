@@ -54,6 +54,26 @@ interface DocumentoDto {
   fechaSubida: string | null;
 }
 
+interface ProtocoloEmergenciaDto {
+  idProtocolo: number | null;
+  idPaciente: number;
+  descripcion: string;
+}
+
+interface ContactoEmergenciaDto {
+  idContacto: number | null;
+  idPaciente: number;
+  nombreContacto: string;
+  telefono: string;
+  relacion: string;
+}
+
+interface SensibilidadPacienteDto {
+  idSensibilidad: number | null;
+  idPaciente: number;
+  tipoSensibilidad: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -79,8 +99,23 @@ export class RegistrationApiService {
     correo: string;
     clave: string;
     fotoPaciente: File | null;
+
+    protocoloEmergencia: string;
+    sensibilidades: string[];
+    nombreContacto: string;
+    telefonoContacto: string;
+    relacionContacto: string;
   }): Promise<void> {
     let fotoUrl: string | null = 'https://via.placeholder.com/300';
+
+    /*
+    Si Cloudinary ya funciona, puedes activar esto:
+
+    if (payload.fotoPaciente) {
+      const uploaded = await firstValueFrom(this.fileService.uploadImage(payload.fotoPaciente));
+      fotoUrl = uploaded.url;
+    }
+    */
 
     const registerResult = await firstValueFrom(
       this.http.post<RegistroTutorResponse>(`${this.registroUrl}/tutor`, {
@@ -91,10 +126,11 @@ export class RegistrationApiService {
     );
 
     if (!registerResult.success || !registerResult.usuario) {
-      throw new Error(registerResult.message || 'No se pudo registrar');
+      throw new Error(registerResult.message || 'No se pudo registrar el tutor');
     }
 
     const idTutor = registerResult.idTutor;
+
     const gradoAutismoMap: Record<string, string> = {
       Leve: 'uno',
       Moderado: 'dos',
@@ -104,8 +140,7 @@ export class RegistrationApiService {
       severo: 'tres',
     };
 
-
-    await firstValueFrom(
+    const pacienteResult = await firstValueFrom(
       this.http.post<PacienteDto>(this.pacienteUrl, {
         idPaciente: null,
         idTutor: idTutor,
@@ -119,6 +154,67 @@ export class RegistrationApiService {
         direccion: payload.direccion,
       }),
     );
+
+    const idPaciente = pacienteResult.idPaciente;
+
+    if (!idPaciente) {
+      throw new Error('No se pudo obtener el id del paciente registrado');
+    }
+
+    await firstValueFrom(
+      this.http.post<ProtocoloEmergenciaDto>(
+        `${this.pacienteUrl}/${idPaciente}/protocolo-emergencia`,
+        {
+          idProtocolo: null,
+          idPaciente: idPaciente,
+          descripcion: payload.protocoloEmergencia,
+        },
+      ),
+    );
+
+    await firstValueFrom(
+      this.http.post<ContactoEmergenciaDto>(
+        `${this.pacienteUrl}/${idPaciente}/contacto-emergencia`,
+        {
+          idContacto: null,
+          idPaciente: idPaciente,
+          nombreContacto: payload.nombreContacto,
+          telefono: payload.telefonoContacto,
+          relacion: payload.relacionContacto,
+        },
+      ),
+    );
+
+    const sensibilidadMap: Record<string, string> = {
+      'Ruidos fuertes': 'ruidos fuertes',
+      'Contacto físico': 'contacto físico',
+      'Luces brillantes': 'luces brillantes',
+      'Cambios de rutina': 'cambios de rutina',
+      'Multitudes': 'multitudes',
+      'Texturas específicas': 'texturas específicas',
+      'Olores intensos': 'olores intensos',
+      'Espacios cerrados': 'espacios cerrados',
+    };
+
+    for (const sensibilidad of payload.sensibilidades) {
+      const sensibilidadDb = sensibilidadMap[sensibilidad];
+
+      if (!sensibilidadDb) {
+        continue;
+      }
+
+      await firstValueFrom(
+        this.http.post<SensibilidadPacienteDto>(
+          `${this.pacienteUrl}/${idPaciente}/sensibilidades`,
+          {
+            idSensibilidad: null,
+            idPaciente: idPaciente,
+            tipoSensibilidad: sensibilidadDb,
+          },
+        ),
+      );
+    }
+
     localStorage.setItem('authToken_tutor', registerResult.token);
     localStorage.setItem('authUser_tutor', JSON.stringify(registerResult.usuario));
   }
@@ -135,6 +231,7 @@ export class RegistrationApiService {
     documentos: Record<DocumentKey, File | null>;
   }): Promise<void> {
     let urlImagenPerfil: string | null = null;
+
     if (payload.profileImageFile) {
       const uploadedImage = await firstValueFrom(this.fileService.uploadImage(payload.profileImageFile));
       urlImagenPerfil = uploadedImage.url;
@@ -154,7 +251,7 @@ export class RegistrationApiService {
     );
 
     if (!registerResult.success || !registerResult.usuario) {
-      throw new Error(registerResult.message || 'No se pudo registrar');
+      throw new Error(registerResult.message || 'No se pudo registrar el instructor');
     }
 
     const idInstructor = registerResult.idInstructor;
@@ -168,9 +265,13 @@ export class RegistrationApiService {
 
     for (const key of Object.keys(payload.documentos) as DocumentKey[]) {
       const file = payload.documentos[key];
-      if (!file) continue;
+
+      if (!file) {
+        continue;
+      }
 
       const uploaded = await firstValueFrom(this.fileService.uploadFile(file));
+
       await firstValueFrom(
         this.http.post<DocumentoDto>(this.documentoUrl, {
           idDocumento: null,
