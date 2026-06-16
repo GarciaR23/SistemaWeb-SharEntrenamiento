@@ -34,6 +34,9 @@ export class RevisionDocumento {
   historialRechazos: HistorialRechazo[] = [];
   confirmApproveModalOpen = false;
   documentoAprobar: DocumentoRevision | null = null;
+  infoModalOpen = false;
+  infoModalTitulo = '';
+  infoModalMensaje = '';
 
   constructor(
     private readonly revisionService: RevisionDocumentoService,
@@ -56,6 +59,13 @@ export class RevisionDocumento {
 
   marcarEstadoDocumento(documento: DocumentoRevision, estado: string): void {
     if (estado === 'aprobado') {
+      if (documento.estadoAprobacion === 'aprobado') {
+        this.infoModalTitulo = 'Documento ya aprobado';
+        this.infoModalMensaje = 'Ya aprobó este documento.';
+        this.infoModalOpen = true;
+        return;
+      }
+
       this.documentoAprobar = documento;
       this.confirmApproveModalOpen = true;
       return;
@@ -74,6 +84,12 @@ export class RevisionDocumento {
     this.enviarEvaluacion(this.documentoAprobar, 'aprobado', '');
     this.confirmApproveModalOpen = false;
     this.documentoAprobar = null;
+  }
+
+  cerrarInfoModal(): void {
+    this.infoModalOpen = false;
+    this.infoModalTitulo = '';
+    this.infoModalMensaje = '';
   }
 
   private cargarHistorialDocumento(idDocumento: number): void {

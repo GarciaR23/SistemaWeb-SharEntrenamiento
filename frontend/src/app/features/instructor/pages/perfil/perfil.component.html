@@ -1,14 +1,9 @@
-
 <app-header></app-header>
 
 <section class="perfil-page fade-in">
   <div class="perfil-shell">
     <nav class="perfil-steps" aria-label="Progreso de perfil">
-      <button
-        type="button"
-        class="step"
-        routerLink="/formulario"
-        routerLinkActive="active"
+      <button type="button" class="step" routerLink="/formulario" routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }">
 
         <span>1</span>
@@ -17,11 +12,7 @@
 
       <div class="step-separator"></div>
 
-      <button
-        type="button"
-        class="step"
-        [class.disabled]="isContinueDisabled"
-        [disabled]="isContinueDisabled"
+      <button type="button" class="step" [class.disabled]="isContinueDisabled" [disabled]="isContinueDisabled"
         (click)="goToCertificado()">
 
         <span>2</span>
@@ -30,9 +21,7 @@
 
       <div class="step-separator"></div>
 
-      <button
-        type="button"
-        class="step"
+      <button type="button" class="step"
         [class.disabled]="profileForm.invalid || formState.getMissingDocumentFields().length > 0"
         [disabled]="profileForm.invalid || formState.getMissingDocumentFields().length > 0"
         (click)="goToCuentaFromPerfil()">
@@ -51,10 +40,7 @@
         </div>
       </header>
 
-      <form
-        class="perfil-form"
-        [formGroup]="profileForm"
-        autocomplete="off">
+      <form class="perfil-form" [formGroup]="profileForm" autocomplete="off">
 
         <!-- NOMBRE Y ESPECIALIDAD -->
         <div class="field-row">
@@ -62,10 +48,7 @@
           <label class="field-group" [class.invalid]="isInvalid('fullName')">
             <span>Nombre Completo</span>
 
-            <input
-              type="text"
-              placeholder="Ej. Alex Rivera"
-              formControlName="fullName" />
+            <input type="text" placeholder="Ej. Alex Rivera" formControlName="fullName" />
 
             <p class="invalid-note" *ngIf="fieldError('fullName')">
               {{ fieldError('fullName') }}
@@ -106,17 +89,13 @@
           <label class="field-group" [class.invalid]="isInvalid('district')">
             <span>Distrito</span>
 
-            <select
-              formControlName="district"
-              (change)="onDistrictChange($event)">
+            <select formControlName="district" (change)="onDistrictChange($event)">
 
               <option value="">
                 Selecciona tu distrito
               </option>
 
-              <option
-                *ngFor="let d of allDistricts"
-                [value]="d.district">
+              <option *ngFor="let d of allDistricts" [value]="d.district">
 
                 {{ d.district | titlecase }}
 
@@ -131,10 +110,7 @@
           <label class="field-group" [class.invalid]="isInvalid('address')">
             <span>Dirección</span>
 
-            <input
-              type="text"
-              placeholder="Ej. Av. Girasol"
-              formControlName="address" />
+            <input type="text" placeholder="Ej. Av. Girasol" formControlName="address" />
 
             <p class="invalid-note" *ngIf="fieldError('address')">
               {{ fieldError('address') }}
@@ -149,10 +125,7 @@
           <label class="field-group" [class.invalid]="isInvalid('rate')">
             <span>Tarifa por hora (USD)</span>
 
-            <input
-              type="text"
-              placeholder="$45.00"
-              formControlName="rate" />
+            <input type="text" placeholder="$45.00" formControlName="rate" />
 
             <p class="invalid-note" *ngIf="fieldError('rate')">
               {{ fieldError('rate') }}
@@ -164,28 +137,19 @@
 
             <div class="toggle-group">
 
-              <button
-                type="button"
-                class="toggle"
-                [class.active]="isShiftActive('Mañana')"
+              <button type="button" class="toggle" [class.active]="isShiftActive('Mañana')"
                 (click)="toggleShift('Mañana')">
 
                 Mañana
               </button>
 
-              <button
-                type="button"
-                class="toggle"
-                [class.active]="isShiftActive('Tarde')"
+              <button type="button" class="toggle" [class.active]="isShiftActive('Tarde')"
                 (click)="toggleShift('Tarde')">
 
                 Tarde
               </button>
 
-              <button
-                type="button"
-                class="toggle"
-                [class.active]="isShiftActive('Noche')"
+              <button type="button" class="toggle" [class.active]="isShiftActive('Noche')"
                 (click)="toggleShift('Noche')">
 
                 Noche
@@ -193,17 +157,13 @@
 
             </div>
 
-            <p
-              class="field-note"
-              *ngIf="selectedShift.length">
+            <p class="field-note" *ngIf="selectedShift.length">
 
               {{ selectedShift.join(' • ') }}
 
             </p>
 
-            <p
-              class="invalid-note"
-              *ngIf="fieldError('selectedShift')">
+            <p class="invalid-note" *ngIf="fieldError('selectedShift')">
 
               {{ fieldError('selectedShift') }}
 
@@ -219,11 +179,7 @@
 
         <div class="days-grid" [class.invalid]="isInvalid('selectedDay')">
 
-          <button
-            *ngFor="let day of availableDays"
-            type="button"
-            class="day"
-            [class.active]="isDayActive(day.code)"
+          <button *ngFor="let day of availableDays" type="button" class="day" [class.active]="isDayActive(day.code)"
             (click)="toggleDay(day.code)">
 
             {{ day.label }}
@@ -231,9 +187,7 @@
 
         </div>
 
-        <p
-          class="invalid-note"
-          *ngIf="fieldError('selectedDay')">
+        <p class="invalid-note" *ngIf="fieldError('selectedDay')">
 
           {{ fieldError('selectedDay') }}
 
@@ -255,9 +209,7 @@
                 Selecciona hora
               </option>
 
-              <option
-                *ngFor="let hour of availableTimeSlots"
-                [value]="hour">
+              <option *ngFor="let hour of availableTimeSlots" [value]="hour">
 
                 {{ formatHour(hour) }}
 
@@ -275,9 +227,7 @@
                 Selecciona hora
               </option>
 
-              <option
-                *ngFor="let hour of availableTimeSlots"
-                [value]="hour">
+              <option *ngFor="let hour of availableTimeSlots" [value]="hour">
 
                 {{ formatHour(hour) }}
 
@@ -291,9 +241,7 @@
 
         </div>
 
-        <p
-          class="time-error"
-          *ngIf="timeValidationMessage">
+        <p class="time-error" *ngIf="timeValidationMessage">
 
           {{ timeValidationMessage }}
 
@@ -303,9 +251,7 @@
         <label class="field-group bio-group" [class.invalid]="isInvalid('bio')">
           <span>Biografía profesional</span>
 
-          <textarea
-            rows="4"
-            formControlName="bio"
+          <textarea rows="4" formControlName="bio"
             placeholder="Describe tu metodología, años de experiencia y experiencia profesional...">
           </textarea>
 
@@ -317,11 +263,7 @@
         <!-- BOTÓN -->
         <div class="form-actions">
 
-          <button
-            type="button"
-            class="btn-primary"
-            [disabled]="isContinueDisabled"
-            (click)="goToCertificado()">
+          <button type="button" class="btn-primary" [disabled]="isContinueDisabled" (click)="goToCertificado()">
 
             Continuar →
 

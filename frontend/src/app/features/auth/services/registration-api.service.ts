@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
-import { DocumentKey } from '../../../shared/interfaces/registration.models';
+import { DocumentKey } from '../modules/dtos/registration.models';
 import { FileService } from '../../../core/services/file.service';
 
 interface RegistroInstructorResponse {

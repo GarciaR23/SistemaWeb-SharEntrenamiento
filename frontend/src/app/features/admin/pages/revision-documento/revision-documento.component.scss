@@ -99,6 +99,16 @@
     padding: 8px 24px 16px 24px;
 }
 
+.mensaje-info {
+    color: #f8fafc;
+    background: rgba(94, 255, 173, 0.12);
+    border: 1px solid rgba(94, 255, 173, 0.2);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    font-size: 0.87rem;
+}
+
 .documento-revision-row {
     display: flex;
     justify-content: space-between;
@@ -116,8 +126,26 @@
     box-shadow: 0 0 0 1px rgba(46, 204, 113, 0.12);
 }
 
+.btn-view.revisado {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.16) !important;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
 .btn-view.revisado svg {
-    color: #ffffff;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    stroke: #ffffff !important;
+    fill: none !important;
+}
+
+.btn-view.revisado svg path,
+.btn-view.revisado svg circle,
+.btn-view.revisado svg rect,
+.btn-view.revisado svg polyline {
+    stroke: #ffffff !important;
 }
 
 /* Borde coral si el documento está rechazado */
@@ -174,6 +202,17 @@
 
 .btn-view svg {
     color: #94a3b8;
+}
+
+.btn-view.selected {
+    background-color: rgba(255, 255, 255, 0.16) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+}
+
+.btn-view.selected svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    opacity: 1 !important;
 }
 
 .icon-check {

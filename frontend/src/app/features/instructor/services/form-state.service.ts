@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { DocumentKey, ProfileState, RegistrationDocumentState, RegistrationState } from '../../../shared/interfaces/registration.models';
+import { DocumentKey, ProfileState, RegistrationDocumentState, RegistrationState } from '../../auth/modules/dtos/registration.models';
 
-export type { DocumentKey, ProfileState, RegistrationDocumentState, RegistrationState } from '../../../shared/interfaces/registration.models';
+export type { DocumentKey, ProfileState, RegistrationDocumentState, RegistrationState } from '../../auth/modules/dtos/registration.models';
 
 @Injectable({
   providedIn: 'root',

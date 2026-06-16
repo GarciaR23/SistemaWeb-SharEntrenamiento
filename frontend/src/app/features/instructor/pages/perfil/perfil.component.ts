@@ -53,6 +53,34 @@ export class Perfil implements OnInit, OnDestroy {
 
   availableTimeSlots: string[] = [];
 
+  distritosFallback: string[] = [
+    'Ate',
+    'Barranco',
+    'Breña',
+    'Callao',
+    'Chorrillos',
+    'Comas',
+    'Jesús María',
+    'La Molina',
+    'La Victoria',
+    'Lince',
+    'Los Olivos',
+    'Miraflores',
+    'Pueblo Libre',
+    'San Borja',
+    'San Isidro',
+    'San Juan de Lurigancho',
+    'San Juan de Miraflores',
+    'San Luis',
+    'San Martín de Porres',
+    'San Miguel',
+    'Santa Anita',
+    'Santiago de Surco',
+    'Surquillo',
+    'Villa El Salvador',
+    'Villa María del Triunfo'
+  ];
+
   private readonly fieldLabels: Record<string, string> = {
     fullName: 'Nombre completo',
     specialty: 'Especialidad',
@@ -135,13 +163,22 @@ export class Perfil implements OnInit, OnDestroy {
 
     this.ubiService
       .getDistrictsByUbigeoPrefix('1401')
-      .subscribe((list: Ubication[]) => {
-        this.allDistricts = list.sort(
-          (a: Ubication, b: Ubication) =>
-            a.district.localeCompare(
-              b.district
-            )
-        );
+      .subscribe({
+        next: (list: Ubication[]) => {
+          if (list && list.length) {
+            this.allDistricts = list.sort(
+              (a: Ubication, b: Ubication) =>
+                a.district.localeCompare(
+                  b.district
+                )
+            );
+          } else {
+            this.setDistrictFallback();
+          }
+        },
+        error: () => {
+          this.setDistrictFallback();
+        }
       });
 
     this.profileForm.patchValue(
@@ -523,6 +560,12 @@ export class Perfil implements OnInit, OnDestroy {
       false;
   }
 
+  private setDistrictFallback(): void {
+    this.allDistricts = this.distritosFallback.map(
+      (district) => ({ district, code: '' })
+    );
+  }
+
   onDistrictChange(
     event: Event
   ): void {
@@ -541,5 +584,3 @@ export class Perfil implements OnInit, OnDestroy {
         : '';
   }
 }
-
-
