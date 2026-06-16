@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Certificado } from './certificado';
+import { Certificado } from './certificado.component';
 
 describe('Certificado', () => {
   let component: Certificado;
@@ -8,7 +8,7 @@ describe('Certificado', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Certificado]
+      declarations: [Certificado]
     })
     .compileComponents();
 
