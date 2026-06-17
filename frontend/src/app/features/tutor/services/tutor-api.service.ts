@@ -1,24 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { PacienteDto } from '../modules/paciente.model';
 
 export interface TutorDto {
     idTutor: number;
     idUsuario: number;
     nombreCompleto: string;
-}
-
-export interface PacienteDto {
-    idPaciente: number;
-    idTutor: number;
-    nombreCompleto: string;
-    urlImagenPaciente: string | null;
-    condicion: string;
-    gradoAutismo: string;
-    genero: string;
-    edad: number;
-    distrito: string;
-    direccion: string;
 }
 
 @Injectable({

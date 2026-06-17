@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { DocumentKey, ProfileState, RegistrationDocumentState, RegistrationState } from '../../auth/modules/dtos/registration.models';
-
-export type { DocumentKey, ProfileState, RegistrationDocumentState, RegistrationState } from '../../auth/modules/dtos/registration.models';
+import { DocumentKey, RegistrationState } from '../../auth/models/registration.model';
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class FormStateService {
   state: RegistrationState = {
     profile: {

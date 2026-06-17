@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 import { AuthApiService } from '../../../core/services/auth-api.service';
+import { HistorialRespuestaService } from '../../admin/services/historial-respuesta.service';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
 
 @Component({
@@ -18,6 +19,7 @@ export class Login {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private authApiService = inject(AuthApiService);
+  private historialService = inject(HistorialRespuestaService);
   private pendingRedirectUrl = '/';
 
   loginForm = this.fb.group({
@@ -33,6 +35,10 @@ export class Login {
   showSuccessModal = false;
   successMessage = 'Bienvenido, Usuario';
 
+  showSubsanacionModal = false;
+  documentosRechazados: string[] = [];
+  idInstructorPendiente: number | null = null;
+
   togglePassword() {
     this.showPassword = !this.showPassword;
   }
@@ -46,18 +52,40 @@ export class Login {
     this.router.navigate([this.pendingRedirectUrl]);
   }
 
+  irACorregirDocumentos(): void {
+    this.showSubsanacionModal = false;
+    this.router.navigate(['/instructor/documentos']);
+  }
+
+  obtenerDocumentosRechazados(): void {
+    if (!this.idInstructorPendiente) return;
+    this.historialService.obtenerDocumentosRechazados(this.idInstructorPendiente).subscribe({
+      next: (docs) => {
+        this.documentosRechazados = docs;
+        this.showSubsanacionModal = true;
+      },
+      error: () => {
+        this.errorMessage = 'No se pudieron obtener los documentos observados.';
+        this.showErrorModal = true;
+      }
+    });
+  }
+
   private mapAuthError(message: string): string {
     const normalized = (message || '').toLowerCase();
     if (/usuario inexistente|no existe|no encontrado/.test(normalized)) {
-      return 'Usuario inexistente. Verifica tu correo o regístrate si aún no tienes cuenta.';
+      return 'Usuario inexistente. Verifica tu correo o regístrate.';
     }
-    if (/cuenta no activada|no activada|pendiente.*activaci[oó]n|pendiente_validacion|pendiente de validaci[oó]n/.test(normalized)) {
-      return 'Tu cuenta no ha sido activada. Revisa tu correo para completar la validación.';
+    if (/pendiente de validaci[oó]n|pendiente_validacion/.test(normalized)) {
+      return 'Tu cuenta está pendiente de validación por el administrador.';
     }
-    if (/credenciales incorrectas|contraseñ(a|as) incorrect(a|as)|usuario o contraseña|password incorrecto|email o contraseña/.test(normalized)) {
-      return 'Credenciales incorrectas. Verifica tu correo y contraseña e inténtalo de nuevo.';
+    if (/subsanar|observaciones/.test(normalized)) {
+      return 'El administrador revisó tus documentos. Tienes observaciones que debes corregir.';
     }
-    return message || 'No se pudo iniciar sesión. Intenta de nuevo más tarde.';
+    if (/credenciales incorrectas/.test(normalized)) {
+      return 'Credenciales incorrectas. Verifica tu correo y contraseña.';
+    }
+    return message || 'No se pudo iniciar sesión.';
   }
 
   onSubmit() {
@@ -77,6 +105,14 @@ export class Login {
         this.loading = false;
 
         if (!response.success || !response.usuario) {
+          const msg = (response.message || '').toLowerCase();
+
+          if (/subsanar|observaciones/.test(msg)) {
+            this.idInstructorPendiente = response.idInstructor;
+            this.obtenerDocumentosRechazados();
+            return;
+          }
+
           this.errorMessage = this.mapAuthError(response.message || 'No se pudo iniciar sesión');
           this.showErrorModal = true;
           return;

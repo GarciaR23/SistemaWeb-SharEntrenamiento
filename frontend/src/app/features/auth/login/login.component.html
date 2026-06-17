@@ -17,12 +17,35 @@
 
   <ng-container *ngIf="showErrorModal">
     <div class="modal-backdrop" role="presentation" (click)="closeErrorModal()">
-      <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title" (click)="$event.stopPropagation()">
+      <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title"
+        (click)="$event.stopPropagation()">
         <button type="button" class="modal-close" aria-label="Cerrar mensaje" (click)="closeErrorModal()">×</button>
         <p class="modal-kicker error-kicker">Error de autenticación</p>
         <h3 id="auth-modal-title">{{ errorTitle }}</h3>
         <p class="modal-text">{{ errorMessage }}</p>
         <button type="button" class="btn-primary modal-button" (click)="closeErrorModal()">Intentar de nuevo</button>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Modal Subsanación -->
+  <ng-container *ngIf="showSubsanacionModal">
+    <div class="modal-backdrop" role="presentation">
+      <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="subsanacion-title">
+        <p class="modal-kicker error-kicker">Documentos observados</p>
+        <h3 id="subsanacion-title">El administrador ha revisado tus documentos</h3>
+        <p class="modal-text">Debes corregir los siguientes documentos:</p>
+        <ul class="documentos-rechazados">
+          <li *ngFor="let doc of documentosRechazados">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x">
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+            {{ doc }}
+          </li>
+        </ul>
+        <button type="button" class="btn-primary modal-button" (click)="irACorregirDocumentos()">Ver documentos</button>
       </div>
     </div>
   </ng-container>
@@ -39,7 +62,7 @@
         <div class="input-wrapper">
           <input type="email" formControlName="email" placeholder="ejemplo@entreno.com" autocomplete="email" />
           <span class="input-icon">
-             <img src="assets/icons/Icon_email.png" alt="Icono de correo" />
+            <img src="assets/icons/Icon_email.png" alt="Icono de correo" />
           </span>
         </div>
         <div class="field-error" *ngIf="loginForm.controls.email.touched && loginForm.controls.email.invalid">
@@ -51,8 +74,10 @@
       <label class="form-label">
         <span>Contraseña</span>
         <div class="input-wrapper">
-          <input [type]="showPassword ? 'text': 'password'" formControlName="password" placeholder="********" autocomplete="current-password" />
-          <button type="button" (click)="togglePassword()" class="icon-button" aria-label="Mostrar contraseña">👁</button>
+          <input [type]="showPassword ? 'text': 'password'" formControlName="password" placeholder="********"
+            autocomplete="current-password" />
+          <button type="button" (click)="togglePassword()" class="icon-button"
+            aria-label="Mostrar contraseña">👁</button>
         </div>
         <div class="field-error" *ngIf="loginForm.controls.password.touched && loginForm.controls.password.invalid">
           <small>La contraseña es obligatoria.</small>
@@ -63,10 +88,12 @@
         <a routerLink="/recuperar-contrasena" class="secondary-link">¿Olvidaste tu contraseña?</a>
       </div>
 
-      <button type="submit" [disabled]="loginForm.invalid || loading" class="btn-primary">{{ loading ? 'Iniciando...' : 'Iniciar Sesión' }}</button>
+      <button type="submit" [disabled]="loginForm.invalid || loading" class="btn-primary">{{ loading ? 'Iniciando...' :
+        'Iniciar Sesión' }}</button>
 
       <p class="register-link">
-        ¿No tienes una cuenta? <a [routerLink]="['/seleccion-rol']" routerLinkActive="router-link-active" (click)="closeMenu()">Registrarse</a>
+        ¿No tienes una cuenta? <a [routerLink]="['/seleccion-rol']" routerLinkActive="router-link-active"
+          (click)="closeMenu()">Registrarse</a>
       </p>
     </form>
   </div>

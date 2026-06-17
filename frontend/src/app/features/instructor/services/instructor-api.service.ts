@@ -1,17 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { InstructorDto } from '../models/instructor.model';
 
-export interface InstructorDto {
-    idInstructor: number;
-    idUsuario: number;
-    nombreCompleto: string;
-    urlImagenPerfil: string | null;
-    especialidad: string;
-    biografiaInstructor: string;
-    distrito: string;
-    direccion: string;
-}
 
 @Injectable({
     providedIn: 'root',
