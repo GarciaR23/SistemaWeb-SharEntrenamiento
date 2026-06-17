@@ -188,6 +188,11 @@ export class FormularioTutor implements OnInit, OnDestroy {
       return;
     }
 
+    if (this.contrasena.trim().length < 8) {
+      this.errorMessage = 'La contraseña debe tener al menos 8 caracteres.';
+      return;
+    }
+
     if (!this.fotoPaciente) {
       this.errorMessage = 'Debes subir una foto del paciente';
       return;
@@ -214,6 +219,11 @@ export class FormularioTutor implements OnInit, OnDestroy {
         correo: this.correo,
         clave: this.contrasena,
         fotoPaciente: this.fotoPaciente,
+        protocoloEmergencia: this.protocoloEmergencia,
+        sensibilidades: this.sensibilidadesSeleccionadas,
+        nombreContacto: this.nombreContacto,
+        telefonoContacto: this.telefonoContacto,
+        relacionContacto: this.relacionContacto,
       });
 
       localStorage.setItem('rolSeleccionado', 'tutor');
