@@ -16,6 +16,12 @@ backend/out/
 *.zip
 .DS_Store
 
+# Spring Boot Configuration & Secrets
+backend/src/main/resources/application.properties
+backend/src/main/resources/application-*.properties
+backend/src/test/resources/application.properties
+backend/src/test/resources/application-*.properties
+
 # Angular / Node.js
 frontend/node_modules/
 frontend/dist/
