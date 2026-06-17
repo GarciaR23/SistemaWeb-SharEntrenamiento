@@ -89,13 +89,13 @@
           <label class="field-group" [class.invalid]="isInvalid('district')">
             <span>Distrito</span>
 
-            <select formControlName="district" (change)="onDistrictChange($event)">
+            <select formControlName="district">
 
               <option value="">
                 Selecciona tu distrito
               </option>
 
-              <option *ngFor="let d of allDistricts" [value]="d.district">
+              <option *ngFor="let d of allDistricts" [value]="toTitleCase(d.district)">
 
                 {{ d.district | titlecase }}
 

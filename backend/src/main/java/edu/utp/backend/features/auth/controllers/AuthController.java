@@ -23,6 +23,8 @@ import edu.utp.backend.features.auth.services.AuthService;
 import edu.utp.backend.features.auth.services.PasswordRecoveryService;
 import edu.utp.backend.features.instructor.entities.Instructor;
 import edu.utp.backend.features.instructor.repositories.InstructorRepository;
+import edu.utp.backend.features.servicio.entities.ServicioInstructor;
+import edu.utp.backend.features.servicio.repositories.ServicioInstructorRepository;
 import edu.utp.backend.features.auth.dtos.RegistroTutorRequest;
 import edu.utp.backend.features.auth.dtos.RegistroTutorResponse;
 import edu.utp.backend.features.tutor.entities.Tutor;
@@ -49,6 +51,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final TutorRepository tutorRepository;
     private final JwtService jwtService;
+    private final ServicioInstructorRepository serviInstructorRepo;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
@@ -81,6 +84,15 @@ public class AuthController {
         instructor.setDistrito(request.distrito());
         instructor.setDireccion(request.direccion());
         Instructor instructorGuardado = instructorRepository.save(instructor);
+
+        ServicioInstructor serviInstructor = new ServicioInstructor();
+        serviInstructor.setIdInstructor(instructorGuardado.getIdInstructor());
+        serviInstructor.setTarifaHora(request.tarifaHora());
+        serviInstructor.setHorarioPreferencia(request.horarioPreferencia());
+        serviInstructor.setDiaDisponible(request.diaDisponible());
+        serviInstructor.setHorarioInicio(request.horarioInicio());
+        serviInstructor.setHorarioFinal(request.horarioFinal());
+        serviInstructorRepo.save(serviInstructor);
 
         UsuarioResponse usuarioResponse = new UsuarioResponse(
                 usuarioGuardado.getIdUsuario(),

@@ -159,6 +159,10 @@ export class Perfil implements OnInit, OnDestroy {
     });
   }
 
+  toTitleCase(value: string): string {
+    return this.titleCase.transform(value);
+  }
+
   ngOnInit(): void {
 
     this.ubiService
@@ -201,11 +205,7 @@ export class Perfil implements OnInit, OnDestroy {
               value.specialty ?? '',
 
             district:
-              value.district
-                ? this.titleCase.transform(
-                  value.district
-                )
-                : '',
+              value.district ?? '',
 
             address:
               value.address ?? '',
@@ -566,21 +566,4 @@ export class Perfil implements OnInit, OnDestroy {
     );
   }
 
-  onDistrictChange(
-    event: Event
-  ): void {
-
-    const target =
-      event.target as HTMLSelectElement;
-
-    const value =
-      target.value;
-
-    this.formState.state.profile.district =
-      value
-        ? this.titleCase.transform(
-          value
-        )
-        : '';
-  }
 }

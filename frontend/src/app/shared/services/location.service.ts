@@ -12,7 +12,7 @@ export interface Ubication {
   providedIn: 'root',
 })
 export class Location {
-  private apiUrl = 'https://free.e-api.net.pe/ubigeos.json';
+  private apiUrl = 'http://localhost:8080/api/ubicacion/ubigeos';
   private cache$?: Observable<Ubication[]>;
 
   constructor(private http: HttpClient) {

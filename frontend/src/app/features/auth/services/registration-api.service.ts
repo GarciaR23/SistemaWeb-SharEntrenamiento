@@ -88,6 +88,11 @@ export class RegistrationApiService {
     email: string;
     clave: string;
     documentos: Record<DocumentKey, File | null>;
+    tarifaHora: number;
+    horarioPreferencia: string;
+    diaDisponible: string;
+    horarioInicio: string;
+    horarioFinal: string;
   }): Promise<void> {
     let urlImagenPerfil: string | null = null;
     if (payload.profileImageFile) {
@@ -105,6 +110,11 @@ export class RegistrationApiService {
         biografia: payload.biografia,
         distrito: payload.distrito,
         direccion: payload.direccion,
+        tarifaHora: payload.tarifaHora,
+        horarioPreferencia: payload.horarioPreferencia,
+        diaDisponible: payload.diaDisponible,
+        horarioInicio: payload.horarioInicio,
+        horarioFinal: payload.horarioFinal,
       }),
     );
 
