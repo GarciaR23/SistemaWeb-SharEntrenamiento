@@ -113,6 +113,11 @@ export class Cuenta implements OnInit, OnDestroy {
           titulo: this.formState.state.documents.titulo.file,
           antecedentes: this.formState.state.documents.antecedentes.file,
         },
+        tarifaHora: Number(this.formState.state.profile.rate),
+        horarioPreferencia: this.formState.state.profile.selectedShift.join(','),
+        diaDisponible: this.formState.state.profile.selectedDay.join(','),
+        horarioInicio: this.formState.state.profile.fromTime,
+        horarioFinal: this.formState.state.profile.toTime,
       });
 
       this.modalType = 'success';
