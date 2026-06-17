@@ -44,6 +44,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/public/status").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/cloudinary/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/admin/revisiones/instructor/*/documentos-rechazados")
+                        .permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/instructores", "/api/tutores", "/api/pacientes",
                                 "/api/documentos")
                         .permitAll()

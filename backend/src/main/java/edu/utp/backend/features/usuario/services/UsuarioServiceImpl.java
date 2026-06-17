@@ -6,8 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.utp.backend.features.auth.dtos.UsuarioRequest;
-import edu.utp.backend.features.auth.dtos.UsuarioResponse;
+import edu.utp.backend.features.usuario.dtos.*;
 import edu.utp.backend.features.usuario.entities.Usuario;
 import edu.utp.backend.features.usuario.enums.EstadoCuenta;
 import edu.utp.backend.features.usuario.enums.Rol;

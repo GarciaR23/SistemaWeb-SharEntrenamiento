@@ -1,4 +1,4 @@
-package edu.utp.backend.features.auth.controllers;
+package edu.utp.backend.features.usuario.controllers;
 
 import java.util.List;
 
@@ -12,8 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import edu.utp.backend.features.auth.dtos.UsuarioRequest;
-import edu.utp.backend.features.auth.dtos.UsuarioResponse;
+import edu.utp.backend.features.usuario.dtos.*;
 import edu.utp.backend.features.usuario.services.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

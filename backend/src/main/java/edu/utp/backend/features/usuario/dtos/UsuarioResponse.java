@@ -1,4 +1,4 @@
-package edu.utp.backend.features.auth.dtos;
+package edu.utp.backend.features.usuario.dtos;
 
 import java.time.ZonedDateTime;
 
