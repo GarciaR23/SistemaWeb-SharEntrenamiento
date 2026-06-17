@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TutorApiService, TutorDto, PacienteDto } from '../../services/tutor-api.service';
-import { InstructorApiService, InstructorDto } from '../../../instructor/services/instructor-api.service';
+import { TutorApiService, TutorDto } from '../../services/tutor-api.service';
+import { PacienteDto } from '../../modules/paciente.model';
+import { InstructorDto } from '../../../instructor/models/instructor.model';
+import { InstructorApiService } from '../../../instructor/services/instructor-api.service';
 
 @Component({
   selector: 'app-inicio',

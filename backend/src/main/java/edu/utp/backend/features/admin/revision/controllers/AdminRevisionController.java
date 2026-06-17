@@ -36,4 +36,15 @@ public class AdminRevisionController {
             @PathVariable Long idDocumento) {
         return ResponseEntity.ok(adminRevisionService.obtenerHistorialRechazosPorDocumento(idDocumento));
     }
+
+    @PostMapping("/instructor/{idInstructor}/finalizar")
+    public ResponseEntity<Map<String, String>> finalizarRevision(@PathVariable Long idInstructor) {
+        adminRevisionService.finalizarRevision(idInstructor);
+        return ResponseEntity.ok(Map.of("mensaje", "Revisión finalizada"));
+    }
+
+    @GetMapping("/instructor/{idInstructor}/documentos-rechazados")
+    public ResponseEntity<List<String>> obtenerDocumentosRechazados(@PathVariable Long idInstructor) {
+        return ResponseEntity.ok(adminRevisionService.obtenerDocumentosRechazados(idInstructor));
+    }
 }

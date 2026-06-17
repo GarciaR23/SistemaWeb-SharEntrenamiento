@@ -15,6 +15,7 @@ export interface LoginResponse {
   message: string;
   token: string;
   usuario: UsuarioAuth | null;
+  idInstructor: number | null;
 }
 
 export interface ApiMessage {

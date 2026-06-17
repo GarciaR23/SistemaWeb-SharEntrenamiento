@@ -57,7 +57,7 @@ export const routes: Routes = [
         children: [
           { path: '', redirectTo: 'inicio', pathMatch: 'full' },
           { path: 'inicio', component: AdminInicio },
-          { path: 'instructores', component: Solicitud },
+          { path: 'solicitud-instructor', component: Solicitud },
           { path: 'reporte-instructor', component: ReporteInstructor },
           { path: 'reporte-paciente', component: ReportePaciente }
         ]

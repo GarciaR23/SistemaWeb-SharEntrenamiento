@@ -14,7 +14,7 @@
             </div>
             <div class="metric-box">
                 <span class="metric-label">HOY</span>
-                <span class="metric-value blue-neon">+{{ listaSolicitudes.length > 0 ? 3 : 0 }}</span>
+                <span class="metric-value blue-neon">+{{ pendientesHoy }}</span>
             </div>
         </div>
     </header>
@@ -74,4 +74,4 @@
 
 </div>
 
-<app-revision-documento #componenteRevision></app-revision-documento>
+<app-revision-documento #componenteRevision (solicitudCompletada)="removerCard($event)"></app-revision-documento>

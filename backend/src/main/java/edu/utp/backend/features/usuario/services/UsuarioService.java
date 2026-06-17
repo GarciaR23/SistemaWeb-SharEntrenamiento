@@ -2,8 +2,7 @@ package edu.utp.backend.features.usuario.services;
 
 import java.util.List;
 
-import edu.utp.backend.features.auth.dtos.UsuarioRequest;
-import edu.utp.backend.features.auth.dtos.UsuarioResponse;
+import edu.utp.backend.features.usuario.dtos.*;
 
 public interface UsuarioService {
     List<UsuarioResponse> findAll();

@@ -50,22 +50,34 @@ public class AdminRevisionService {
         verificarEstadoInstructor(idInstructor);
     }
 
+    public List<String> obtenerDocumentosRechazados(Long idInstructor) {
+        List<Documento> documentos = documentoRepository.findByIdInstructor(idInstructor);
+        return documentos.stream()
+                .filter(d -> "rechazado".equals(d.getEstadoAprobacion()))
+                .map(Documento::getNombreDocumento)
+                .toList();
+    }
+
+    @Transactional
+    public void finalizarRevision(Long idInstructor) {
+        verificarEstadoInstructor(idInstructor);
+    }
+
     private void verificarEstadoInstructor(Long idInstructor) {
         long documentosAprobados = documentoRepository.countByIdInstructorAndEstadoAprobacion(idInstructor, "aprobado");
 
         Long idUsuario = instructorRepository.findById(idInstructor.intValue())
                 .map(instructor -> instructor.getIdUsuario())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "No se encontró el instructor con ID: " + idInstructor));
+                .orElseThrow(
+                        () -> new IllegalArgumentException("No se encontró el instructor con ID: " + idInstructor));
 
         Usuario usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "No se encontró el usuario con ID: " + idUsuario));
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró el usuario con ID: " + idUsuario));
 
         if (documentosAprobados == 4) {
             usuario.setEstadoCuenta(EstadoCuenta.activo);
         } else {
-            usuario.setEstadoCuenta(EstadoCuenta.pendiente_validacion);
+            usuario.setEstadoCuenta(EstadoCuenta.pendiente_subsanacion);
         }
 
         usuarioRepository.save(usuario);

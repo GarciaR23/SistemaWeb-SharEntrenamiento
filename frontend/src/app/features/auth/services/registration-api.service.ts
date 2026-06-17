@@ -1,62 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-
-import { DocumentKey } from '../modules/dtos/registration.models';
 import { FileService } from '../../../core/services/file.service';
-
-interface RegistroInstructorResponse {
-  success: boolean;
-  message: string;
-  usuario: {
-    idUsuario: number;
-    email: string;
-    rol: string;
-    estadoCuenta: string;
-    fechaRegistro: string;
-  };
-  idInstructor: number;
-}
-
-interface RegistroTutorResponse {
-  success: boolean;
-  message: string;
-  token: string;
-  usuario: {
-    idUsuario: number;
-    email: string;
-    rol: string;
-    estadoCuenta: string;
-    fechaRegistro: string;
-  };
-  idTutor: number;
-}
-
-interface PacienteDto {
-  idPaciente: number | null;
-  idTutor: number;
-  nombreCompleto: string;
-  urlImagenPaciente: string | null;
-  condicion: string;
-  gradoAutismo: string;
-  genero: string;
-  edad: number;
-  distrito: string;
-  direccion: string;
-}
-
-interface DocumentoDto {
-  idDocumento: number | null;
-  idInstructor: number;
-  nombreDocumento: string;
-  urlArchivo: string;
-  estadoAprobacion: string;
-  fechaSubida: string | null;
-}
+import { DocumentKey } from '../models/registration.model';
+import { RegistroTutorResponse } from '../models/response-tutor.model';
+import { RegistroInstructorResponse } from '../models/response-instructor.model';
+import { DocumentoDto } from '../../admin/models/documento.model';
+import { PacienteDto } from '../../tutor/modules/paciente.model';
 
 @Injectable({
   providedIn: 'root',
 })
+
 export class RegistrationApiService {
   private readonly registroUrl = 'http://localhost:8080/api/auth/register';
   private readonly pacienteUrl = 'http://localhost:8080/api/pacientes';
