@@ -1,5 +1,7 @@
 package edu.utp.backend.features.auth.services;
 
+import java.time.ZonedDateTime;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +44,10 @@ public class AuthServiceImpl implements AuthService {
                     if (usuario.getEstadoCuenta() != EstadoCuenta.activo) {
                         return new LoginResponse(false, "Cuenta suspendida", null, null, null);
                     }
+
+                    usuario.setUltimoLogin(ZonedDateTime.now());
+                    usuarioRepository.save(usuario);
+
                     String token = jwtService.GenerarToken(usuario);
                     return new LoginResponse(true, "Autenticación exitosa", token, toResponse(usuario), null);
                 })

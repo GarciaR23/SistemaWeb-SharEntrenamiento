@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ConteoSolicitudes, SolicitudesService } from '../../services/solicitudes.service';
+import { MonitoreoService } from '../../services/monitoreo.service';
 
 @Component({
   selector: 'app-admin-inicio',
@@ -11,17 +12,26 @@ import { ConteoSolicitudes, SolicitudesService } from '../../services/solicitude
 })
 export class Inicio implements OnInit {
   totalPendientes: number = 0;
-  // pendientesHoy: number = 0;
+  totalActivos: number = 0;
 
-  constructor(private solicitudesService: SolicitudesService) { }
+  constructor(
+    private solicitudesService: SolicitudesService,
+    private monitoreoService: MonitoreoService
+  ) { }
 
   ngOnInit(): void {
     this.solicitudesService.obtenerConteo().subscribe({
       next: (conteo: ConteoSolicitudes) => {
         this.totalPendientes = conteo.totalPendientes;
-        // this.pendientesHoy = conteo.pendientesHoy;
       },
-      error: (err) => console.error('Error al cargar conteo:', err)
+      error: (err) => console.error('Error al cargar conteo:', err),
+    });
+
+    this.monitoreoService.obtenerConteoInstructor().subscribe({
+      next: (conteo) => {
+        this.totalActivos = conteo.activoInstructor;
+      },
+      error: (err) => console.error('Error al cargar activos:', err),
     });
   }
 }

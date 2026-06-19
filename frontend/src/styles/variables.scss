@@ -1,38 +1,81 @@
-// Colores principales
-$color-primary: #00E5A0;        // Verde Neón / Cian
-$color-primary-dark: #00A98A;   // Turquesa oscuro
-$color-primary-light: #4FEFDA;  // Turquesa claro
-$color-secondary: #004883;        // Azul oscuro
+// ==========================================================================
+// VARIABLES GLOBALES DEL SISTEMA (DARK THEME & NEON INFRASTRUCTURE)
+// ==========================================================================
 
-// Colores oscuros (Dark Mode)
-$color-bg-dark: #0F1419;        // Fondo muy oscuro
-$color-bg-card: #1A1F2E;        // Fondo de tarjeta
-$color-bg-input: #242B3A;       // Fondo de inputs
+// --------------------------------------------------------------------------
+// Colores de Fondo y Contenedores (Dark Mode Core)
+// --------------------------------------------------------------------------
+$color-bg-main: #0c0f17; // Fondo profundo de la aplicación
+$color-bg-dark: #0f1419; // Fondo oscuro secundario
+$color-bg-card: #121824; // Contenedor de tarjetas y bloques analíticos
+$color-bg-input: #171e2e; // Fondo de campos de entrada y botones secundarios
 
-// Colores de texto
-$color-text-primary: #FFFFFF;   // Blanco principal
-$color-text-secondary: #B0B8C8; // Gris claro
-$color-text-tertiary: #7C8494;  // Gris más oscuro
+// --------------------------------------------------------------------------
+// Colores de Marca y Acentuaciones Neón
+// --------------------------------------------------------------------------
+$color-primary: #00E5A0; // Verde Neón / Cian original
+$color-primary-dark: #00A98A; // Turquesa oscuro
+$color-primary-light: #4FEFDA; // Turquesa claro
+$color-secondary: #004883; // Azul oscuro de soporte
 
-// Colores de estado
-$color-success: #10B981;        // Verde
-$color-error: #EF4444;          // Rojo
-$color-warning: #F59E0B;        // Amarillo/Naranja
-$color-info: #3B82F6;           // Azul
+// Luces e Indicadores de Estado Activos
+$neon-green: #22c55e; // Verde Neón para estados activos y éxitos
+$neon-green-dim: rgba(34, 197, 94, 0.1);
 
-// Colores de bordes
-$color-border: #2D3748;         // Borde oscuro
-$color-border-light: #4A5568;   // Borde más claro
+$accent-blue: #38bdf8; // Azul Eléctrico para info, servicios y links
+$accent-blue-dim: rgba(56, 189, 248, 0.1);
 
-// Tipografía
+$accent-rose: #f87171; // Rosa/Rojo Neón para alertas y bloqueos
+$accent-rose-dim: rgba(248, 113, 113, 0.1);
+
+$status-orange: #fb923c; // Naranja para advertencias y estados intermedios
+
+// Sincronización con Estados Semánticos Tradicionales
+$color-success: $neon-green;
+$color-error: $accent-rose;
+$color-warning: $status-orange;
+$color-info: #3B82F6;
+
+// --------------------------------------------------------------------------
+// Sistema de Paleta Tipográfica
+// --------------------------------------------------------------------------
+$color-txt-main: #ffffff; // Texto principal (Contraste Máximo)
+$color-txt-muted: #8e9aa8; // Texto secundario / Desactivado pasivo
+$color-txt-dim: #546274; // Texto para subtítulos de tablas y códigos ID
+
+// Compatibilidad heredada
+$color-text-primary: $color-txt-main;
+$color-text-secondary: #b0b8c8;
+$color-text-tertiary: #7c8494;
+
+// --------------------------------------------------------------------------
+// Estructura de Bordes y Líneas Divisorias
+// --------------------------------------------------------------------------
+$border-subtle: rgba(255, 255, 255, 0.04); // Línea sutil para filas y cards
+$color-border: #2D3748; // Borde estructural oscuro
+$color-border-light: #4A5568; // Borde estructural resaltado
+
+// --------------------------------------------------------------------------
+// Tipografía (Fuentes y Escalas)
+// --------------------------------------------------------------------------
 $font-family-primary: 'Plus Jakarta Sans', sans-serif;
-$font-size-base: 18px;
-$font-size-lg: 16px;
+
+// Pesos de Fuente
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+$font-weight-extrabold: 800;
+
+// Escala de Tamaños Estáticos
+$font-size-base: 16px;
+$font-size-lg: 18px;
 $font-size-xl: 24px;
 $font-size-2xl: 48px;
 $font-size-3xl: 72px;
 
-// Tamaños de fuente responsivos
+// Mapa de Tamaños Responsivos
 $font-sizes: (
   'xs': 12px,
   'sm': 14px,
@@ -43,15 +86,9 @@ $font-sizes: (
   '3xl': 32px
 );
 
-// Pesos de fuente
-$font-weight-light: 300;
-$font-weight-normal: 400;
-$font-weight-medium: 500;
-$font-weight-semibold: 600;
-$font-weight-bold: 700;
-$font-weight-extrabold: 800;
-
-// Espaciado
+// --------------------------------------------------------------------------
+// Sistema de Espaciados (Layout & Padding)
+// --------------------------------------------------------------------------
 $spacing-xs: 4px;
 $spacing-sm: 8px;
 $spacing-md: 16px;
@@ -68,33 +105,44 @@ $spacings: (
   '2xl': 48px
 );
 
-// Bordes redondeados
+// --------------------------------------------------------------------------
+// Geometría y Radio de Bordes (Border Radius)
+// --------------------------------------------------------------------------
 $border-radius-sm: 4px;
 $border-radius-md: 8px;
 $border-radius-lg: 12px;
 $border-radius-xl: 16px;
 $border-radius-full: 9999px;
 
-// Sombras
+// --------------------------------------------------------------------------
+// Efectos de Elevación y Profundidad (Shadows)
+// --------------------------------------------------------------------------
 $shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
 $shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
 $shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 $shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
 $shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.15);
 
-// Transiciones
+// --------------------------------------------------------------------------
+// Dinámicas de Animación (Transitions)
+// --------------------------------------------------------------------------
 $transition-fast: 150ms ease-in-out;
 $transition-base: 250ms ease-in-out;
 $transition-slow: 350ms ease-in-out;
+$transition-smooth: all 0.2s ease-in-out; // Transición fluida para hovers
 
-// Media queries
+// --------------------------------------------------------------------------
+// Puntos de Quiebre Adaptativos (Media Query Breakpoints)
+// --------------------------------------------------------------------------
 $breakpoint-sm: 640px;
 $breakpoint-md: 768px;
 $breakpoint-lg: 1024px;
 $breakpoint-xl: 1280px;
 $breakpoint-2xl: 1536px;
 
-// Zindex
+// --------------------------------------------------------------------------
+// Control de Capas Superpuestas (Z-Index Architecture)
+// --------------------------------------------------------------------------
 $z-base: 1;
 $z-dropdown: 100;
 $z-sticky: 200;
@@ -103,6 +151,8 @@ $z-modal-backdrop: 400;
 $z-modal: 500;
 $z-tooltip: 600;
 
-// Altura
+// --------------------------------------------------------------------------
+// Dimensiones y Maquetación del Viewport (Layout Sizing)
+// --------------------------------------------------------------------------
 $header-height: 40px;
 $extra-spacing: 20px;
