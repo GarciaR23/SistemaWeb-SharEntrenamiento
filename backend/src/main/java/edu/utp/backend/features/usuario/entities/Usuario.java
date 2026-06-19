@@ -47,4 +47,7 @@ public class Usuario {
 
     @Column(name = "fecha_registro", updatable = false)
     private ZonedDateTime fechaRegistro = ZonedDateTime.now();
+
+    @Column(name = "ultimo_login")
+    private ZonedDateTime ultimoLogin;
 }
