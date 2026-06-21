@@ -30,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
                 .filter(usuario -> passwordEncoder.matches(request.clave(), usuario.getClave()))
                 .map(usuario -> {
                     if (usuario.getEstadoCuenta() == EstadoCuenta.pendiente_validacion) {
-                        return new LoginResponse(false, "Cuenta pendiente de validación", null, null, null);
+                        return new LoginResponse(false, "Cuenta pendiente de validación", null, null, null, usuario.getEstadoCuenta().name());
                     }
                     if (usuario.getEstadoCuenta() == EstadoCuenta.pendiente_subsanacion) {
                         Long idInstructor = instructorRepository.findByIdUsuario(usuario.getIdUsuario())
@@ -38,20 +38,20 @@ public class AuthServiceImpl implements AuthService {
                                 .orElse(null);
                         return new LoginResponse(false,
                                 "El administrador ha revisado tus documentos. Tienes observaciones pendientes de subsanar.",
-                                null, null, idInstructor);
+                                null, null, idInstructor, usuario.getEstadoCuenta().name());
                     }
 
                     if (usuario.getEstadoCuenta() != EstadoCuenta.activo) {
-                        return new LoginResponse(false, "Cuenta suspendida", null, null, null);
+                        return new LoginResponse(false, "Cuenta suspendida", null, null, null, usuario.getEstadoCuenta().name());
                     }
 
                     usuario.setUltimoLogin(ZonedDateTime.now());
                     usuarioRepository.save(usuario);
 
                     String token = jwtService.GenerarToken(usuario);
-                    return new LoginResponse(true, "Autenticación exitosa", token, toResponse(usuario), null);
+                    return new LoginResponse(true, "Autenticación exitosa", token, toResponse(usuario), null, usuario.getEstadoCuenta().name());
                 })
-                .orElse(new LoginResponse(false, "Credenciales inválidas", null, null, null));
+                .orElse(new LoginResponse(false, "Credenciales inválidas", null, null, null, null));
     }
 
     private UsuarioResponse toResponse(Usuario usuario) {

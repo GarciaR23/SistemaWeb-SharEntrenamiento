@@ -12,6 +12,11 @@
     #090d14;
 }
 
+// Función para obtener tamaños de fuente responsivos
+@function font-size($key) {
+  @return map-get($font-sizes, $key);
+}
+
 // Shell principal
 @mixin onboarding-shell {
   width: min(960px, 100%);
@@ -246,4 +251,89 @@
   border: 1px solid rgba(239, 68, 68, 0.18);
   padding: 8px 12px;
   border-radius: $border-radius-md;
+}
+
+@mixin head-span {
+  font-family: $font-family-primary;
+  font-size: font-size(xs);
+  font-weight: $font-weight-normal;
+  color: #BACBBF;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+@mixin pill-status(
+  $color: #ffd45c,
+  $bg: rgba(255, 169, 0, 0.08),
+  $border: rgba(255, 169, 0, 0.55),
+  $shadow: rgba(255, 169, 0, 0.18),
+  $font-size: font-size('xs')
+) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  color: $color;
+  background: $bg;
+  border: 1px solid $border;
+  box-shadow: 0 0 12px $shadow;
+
+  border-radius: 999px;
+  padding: 6px 11px;
+
+  font-size: $font-size;
+  font-weight: $font-weight-extrabold;
+
+  white-space: nowrap;
+  width: fit-content;
+}
+
+@mixin status-point(
+  $size: 8px,
+  $color: #ffae16,
+  $shadow: rgba(255, 174, 22, 0.9)
+) {
+  width: $size;
+  height: $size;
+
+  background: $color;
+  border-radius: 50%;
+  box-shadow: 0 0 10px $shadow;
+
+  flex: 0 0 auto;
+}
+
+@mixin button-upload(
+  $bg: #111d31,
+  $bg-hover: #162844,
+  $border: #173a68,
+  $border-hover: #235895,
+  $text: #ffffff,
+  $gap: 8px,
+  $padding: 10px 14px,
+  $radius: 7px
+) {
+  display: inline-flex;
+  align-items: center;
+  gap: $gap;
+
+  border: 1px solid $border;
+  background: $bg;
+  color: $text;
+
+  border-radius: $radius;
+  padding: $padding;
+
+  font-weight: $font-weight-bold;
+  cursor: pointer;
+  white-space: nowrap;
+
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+
+  &:hover {
+    background: $bg-hover;
+    border-color: $border-hover;
+    transform: translateY(-1px);
+  }
 }
