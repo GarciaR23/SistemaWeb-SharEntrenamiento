@@ -3,8 +3,10 @@
     <header class="solicitudes-header">
         <div>
             <h1>Solicitudes de Registro</h1>
-            <p>Gestione las peticiones de nuevos profesionales que desean unirse a la plataforma Elite de
-                ShareEntrenamiento.</p>
+            <p>
+                Gestione las peticiones de nuevos profesionales que desean unirse a la plataforma Elite de
+                ShareEntrenamiento.
+            </p>
         </div>
 
         <div class="metrics-wrapper">
@@ -12,9 +14,15 @@
                 <span class="metric-label">PENDIENTES</span>
                 <span class="metric-value alert-neon">{{ totalPendientes }}</span>
             </div>
+
             <div class="metric-box">
                 <span class="metric-label">HOY</span>
                 <span class="metric-value blue-neon">+{{ pendientesHoy }}</span>
+            </div>
+
+            <div class="metric-box metric-warning">
+                <span class="metric-label">POR VENCER</span>
+                <span class="metric-value warning-neon">{{ solicitudesPorVencer }}</span>
             </div>
         </div>
     </header>
@@ -24,7 +32,7 @@
     </div>
 
     <section *ngIf="!cargando" class="cards-grid">
-        <div class="card-solicitud" *ngFor="let solicitud of listaSolicitudes">
+        <div class="card-solicitud" *ngFor="let solicitud of listaSolicitudes" [ngClass]="obtenerClaseCard(solicitud)">
 
             <div class="card-header-info">
                 <div class="avatar-container">
@@ -37,7 +45,9 @@
                     <p class="specialty-text">{{ solicitud.especialidad }}</p>
                 </div>
 
-                <span class="badge-status-pending">{{ solicitud.estadoUsuario | uppercase }}</span>
+                <span [ngClass]="obtenerClaseEstado(solicitud)">
+                    {{ solicitud.estadoUsuario | uppercase }}
+                </span>
             </div>
 
             <div class="card-body-details">
@@ -48,6 +58,15 @@
                         <path d="M16 2v4M8 2v4M3 10h18" />
                     </svg>
                     <span>Enviado: {{ solicitud.fechaUltimoEnvio | date:'dd MMM, yyyy' }}</span>
+                </div>
+
+                <div class="detail-row" [ngClass]="obtenerClaseVencimiento(solicitud)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        class="icon-inline">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    <span>{{ obtenerTextoVencimiento(solicitud) }}</span>
                 </div>
 
                 <div class="detail-row">

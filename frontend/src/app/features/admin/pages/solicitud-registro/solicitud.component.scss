@@ -63,7 +63,16 @@
             &.blue-neon {
                 color: var.$color-info;
             }
+
+            &.warning-neon {
+                color: #f59e0b;
+            }
         }
+    }
+
+    .metric-warning {
+        border-color: rgba(245, 158, 11, 0.25) !important;
+        background: rgba(245, 158, 11, 0.08) !important;
     }
 }
 
@@ -83,6 +92,25 @@
     overflow: hidden;
     box-sizing: border-box;
     padding: 30px;
+
+    &.card-approved {
+        border-color: rgba(34, 197, 94, 0.45) !important;
+        box-shadow: 0 0 18px rgba(34, 197, 94, 0.10);
+    }
+
+    &.card-pending {
+        border-color: rgba(245, 158, 11, 0.45) !important;
+        box-shadow: 0 0 18px rgba(245, 158, 11, 0.10);
+    }
+
+    &.card-rejected {
+        border-color: rgba(239, 68, 68, 0.45) !important;
+        box-shadow: 0 0 18px rgba(239, 68, 68, 0.10);
+    }
+
+    &.card-default {
+        border-color: rgba(148, 163, 184, 0.25) !important;
+    }
 
     .card-header-info {
         display: flex;
@@ -129,18 +157,44 @@
             }
         }
 
-        .badge-status-pending {
+        .badge-status-pending,
+        .badge-status-approved,
+        .badge-status-rejected,
+        .badge-status-default {
             position: absolute;
             top: 0;
             right: 0;
-            background-color: rgba(255, 255, 255, 0.03);
-            color: var.$color-primary;
             font-size: 11px;
             font-weight: 700;
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: var.$border-radius-full;
             letter-spacing: 0.5px;
             border: 1px solid rgba(255, 255, 255, 0.05);
+            text-transform: uppercase;
+        }
+
+        .badge-status-approved {
+            background-color: rgba(34, 197, 94, 0.12);
+            color: #22c55e;
+            border-color: rgba(34, 197, 94, 0.35);
+        }
+
+        .badge-status-pending {
+            background-color: rgba(245, 158, 11, 0.12);
+            color: #f59e0b;
+            border-color: rgba(245, 158, 11, 0.35);
+        }
+
+        .badge-status-rejected {
+            background-color: rgba(239, 68, 68, 0.12);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.35);
+        }
+
+        .badge-status-default {
+            background-color: rgba(148, 163, 184, 0.12);
+            color: #94a3b8;
+            border-color: rgba(148, 163, 184, 0.35);
         }
     }
 
@@ -159,6 +213,33 @@
             .icon-inline {
                 margin-right: 10px;
                 color: var.$color-text-tertiary;
+            }
+
+            &.expiration-ok {
+                color: #22c55e !important;
+                font-weight: 700;
+
+                .icon-inline {
+                    color: #22c55e !important;
+                }
+            }
+
+            &.expiration-warning {
+                color: #f59e0b !important;
+                font-weight: 700;
+
+                .icon-inline {
+                    color: #f59e0b !important;
+                }
+            }
+
+            &.expiration-expired {
+                color: #ef4444 !important;
+                font-weight: 700;
+
+                .icon-inline {
+                    color: #ef4444 !important;
+                }
             }
         }
     }

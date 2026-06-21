@@ -6,6 +6,7 @@ import { SolicitudInstructor } from '../models/solicitud.model';
 export interface ConteoSolicitudes {
     totalPendientes: number;
     pendientesHoy: number;
+    pendientesPorVencer: number;
 }
 
 @Injectable({
