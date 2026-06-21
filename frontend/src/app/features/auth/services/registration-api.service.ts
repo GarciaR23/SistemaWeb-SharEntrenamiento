@@ -67,7 +67,6 @@ export class RegistrationApiService {
         const uploadedImage: any = await firstValueFrom(
           this.fileService.uploadImage(payload.fotoPaciente),
         );
-
         console.log('Respuesta Cloudinary:', uploadedImage);
 
         fotoUrl =
