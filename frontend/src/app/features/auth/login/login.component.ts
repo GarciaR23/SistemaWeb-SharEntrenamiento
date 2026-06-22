@@ -6,6 +6,8 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthApiService } from '../../../core/services/auth-api.service';
 import { HistorialRespuestaService } from '../../admin/services/historial-respuesta.service';
 import { HeaderComponent } from '../../../shared/components/header/header.component';
+import { DocumentoObservado } from '../models/documento-observado.model';
+import { SubsanacionDocumentosService } from '../services/subsanacion-documentos.service';
 
 @Component({
   selector: 'app-login',
@@ -15,11 +17,12 @@ import { HeaderComponent } from '../../../shared/components/header/header.compon
   styleUrls: ['./login.component.scss'],
 })
 export class Login {
-
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private authApiService = inject(AuthApiService);
   private historialService = inject(HistorialRespuestaService);
+  private subsanacionDocumentosService = inject(SubsanacionDocumentosService);
+
   private pendingRedirectUrl = '/';
 
   loginForm = this.fb.group({
@@ -36,8 +39,16 @@ export class Login {
   successMessage = 'Bienvenido, Usuario';
 
   showSubsanacionModal = false;
+  showDocumentosCorreccionModal = false;
   documentosRechazados: string[] = [];
   idInstructorPendiente: number | null = null;
+  idInstructorSubsanacion: number | null = null;
+  documentosObservados: DocumentoObservado[] = [];
+
+  loadingDocumentos = false;
+  enviandoCorreccion = false;
+  errorCorreccion = '';
+  successCorreccion = '';
 
   togglePassword() {
     this.showPassword = !this.showPassword;
@@ -53,8 +64,20 @@ export class Login {
   }
 
   irACorregirDocumentos(): void {
+    if (!this.idInstructorSubsanacion && this.idInstructorPendiente) {
+      this.idInstructorSubsanacion = this.idInstructorPendiente;
+    }
+
+    if (!this.idInstructorSubsanacion) {
+      this.errorCorreccion = 'No se encontró el instructor asociado a la cuenta.';
+      this.showSubsanacionModal = false;
+      this.showDocumentosCorreccionModal = true;
+      return;
+    }
+
     this.showSubsanacionModal = false;
-    this.router.navigate(['/instructor/documentos']);
+    this.showDocumentosCorreccionModal = true;
+    this.cargarDocumentosObservados();
   }
 
   obtenerDocumentosRechazados(): void {
@@ -67,8 +90,115 @@ export class Login {
       error: () => {
         this.errorMessage = 'No se pudieron obtener los documentos observados.';
         this.showErrorModal = true;
-      }
+      },
     });
+  }
+
+  cargarDocumentosObservados(): void {
+    if (!this.idInstructorSubsanacion) {
+      this.errorCorreccion = 'No se encontró el instructor asociado a la cuenta.';
+      return;
+    }
+
+    this.loadingDocumentos = true;
+    this.errorCorreccion = '';
+    this.successCorreccion = '';
+    this.documentosObservados = [];
+
+    this.subsanacionDocumentosService
+      .obtenerDocumentosObservados(this.idInstructorSubsanacion)
+      .subscribe({
+        next: (documentos) => {
+          this.documentosObservados = documentos;
+          this.loadingDocumentos = false;
+        },
+        error: () => {
+          this.errorCorreccion = 'No se pudieron cargar los documentos observados.';
+          this.loadingDocumentos = false;
+        },
+      });
+  }
+
+  seleccionarArchivo(event: Event, documento: DocumentoObservado): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const formatosPermitidos = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+
+    if (!formatosPermitidos.includes(file.type)) {
+      this.errorCorreccion = 'Solo se permiten archivos PDF, JPG o PNG.';
+      input.value = '';
+      return;
+    }
+
+    const maxSizeMb = 5;
+    const maxSizeBytes = maxSizeMb * 1024 * 1024;
+
+    if (file.size > maxSizeBytes) {
+      this.errorCorreccion = `El archivo no debe superar los ${maxSizeMb}MB.`;
+      input.value = '';
+      return;
+    }
+
+    documento.archivoCorregido = file;
+    documento.corregido = true;
+    this.errorCorreccion = '';
+  }
+
+  todosTienenArchivo(): boolean {
+    return (
+      this.documentosObservados.length > 0 &&
+      this.documentosObservados.every((doc) => !!doc.archivoCorregido)
+    );
+  }
+
+  enviarCorreccion(): void {
+    if (!this.idInstructorSubsanacion) {
+      this.errorCorreccion = 'No se encontró el instructor asociado a la cuenta.';
+      return;
+    }
+
+    if (!this.todosTienenArchivo()) {
+      this.errorCorreccion = 'Debe subir un archivo corregido para cada documento observado.';
+      return;
+    }
+
+    this.enviandoCorreccion = true;
+    this.errorCorreccion = '';
+    this.successCorreccion = '';
+
+    this.subsanacionDocumentosService
+      .enviarCorrecciones(this.idInstructorSubsanacion, this.documentosObservados)
+      .subscribe({
+        next: () => {
+          this.enviandoCorreccion = false;
+          this.successCorreccion =
+            'Corrección enviada correctamente. Tu cuenta volverá a revisión.';
+
+          setTimeout(() => {
+            this.cerrarModalCorreccion();
+            this.showSuccessModal = false;
+            this.showErrorModal = false;
+          }, 1800);
+        },
+        error: () => {
+          this.enviandoCorreccion = false;
+          this.errorCorreccion = 'No se pudo enviar la corrección. Intente nuevamente.';
+        },
+      });
+  }
+
+  cerrarModalCorreccion(): void {
+    this.showDocumentosCorreccionModal = false;
+    this.documentosObservados = [];
+    this.loadingDocumentos = false;
+    this.enviandoCorreccion = false;
+    this.errorCorreccion = '';
+    this.successCorreccion = '';
   }
 
   private mapAuthError(message: string): string {
@@ -79,7 +209,7 @@ export class Login {
     if (/pendiente de validaci[oó]n|pendiente_validacion/.test(normalized)) {
       return 'Tu cuenta está pendiente de validación por el administrador.';
     }
-    if (/subsanar|observaciones/.test(normalized)) {
+    if (/subsanar|observaciones|pendiente_subsanacion/.test(normalized)) {
       return 'El administrador revisó tus documentos. Tienes observaciones que debes corregir.';
     }
     if (/credenciales incorrectas/.test(normalized)) {
@@ -99,6 +229,7 @@ export class Login {
 
     this.loading = true;
     this.errorMessage = '';
+    this.errorTitle = 'Error de autenticación';
 
     this.authApiService.login(email, password).subscribe({
       next: (response) => {
@@ -107,9 +238,19 @@ export class Login {
         if (!response.success || !response.usuario) {
           const msg = (response.message || '').toLowerCase();
 
-          if (/subsanar|observaciones/.test(msg)) {
-            this.idInstructorPendiente = response.idInstructor;
-            this.obtenerDocumentosRechazados();
+          if (/subsanar|observaciones|pendiente_subsanacion/.test(msg)) {
+            this.idInstructorPendiente = response.idInstructor ?? null;
+            this.idInstructorSubsanacion = response.idInstructor ?? null;
+
+            if (this.idInstructorPendiente) {
+              this.obtenerDocumentosRechazados();
+            } else {
+              this.documentosRechazados = [
+                'No se pudo obtener el detalle de los documentos observados.',
+              ];
+              this.showSubsanacionModal = true;
+            }
+
             return;
           }
 
@@ -137,7 +278,9 @@ export class Login {
           return;
         }
 
-        localStorage.setItem(`authToken_${rol}`, response.token);
+        if (response.token) {
+          localStorage.setItem(`authToken_${rol}`, response.token);
+        }
         localStorage.setItem(`authUser_${rol}`, JSON.stringify(response.usuario));
 
         this.pendingRedirectUrl = `/${rol}/inicio`;
@@ -147,6 +290,26 @@ export class Login {
       error: (error) => {
         this.loading = false;
         const rawMessage = error?.error?.message ?? 'Error de conexión con el servidor';
+        const normalized = rawMessage.toLowerCase();
+
+        if (/subsanar|observaciones|pendiente_subsanacion/.test(normalized)) {
+          const idInstructor = error?.error?.idInstructor ?? null;
+
+          this.idInstructorPendiente = idInstructor;
+          this.idInstructorSubsanacion = idInstructor;
+
+          if (idInstructor) {
+            this.obtenerDocumentosRechazados();
+          } else {
+            this.errorTitle = 'Documentos observados';
+            this.errorMessage =
+              'Tu cuenta tiene observaciones, pero no se recibió el ID del instructor.';
+            this.showErrorModal = true;
+          }
+
+          return;
+        }
+
         this.errorMessage = this.mapAuthError(rawMessage);
         this.showErrorModal = true;
       },

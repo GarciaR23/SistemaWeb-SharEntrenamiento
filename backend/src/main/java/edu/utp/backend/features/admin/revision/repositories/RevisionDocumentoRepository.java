@@ -24,4 +24,21 @@ public interface RevisionDocumentoRepository extends JpaRepository<RevisionDocum
                         "ORDER BY r.fecha_respuesta DESC " +
                         "LIMIT 1", nativeQuery = true)
         List<Object[]> findHistorialRechazosByDocumento(@Param("idDocumento") Long idDocumento);
+
+        @Query(value = """
+            SELECT DISTINCT ON (d.id_documento)
+                d.id_documento,
+                d.nombre_documento,
+                d.url_archivo,
+                d.estado_aprobacion,
+                r.comentario_admin,
+                r.fecha_respuesta
+            FROM documento d INNER JOIN revision_documento r 
+                ON r.id_documento = d.id_documento
+            WHERE d.id_instructor = :idInstructor
+              AND d.estado_aprobacion = 'rechazado'
+              AND r.resultado_revision = 'rechazado'
+            ORDER BY d.id_documento, r.fecha_respuesta DESC
+            """, nativeQuery = true)
+        List<Object[]> findDocumentosObservadosPorInstructor(@Param("idInstructor") Long idInstructor);
 }

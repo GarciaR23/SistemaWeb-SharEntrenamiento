@@ -50,6 +50,114 @@
     </div>
   </ng-container>
 
+  <ng-container *ngIf="showDocumentosCorreccionModal">
+    <div class="correction-backdrop" role="presentation">
+      <div class="correction-modal" role="dialog" aria-modal="true" aria-labelledby="correction-title">
+
+        <div class="correction-header">
+          <div class="correction-title-box">
+            <h2 id="correction-title">
+              <span class="header-icon" aria-hidden="true">
+                <img src="assets/icons/documents.png" alt="Icono de Documento" />
+              </span>
+              Documentos por Corregir
+            </h2>
+
+            <p>
+              Por favor, revise las observaciones del administrador y suba las versiones corregidas de sus documentos
+              profesionales.
+            </p>
+          </div>
+
+          <button type="button" class="close-button" aria-label="Cerrar modal" (click)="cerrarModalCorreccion()">
+            ×
+          </button>
+        </div>
+
+        <div class="correction-body">
+
+          <div *ngIf="loadingDocumentos" class="modal-message">
+            Cargando documentos observados...
+          </div>
+
+          <div *ngIf="errorCorreccion" class="alert-error">
+            {{ errorCorreccion }}
+          </div>
+
+          <div *ngIf="successCorreccion" class="alert-success">
+            {{ successCorreccion }}
+          </div>
+
+          <div *ngIf="!loadingDocumentos && !errorCorreccion && documentosObservados.length === 0" class="modal-message">
+            No tienes documentos observados.
+          </div>
+
+          <div class="documents-table" *ngIf="!loadingDocumentos && documentosObservados.length > 0">
+
+            <div class="documents-head">
+              <span>Nombre del Documento</span>
+              <span>Estado</span>
+              <span>Comentario del Administrador</span>
+              <span>Archivo Corregido</span>
+            </div>
+
+            <div class="document-row" *ngFor="let documento of documentosObservados">
+
+              <div class="document-name">
+                <div class="document-icon" aria-hidden="true">
+                  <img src="assets/icons/icon_document.png" alt="Icono de documento" />
+                </div>
+
+                <span [title]="documento.nombreDocumento">
+                  {{ documento.nombreDocumento }}
+                </span>
+              </div>
+
+              <div class="status-column">
+                <span class="status-pill">
+                  <span class="status-dot"></span>
+                  Pendiente Subsanación
+                </span>
+              </div>
+
+              <div class="admin-comment" [title]="documento.comentarioAdmin || 'Sin comentario del administrador.'">
+                "{{ documento.comentarioAdmin || 'Sin comentario del administrador.' }}"
+              </div>
+
+              <div class="upload-column">
+                <input type="file" hidden #fileInput accept=".pdf,.jpg,.jpeg,.png"
+                  (change)="seleccionarArchivo($event, documento)" />
+
+                <button type="button" class="upload-button" (click)="fileInput.click()">
+                  <img src="assets/icons/Icon_update.png" alt="Icono de subir archivo" />
+                  Subir archivo
+                </button>
+
+                <small class="file-selected" *ngIf="documento.archivoCorregido"
+                  [title]="documento.archivoCorregido.name">
+                  {{ documento.archivoCorregido.name }}
+                </small>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="correction-footer">
+          <button type="button" class="cancel-button" (click)="cerrarModalCorreccion()">
+            Cancelar
+          </button>
+
+          <button type="button" class="send-button" [disabled]="enviandoCorreccion || !todosTienenArchivo()"
+            (click)="enviarCorreccion()">
+            {{ enviandoCorreccion ? 'Enviando...' : 'Enviar Corrección' }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </ng-container>
+
   <div class="login-card">
     <div class="login-header">
       <h2>Bienvenido</h2>

@@ -7,5 +7,6 @@ public record LoginResponse(
                 String message,
                 String token,
                 UsuarioResponse usuario,
-                Long idInstructor) {
+                Long idInstructor,
+                String estadoCuenta) {
 }
