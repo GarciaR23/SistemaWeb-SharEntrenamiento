@@ -28,6 +28,10 @@ import { CatalogoInstructor } from './features/tutor/pages/catalogo-instructor/c
 import { Sesion } from './features/tutor/pages/sesion-paciente/sesion-paciente.component';
 import { Progreso } from './features/tutor/pages/progreso-paciente/progreso-paciente.component';
 import { FormularioTutor } from './features/tutor/pages/formulario-tutor/formulario-tutor.component';
+import { Error403 } from './shared/errors/error-403/error-403';
+import { Error404 } from './shared/errors/error-404/error-404';
+import { Error500 } from './shared/errors/error-500/error-500';
+import { ErrorConnection } from './shared/errors/error-connection/error-connection';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -87,9 +91,19 @@ export const routes: Routes = [
           { path: 'sesion', component: Sesion },
           { path: 'progreso', component: Progreso }
         ]
-      }
+      },
+
+      {
+        path: 'error',
+        children: [
+          { path: '403', component: Error403 },
+          { path: '404', component: Error404 },
+          { path: '500', component: Error500 },
+          { path: 'connection', component: ErrorConnection },
+        ]
+      },
     ]
   },
 
-  { path: '**', redirectTo: '' }
+  { path: '**', component: Error404 }
 ];

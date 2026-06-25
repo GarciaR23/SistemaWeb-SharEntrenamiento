@@ -1,0 +1,38 @@
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: 40px 20px;
+    color: #cbd5e1;
+
+    h1 {
+        font-size: 4rem;
+        font-weight: 800;
+        color: #ef4444;
+        margin-bottom: 10px;
+    }
+
+    p {
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+        color: #94a3b8;
+    }
+
+    button {
+        background: #00e5a0;
+        color: #0a0e1a;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+
+        &:hover {
+            background: #00c98a;
+        }
+    }
+}

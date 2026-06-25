@@ -46,8 +46,7 @@ public class AdminRevisionService {
             nuevaRevision.setResultadoRevision(TipoAprobacion.rechazado);
             revisionRepository.save(nuevaRevision);
         }
-
-        verificarEstadoInstructor(idInstructor);
+        // verificarEstadoInstructor(idInstructor);
     }
 
     public List<String> obtenerDocumentosRechazados(Long idInstructor) {
