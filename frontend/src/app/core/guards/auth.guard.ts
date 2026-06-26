@@ -1,24 +1,31 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
+import { AuthApiService } from '../services/auth-api.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
 
-    constructor(private router: Router) { }
+    constructor(
+        private router: Router,
+        private authService: AuthApiService
+    ) { }
 
-    canActivate(): boolean {
-        const roles = ['admin', 'tutor', 'instructor'];
+    canActivate(route: ActivatedRouteSnapshot): boolean {
+        const sesion = this.authService.getSesionActiva();
+        const rolRuta = route.parent?.url[0]?.path || route.url[0]?.path;
 
-        for (const rol of roles) {
-            const token = localStorage.getItem(`authToken_${rol}`);
-            if (token) {
-                return true;
-            }
+        if (!sesion) {
+            this.router.navigate(['/login']);
+            return false;
         }
 
-        this.router.navigate(['/login']);
+        if (sesion.rol === 'admin') return true;
+
+        if (rolRuta === sesion.rol) return true;
+
+        this.router.navigate(['/error/403']);
         return false;
     }
 }
