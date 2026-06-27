@@ -65,14 +65,14 @@
             }
 
             &.warning-neon {
-                color: #f59e0b;
+                color: #b45309;
             }
         }
     }
 
     .metric-warning {
-        border-color: rgba(245, 158, 11, 0.25) !important;
-        background: rgba(245, 158, 11, 0.08) !important;
+        border-color: rgba(180, 83, 9, 0.35);
+        background: rgba(180, 83, 9, 0.10);
     }
 }
 
@@ -93,23 +93,32 @@
     box-sizing: border-box;
     padding: 30px;
 
+    // Registro del día de hoy → azul
+    &.card-today {
+        border-color: rgba(59, 130, 246, 0.55);
+        box-shadow: 0 0 18px rgba(59, 130, 246, 0.12);
+    }
+
+    // Registro normal → verde
     &.card-approved {
-        border-color: rgba(34, 197, 94, 0.45) !important;
-        box-shadow: 0 0 18px rgba(34, 197, 94, 0.10);
+        border-color: rgba(var.$color-primary, 0.45);
+        box-shadow: 0 0 18px rgba(var.$color-primary, 0.12);
     }
 
+    // Por vencer → naranja oscuro
     &.card-pending {
-        border-color: rgba(245, 158, 11, 0.45) !important;
-        box-shadow: 0 0 18px rgba(245, 158, 11, 0.10);
+        border-color: rgba(180, 83, 9, 0.70);
+        box-shadow: 0 0 18px rgba(180, 83, 9, 0.18);
     }
 
+    // Vencido → rojo
     &.card-rejected {
-        border-color: rgba(239, 68, 68, 0.45) !important;
-        box-shadow: 0 0 18px rgba(239, 68, 68, 0.10);
+        border-color: rgba(239, 68, 68, 0.55);
+        box-shadow: 0 0 18px rgba(239, 68, 68, 0.12);
     }
 
     &.card-default {
-        border-color: rgba(148, 163, 184, 0.25) !important;
+        border-color: rgba(148, 163, 184, 0.25);
     }
 
     .card-header-info {
@@ -157,6 +166,7 @@
             }
         }
 
+        .badge-status-today,
         .badge-status-pending,
         .badge-status-approved,
         .badge-status-rejected,
@@ -173,18 +183,28 @@
             text-transform: uppercase;
         }
 
+        // Registro del día de hoy → azul
+        .badge-status-today {
+            background-color: rgba(59, 130, 246, 0.14);
+            color: #3b82f6;
+            border-color: rgba(59, 130, 246, 0.40);
+        }
+
+        // Registro normal → verde
         .badge-status-approved {
-            background-color: rgba(34, 197, 94, 0.12);
-            color: #22c55e;
-            border-color: rgba(34, 197, 94, 0.35);
+            background-color: rgba(var.$color-primary, 0.12);
+            color: var.$color-primary;
+            border-color: rgba(var.$color-primary, 0.35);
         }
 
+        // Por vencer → naranja oscuro
         .badge-status-pending {
-            background-color: rgba(245, 158, 11, 0.12);
-            color: #f59e0b;
-            border-color: rgba(245, 158, 11, 0.35);
+            background-color: rgba(180, 83, 9, 0.18);
+            color: #d97706;
+            border-color: rgba(180, 83, 9, 0.55);
         }
 
+        // Vencido → rojo
         .badge-status-rejected {
             background-color: rgba(239, 68, 68, 0.12);
             color: #ef4444;
@@ -215,30 +235,43 @@
                 color: var.$color-text-tertiary;
             }
 
+            // Registro del día de hoy → azul
+            &.expiration-today {
+                color: #3b82f6;
+                font-weight: 700;
+
+                .icon-inline {
+                    color: #3b82f6;
+                }
+            }
+
+            // Registro normal → verde
             &.expiration-ok {
-                color: #22c55e !important;
+                color: var.$color-primary;
                 font-weight: 700;
 
                 .icon-inline {
-                    color: #22c55e !important;
+                    color: var.$color-primary;
                 }
             }
 
+            // Por vencer → naranja oscuro
             &.expiration-warning {
-                color: #f59e0b !important;
+                color: #d97706;
                 font-weight: 700;
 
                 .icon-inline {
-                    color: #f59e0b !important;
+                    color: #d97706;
                 }
             }
 
+            // Vencido → rojo
             &.expiration-expired {
-                color: #ef4444 !important;
+                color: #ef4444;
                 font-weight: 700;
 
                 .icon-inline {
-                    color: #ef4444 !important;
+                    color: #ef4444;
                 }
             }
         }
