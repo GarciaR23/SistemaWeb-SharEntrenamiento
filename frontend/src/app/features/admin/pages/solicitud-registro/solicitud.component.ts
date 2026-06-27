@@ -55,6 +55,10 @@ export class Solicitud implements OnInit {
       return 'card-rejected';
     }
 
+    if (this.esRegistroDeHoy(solicitud.fechaUltimoEnvio)) {
+      return 'card-today';
+    }
+
     if (horasRestantes < 24) {
       return 'card-pending';
     }
@@ -67,6 +71,10 @@ export class Solicitud implements OnInit {
 
     if (horasRestantes < 0) {
       return 'badge-status-rejected';
+    }
+
+    if (this.esRegistroDeHoy(solicitud.fechaUltimoEnvio)) {
+      return 'badge-status-today';
     }
 
     if (horasRestantes < 24) {
@@ -99,7 +107,7 @@ export class Solicitud implements OnInit {
       return 'Solicitud vencida';
     }
 
-    if (horasRestantes <= 24) {
+    if (horasRestantes < 24) {
       return `Vence en ${horasRestantes} h`;
     }
 
@@ -114,10 +122,24 @@ export class Solicitud implements OnInit {
       return 'expiration-expired';
     }
 
-    if (horasRestantes <= 24) {
+    if (this.esRegistroDeHoy(solicitud.fechaUltimoEnvio)) {
+      return 'expiration-today';
+    }
+
+    if (horasRestantes < 24) {
       return 'expiration-warning';
     }
 
-    return 'expiration-normal';
+    return 'expiration-ok';
   }
-}
+
+  esRegistroDeHoy(fechaUltimoEnvio: string): boolean {
+    const fechaEnvio = new Date(fechaUltimoEnvio);
+    const hoy = new Date();
+
+    return (
+      fechaEnvio.getFullYear() === hoy.getFullYear() &&
+      fechaEnvio.getMonth() === hoy.getMonth() &&
+      fechaEnvio.getDate() === hoy.getDate()
+    );
+  }}

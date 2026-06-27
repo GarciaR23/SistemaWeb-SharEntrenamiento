@@ -60,24 +60,16 @@ export class RegistrationApiService {
     telefonoContacto: string;
     relacionContacto: string;
   }): Promise<void> {
-    let fotoUrl: string | null = 'https://via.placeholder.com/300';
+    let fotoUrl: string = 'https://via.placeholder.com/300';
 
     if (payload.fotoPaciente) {
-      try {
-        const uploadedImage: any = await firstValueFrom(
-          this.fileService.uploadImage(payload.fotoPaciente),
-        );
-        console.log('Respuesta Cloudinary:', uploadedImage);
+      const uploadedImage = await firstValueFrom(
+        this.fileService.uploadImage(payload.fotoPaciente),
+      );
 
-        fotoUrl =
-          uploadedImage.url ??
-          uploadedImage.secureUrl ??
-          uploadedImage.secure_url ??
-          'https://via.placeholder.com/300';
+      console.log('Imagen subida a Cloudinary:', uploadedImage);
 
-      } catch (error) {
-        console.warn('Cloudinary falló o no está configurado. Se usará imagen temporal.', error);
-      }
+      fotoUrl = uploadedImage.url;
     }
 
     const registerResult = await firstValueFrom(
