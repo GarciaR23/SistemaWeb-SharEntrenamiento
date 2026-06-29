@@ -1,27 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TutorApiService, TutorDto } from '../../services/tutor-api.service';
-import { PacienteDto } from '../../modules/paciente.model';
-import { InstructorDto } from '../../../instructor/models/instructor.model';
-import { InstructorApiService } from '../../../instructor/services/instructor-api.service';
+import { PacienteDto } from '../../models/paciente.model';
+import { InstructorExplorarDto } from '../../models/instructor-explorar.model';
+import { ExplorarInstructorApiService } from '../../services/explorar-instructor-api.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-inicio',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './tutor.component.html',
   styleUrls: ['./tutor.component.scss'],
 })
 export class Inicio implements OnInit {
   tutor: TutorDto | null = null;
   paciente: PacienteDto | null = null;
-  instructores: InstructorDto[] = [];
+  instructores: InstructorExplorarDto[] = [];
+  instructoresPaginados: InstructorExplorarDto[] = [];
+
+  pageSize = 4;
+  paginaActual = 1;
+  totalPaginas = 0;
 
   loading = true;
   errorMessage = '';
 
   constructor(
     private tutorApiService: TutorApiService,
-    private instructorApiService: InstructorApiService
+    private instructorApiService: ExplorarInstructorApiService
   ) { }
 
   ngOnInit(): void {
@@ -31,7 +37,6 @@ export class Inicio implements OnInit {
 
   cargarDatosTutor(): void {
     const usuarioString = localStorage.getItem('authUser_tutor');
-
     if (!usuarioString) {
       this.loading = false;
       this.errorMessage = 'No se encontró la sesión del tutor.';
@@ -44,7 +49,6 @@ export class Inicio implements OnInit {
     this.tutorApiService.getTutorPorUsuario(idUsuario).subscribe({
       next: (tutor) => {
         this.tutor = tutor;
-
         this.tutorApiService.getPacientesPorTutor(tutor.idTutor).subscribe({
           next: (pacientes) => {
             this.paciente = pacientes.length > 0 ? pacientes[0] : null;
@@ -66,10 +70,11 @@ export class Inicio implements OnInit {
   }
 
   cargarInstructores(): void {
-    this.instructorApiService.getInstructores().subscribe({
+    this.instructorApiService.getInstructoresExplorar().subscribe({
       next: (instructores) => {
-        console.log('Instructores recibidos:', instructores);
-        this.instructores = instructores.slice(0, 4);
+        this.instructores = instructores;
+        this.totalPaginas = Math.ceil(this.instructores.length / this.pageSize);
+        this.irPagina(1);
       },
       error: (error) => {
         console.error('Error al cargar instructores:', error);
@@ -77,25 +82,20 @@ export class Inicio implements OnInit {
     });
   }
 
-  obtenerPrimerNombre(nombreCompleto: string | undefined | null): string {
-    if (!nombreCompleto) {
-      return '';
-    }
+  irPagina(pagina: number): void {
+    this.paginaActual = pagina;
+    const inicio = (pagina - 1) * this.pageSize;
+    this.instructoresPaginados = this.instructores.slice(inicio, inicio + this.pageSize);
+  }
 
+  obtenerPrimerNombre(nombreCompleto: string | undefined | null): string {
+    if (!nombreCompleto) return '';
     return nombreCompleto.trim().split(' ')[0];
   }
 
   formatearGrado(grado: string | undefined): string {
     if (!grado) return 'No registrado';
-
-    const grados: Record<string, string> = {
-      uno: 'Leve',
-      dos: 'Moderado',
-      tres: 'Severo',
-    };
-
+    const grados: Record<string, string> = { uno: 'Leve', dos: 'Moderado', tres: 'Severo' };
     return grados[grado] ?? grado;
   }
 }
-
-

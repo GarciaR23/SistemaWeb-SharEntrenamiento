@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PacienteDto } from '../modules/paciente.model';
+import { PacienteDto } from '../models/paciente.model';
 
 export interface TutorDto {
     idTutor: number;

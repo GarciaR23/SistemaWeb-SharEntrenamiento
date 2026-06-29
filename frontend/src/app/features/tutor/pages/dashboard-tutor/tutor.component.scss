@@ -9,7 +9,7 @@
 }
 
 .page-container {
-    max-width: 1300px;
+    min-height: 100%;
     margin: 0 auto;
     padding: 20px;
 }
@@ -55,41 +55,15 @@
     .panel-header {
         display: flex;
         justify-content: space-between;
+        margin-bottom: 20px;
     }
 
-    .stats {
-        display: flex;
-        gap: 20px;
-        margin-top: 25px;
-
-        .stat-card {
-            flex: 1;
-            background: #1f2535;
-            padding: 20px;
-            border-radius: 20px;
-
-            span {
-                color: #6dffd0;
-                font-weight: bold;
-            }
-
-            h4 {
-                margin-top: 10px;
-                font-size: 14px;
-            }
-
-            .bar {
-                height: 5px;
-                background: #2e3445;
-                border-radius: 5px;
-                margin-top: 10px;
-
-                div {
-                    height: 100%;
-                    background: #6dffd0;
-                }
-            }
-        }
+    a {
+        color: #9aa6bd;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 14px;
+        text-decoration: none;
     }
 }
 
@@ -98,59 +72,47 @@
     border-radius: 25px;
     padding: 30px;
 
-    .trainer {
-        display: flex;
-        gap: 15px;
-        margin: 20px 0;
+    h3 {
+        margin-top: 0;
+    }
+}
 
-        .avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: #6dffd0;
-            overflow: hidden;
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    text-align: center;
+    color: #64748b;
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            img {
-                width: 70%;
-                height: 70%;
-                object-fit: contain;
-            }
-        }
+    svg {
+        margin-bottom: 16px;
+        opacity: 0.4;
     }
 
-    .schedule {
-        background: #2b3142;
-        padding: 15px;
-        border-radius: 15px;
-        margin-bottom: 20px;
+    h4 {
+        color: #94a3b8;
+        margin-bottom: 8px;
+        font-size: 16px;
+    }
 
-        small {
-            display: block;
-            color: #9aa6bd;
-        }
+    p {
+        font-size: 13px;
+        max-width: 250px;
     }
 
     .btn-primary {
-        width: 100%;
+        display: inline-block;
+        width: auto;
+        padding: 12px 24px;
         background: #6dffd0;
+        color: #06131c;
         border: none;
-        padding: 12px;
         border-radius: 20px;
-        margin-top: 10px;
         font-weight: bold;
-    }
-
-    .btn-secondary {
-        width: 100%;
-        background: #2b3142;
-        border: none;
-        color: #fff;
-        padding: 12px;
-        border-radius: 20px;
+        text-decoration: none;
+        cursor: pointer;
     }
 }
 
@@ -173,15 +135,47 @@
         }
     }
 
+    .trainer-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .arrow-left,
+        .arrow-right {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid #2e3445;
+            background: #171c2a;
+            color: #9aa6bd;
+            font-size: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s;
+
+            &:hover:not(.disabled) {
+                background: #6dffd0;
+                color: #06131c;
+            }
+
+            &.disabled {
+                opacity: 0.3;
+                cursor: default;
+            }
+        }
+    }
+
     .trainer-list {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 20px;
+        flex: 1;
 
         .trainer-card {
             background: #171c2a;
             padding: 20px;
             border-radius: 20px;
+            position: relative;
             transition: transform 0.25s ease, box-shadow 0.25s ease;
             cursor: pointer;
 
@@ -191,7 +185,7 @@
             }
 
             .trainer-img {
-                height: 180px;
+                height: 160px;
                 border-radius: 15px;
                 position: relative;
                 overflow: hidden;
@@ -219,7 +213,7 @@
             }
 
             h4 {
-                margin-top: 15px;
+                margin-top: 18px;
                 margin-bottom: 4px;
                 color: #e8edf8;
             }
