@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators, ɵInternalFormsSharedModu
 import { RouterLink, Router } from '@angular/router';
 
 import { AuthApiService } from '../../../core/services/auth-api.service';
-import { HeaderComponent } from '../../../shared/components/header/header.component';
+import { HeaderComponent } from '../../../shared/components/header/landing-header/landing-header.component';
 
 @Component({
   selector: 'app-recuperar-contrasena',

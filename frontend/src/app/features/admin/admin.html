@@ -1,5 +1,15 @@
-<app-header [modo]="'admin'" (logoutClick)="logout()"></app-header>
+<div class="workspace-layout">
 
-<main class="admin-workspace">
-    <router-outlet></router-outlet>
-</main>
+    <app-sidebar [modo]="'admin'"></app-sidebar>
+
+    <div class="workspace-body">
+
+        <app-panel-header modo="admin" (logoutClick)="logout()"></app-panel-header>
+
+        <main class="admin-workspace">
+            <router-outlet></router-outlet>
+        </main>
+
+    </div>
+
+</div>

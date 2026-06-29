@@ -1,0 +1,26 @@
+.session-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 160px 20px;
+    text-align: center;
+    color: #64748b;
+
+    svg {
+        margin-bottom: 16px;
+        opacity: 0.4;
+    }
+
+    h4 {
+        color: #94a3b8;
+        margin-bottom: 8px;
+        font-size: 16px;
+    }
+
+    p {
+        font-size: 13px;
+        max-width: 280px;
+        margin-bottom: 8px;
+    }
+}

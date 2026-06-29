@@ -5,7 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 
 import { AuthApiService } from '../../../core/services/auth-api.service';
 import { HistorialRespuestaService } from '../../admin/services/historial-respuesta.service';
-import { HeaderComponent } from '../../../shared/components/header/header.component';
+import { HeaderComponent } from '../../../shared/components/header/landing-header/landing-header.component';
 import { DocumentoObservado } from '../models/documento-observado.model';
 import { SubsanacionDocumentosService } from '../services/subsanacion-documentos.service';
 

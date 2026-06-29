@@ -1,5 +1,15 @@
-<app-header [modo]="'instructor'" (logoutClick)="logout()"></app-header>
+<div class="workspace-layout">
 
-<main class="instructor-workspace">
-    <router-outlet></router-outlet>
-</main>
+    <app-sidebar [modo]="'instructor'"></app-sidebar>
+
+    <div class="workspace-body">
+
+        <app-panel-header modo="instructor" (logoutClick)="logout()"></app-panel-header>
+
+        <main class="instructor-workspace">
+            <router-outlet></router-outlet>
+        </main>
+
+    </div>
+
+</div>
