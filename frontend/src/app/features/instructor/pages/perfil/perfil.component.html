@@ -50,9 +50,11 @@
 
             <input type="text" placeholder="Ej. Alex Rivera" formControlName="fullName" />
 
-            <p class="invalid-note" *ngIf="fieldError('fullName')">
-              {{ fieldError('fullName') }}
-            </p>
+            @if (fieldError('fullName')) {
+              <p class="invalid-note">
+                {{ fieldError('fullName') }}
+              </p>
+            }
           </label>
 
           <label class="field-group" [class.invalid]="isInvalid('specialty')">
@@ -76,9 +78,11 @@
               </option>
             </select>
 
-            <p class="invalid-note" *ngIf="fieldError('specialty')">
-              {{ fieldError('specialty') }}
-            </p>
+            @if (fieldError('specialty')) {
+              <p class="invalid-note">
+                {{ fieldError('specialty') }}
+              </p>
+            }
           </label>
 
         </div>
@@ -95,16 +99,18 @@
                 Selecciona tu distrito
               </option>
 
-              <option *ngFor="let d of allDistricts" [value]="toTitleCase(d.district)">
-
-                {{ d.district | titlecase }}
-
-              </option>
+              @for (d of allDistricts; track d) {
+                <option [value]="toTitleCase(d.district)">
+                  {{ d.district | titlecase }}
+                </option>
+              }
             </select>
 
-            <p class="invalid-note" *ngIf="fieldError('district')">
-              {{ fieldError('district') }}
-            </p>
+            @if (fieldError('district')) {
+              <p class="invalid-note">
+                {{ fieldError('district') }}
+              </p>
+            }
           </label>
 
           <label class="field-group" [class.invalid]="isInvalid('address')">
@@ -112,9 +118,11 @@
 
             <input type="text" placeholder="Ej. Av. Girasol" formControlName="address" />
 
-            <p class="invalid-note" *ngIf="fieldError('address')">
-              {{ fieldError('address') }}
-            </p>
+            @if (fieldError('address')) {
+              <p class="invalid-note">
+                {{ fieldError('address') }}
+              </p>
+            }
           </label>
 
         </div>
@@ -127,9 +135,11 @@
 
             <input type="text" placeholder="$45.00" formControlName="rate" />
 
-            <p class="invalid-note" *ngIf="fieldError('rate')">
-              {{ fieldError('rate') }}
-            </p>
+            @if (fieldError('rate')) {
+              <p class="invalid-note">
+                {{ fieldError('rate') }}
+              </p>
+            }
           </label>
 
           <div class="field-group" [class.invalid]="isInvalid('selectedShift')">
@@ -157,17 +167,17 @@
 
             </div>
 
-            <p class="field-note" *ngIf="selectedShift.length">
+            @if (selectedShift.length) {
+              <p class="field-note">
+                {{ selectedShift.join(' • ') }}
+              </p>
+            }
 
-              {{ selectedShift.join(' • ') }}
-
-            </p>
-
-            <p class="invalid-note" *ngIf="fieldError('selectedShift')">
-
-              {{ fieldError('selectedShift') }}
-
-            </p>
+            @if (fieldError('selectedShift')) {
+              <p class="invalid-note">
+                {{ fieldError('selectedShift') }}
+              </p>
+            }
           </div>
 
         </div>
@@ -179,19 +189,20 @@
 
         <div class="days-grid" [class.invalid]="isInvalid('selectedDay')">
 
-          <button *ngFor="let day of availableDays" type="button" class="day" [class.active]="isDayActive(day.code)"
-            (click)="toggleDay(day.code)">
-
-            {{ day.label }}
-          </button>
+          @for (day of availableDays; track day) {
+            <button type="button" class="day" [class.active]="isDayActive(day.code)"
+              (click)="toggleDay(day.code)">
+              {{ day.label }}
+            </button>
+          }
 
         </div>
 
-        <p class="invalid-note" *ngIf="fieldError('selectedDay')">
-
-          {{ fieldError('selectedDay') }}
-
-        </p>
+        @if (fieldError('selectedDay')) {
+          <p class="invalid-note">
+            {{ fieldError('selectedDay') }}
+          </p>
+        }
 
         <!-- HORARIOS EXACTOS -->
         <div class="section-label">
@@ -209,11 +220,11 @@
                 Selecciona hora
               </option>
 
-              <option *ngFor="let hour of availableTimeSlots" [value]="hour">
-
-                {{ formatHour(hour) }}
-
-              </option>
+              @for (hour of availableTimeSlots; track hour) {
+                <option [value]="hour">
+                  {{ formatHour(hour) }}
+                </option>
+              }
 
             </select>
           </label>
@@ -227,25 +238,27 @@
                 Selecciona hora
               </option>
 
-              <option *ngFor="let hour of availableTimeSlots" [value]="hour">
-
-                {{ formatHour(hour) }}
-
-              </option>
+              @for (hour of availableTimeSlots; track hour) {
+                <option [value]="hour">
+                  {{ formatHour(hour) }}
+                </option>
+              }
 
             </select>
-            <p class="invalid-note" *ngIf="fieldError('toTime')">
-              {{ fieldError('toTime') }}
-            </p>
+            @if (fieldError('toTime')) {
+              <p class="invalid-note">
+                {{ fieldError('toTime') }}
+              </p>
+            }
           </label>
 
         </div>
 
-        <p class="time-error" *ngIf="timeValidationMessage">
-
-          {{ timeValidationMessage }}
-
-        </p>
+        @if (timeValidationMessage) {
+          <p class="time-error">
+            {{ timeValidationMessage }}
+          </p>
+        }
 
         <!-- BIO -->
         <label class="field-group bio-group" [class.invalid]="isInvalid('bio')">
@@ -255,9 +268,11 @@
             placeholder="Describe tu metodología, años de experiencia y experiencia profesional...">
           </textarea>
 
-          <p class="invalid-note" *ngIf="fieldError('bio')">
-            {{ fieldError('bio') }}
-          </p>
+          @if (fieldError('bio')) {
+            <p class="invalid-note">
+              {{ fieldError('bio') }}
+            </p>
+          }
         </label>
 
         <!-- BOTÓN -->
@@ -273,17 +288,21 @@
 
       </form>
 
-      <div class="modal-backdrop" *ngIf="showValidationModal">
-        <div class="validation-modal">
-          <button type="button" class="modal-close" (click)="closeValidationModal()">×</button>
-          <p class="modal-kicker error-kicker">Campos incompletos</p>
-          <h3>Completa los siguientes campos antes de continuar</h3>
-          <ul class="validation-list">
-            <li *ngFor="let item of validationMissingFields">{{ item }}</li>
-          </ul>
-          <button type="button" class="btn-primary modal-button" (click)="closeValidationModal()">Volver</button>
+      @if (showValidationModal) {
+        <div class="modal-backdrop">
+          <div class="validation-modal">
+            <button type="button" class="modal-close" (click)="closeValidationModal()">×</button>
+            <p class="modal-kicker error-kicker">Campos incompletos</p>
+            <h3>Completa los siguientes campos antes de continuar</h3>
+            <ul class="validation-list">
+              @for (item of validationMissingFields; track item) {
+                <li>{{ item }}</li>
+              }
+            </ul>
+            <button type="button" class="btn-primary modal-button" (click)="closeValidationModal()">Volver</button>
+          </div>
         </div>
-      </div>
+      }
 
     </div>
   </div>

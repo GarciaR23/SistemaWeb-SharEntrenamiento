@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { HistorialRespuestaService } from '../../services/historial-respuesta.service';
 import { AuthApiService } from '../../../../core/services/auth-api.service';
@@ -18,7 +18,7 @@ interface DocumentoRevision extends DocumentoDto {
 @Component({
   selector: 'app-revision-documento',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './revision-documento.component.html',
   styleUrls: ['./revision-documento.component.scss']
 })

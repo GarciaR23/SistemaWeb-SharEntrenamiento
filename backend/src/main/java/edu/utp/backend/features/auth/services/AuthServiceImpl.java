@@ -30,7 +30,8 @@ public class AuthServiceImpl implements AuthService {
                 .filter(usuario -> passwordEncoder.matches(request.clave(), usuario.getClave()))
                 .map(usuario -> {
                     if (usuario.getEstadoCuenta() == EstadoCuenta.pendiente_validacion) {
-                        return new LoginResponse(false, "Cuenta pendiente de validación", null, null, null, usuario.getEstadoCuenta().name());
+                        return new LoginResponse(false, "Cuenta pendiente de validación", null, null, null,
+                                usuario.getEstadoCuenta().name());
                     }
                     if (usuario.getEstadoCuenta() == EstadoCuenta.pendiente_subsanacion) {
                         Long idInstructor = instructorRepository.findByIdUsuario(usuario.getIdUsuario())
@@ -42,14 +43,25 @@ public class AuthServiceImpl implements AuthService {
                     }
 
                     if (usuario.getEstadoCuenta() != EstadoCuenta.activo) {
-                        return new LoginResponse(false, "Cuenta suspendida", null, null, null, usuario.getEstadoCuenta().name());
+                        return new LoginResponse(false, "Cuenta suspendida", null, null, null,
+                                usuario.getEstadoCuenta().name());
                     }
 
                     usuario.setUltimoLogin(ZonedDateTime.now());
                     usuarioRepository.save(usuario);
 
                     String token = jwtService.GenerarToken(usuario);
-                    return new LoginResponse(true, "Autenticación exitosa", token, toResponse(usuario), null, usuario.getEstadoCuenta().name());
+                    Long idInstructor = instructorRepository.findByIdUsuario(usuario.getIdUsuario())
+                            .map(i -> i.getIdInstructor().longValue())
+                            .orElse(null);
+
+                    return new LoginResponse(
+                            true,
+                            "Autenticación exitosa",
+                            token,
+                            toResponse(usuario),
+                            idInstructor,
+                            usuario.getEstadoCuenta().name());
                 })
                 .orElse(new LoginResponse(false, "Credenciales inválidas", null, null, null, null));
     }

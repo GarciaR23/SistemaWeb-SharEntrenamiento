@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -12,7 +12,7 @@ import { SubsanacionDocumentosService } from '../services/subsanacion-documentos
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink, HeaderComponent],
+  imports: [ReactiveFormsModule, RouterLink, HeaderComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
@@ -282,6 +282,10 @@ export class Login {
           localStorage.setItem(`authToken_${rol}`, response.token);
         }
         localStorage.setItem(`authUser_${rol}`, JSON.stringify(response.usuario));
+
+        if (rol === 'instructor' && response.idInstructor) {
+          localStorage.setItem('idInstructor', response.idInstructor.toString());
+        }
 
         this.pendingRedirectUrl = `/${rol}/inicio`;
         this.successMessage = 'Bienvenido, Usuario';

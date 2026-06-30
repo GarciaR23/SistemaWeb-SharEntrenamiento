@@ -17,22 +17,26 @@
       </div>
 
       <ul class="nav-menu" [class.active]="isMenuOpen">
-        <ng-container *ngIf="modo === 'landing'">
+        @if (modo === 'landing') {
           <li class="nav-item"><a routerLink="/metodologia" fragment="metodologia" routerLinkActive="active"
-              class="nav-link" (click)="closeMenu()">Metodología</a></li>
+          class="nav-link" (click)="closeMenu()">Metodología</a></li>
           <li class="nav-item"><a routerLink="/testimonios" fragment="testimonios" routerLinkActive="active"
-              class="nav-link" (click)="closeMenu()">Testimonios</a></li>
+          class="nav-link" (click)="closeMenu()">Testimonios</a></li>
           <li class="nav-item"><a routerLink="/seguridad" fragment="seguridad" routerLinkActive="active"
-              class="nav-link" (click)="closeMenu()">Seguridad</a></li>
+          class="nav-link" (click)="closeMenu()">Seguridad</a></li>
           <li class="nav-item"><a routerLink="/soporte" fragment="soporte" routerLinkActive="active" class="nav-link"
-              (click)="closeMenu()">Soporte</a></li>
-        </ng-container>
+          (click)="closeMenu()">Soporte</a></li>
+        }
       </ul>
 
       <div class="nav-auth">
-        <a *ngIf="modo === 'landing'" routerLink="/seleccion-rol" class="btn-cta" (click)="closeMenu()">Empezar
+        @if (modo === 'landing') {
+          <a routerLink="/seleccion-rol" class="btn-cta" (click)="closeMenu()">Empezar
           Ahora</a>
-        <a *ngIf="modo !== 'landing'" (click)="logoutClick.emit(); closeMenu()" class="btn-logout">Cerrar Sesión</a>
+        }
+        @if (modo !== 'landing') {
+          <a (click)="logoutClick.emit(); closeMenu()" class="btn-logout">Cerrar Sesión</a>
+        }
       </div>
 
     </div>

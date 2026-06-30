@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, ɵInternalFormsSharedModule } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
@@ -9,7 +8,7 @@ import { HeaderComponent } from '../../../shared/components/header/landing-heade
 @Component({
   selector: 'app-recuperar-contrasena',
   standalone: true,
-  imports: [ɵInternalFormsSharedModule, ReactiveFormsModule, CommonModule, RouterLink, HeaderComponent],
+  imports: [ɵInternalFormsSharedModule, ReactiveFormsModule, RouterLink, HeaderComponent],
   templateUrl: './recuperar-contrasena.component.html',
   styleUrls: ['./recuperar-contrasena.component.scss'],
 })
@@ -54,4 +53,3 @@ export class RecuperarContrasena {
     });
   }
 }
-

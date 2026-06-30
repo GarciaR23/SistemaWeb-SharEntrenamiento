@@ -24,12 +24,14 @@
         <a routerLink="/login">← Volver al inicio de sesión</a>
       </p>
 
-      <div class="modal-overlay" *ngIf="showModal">
-        <div class="modal-box">
-          <p>{{ modalMessage }}</p>
-          <span class="modal-note">Serás redirigido al siguiente paso.</span>
+      @if (showModal) {
+        <div class="modal-overlay">
+          <div class="modal-box">
+            <p>{{ modalMessage }}</p>
+            <span class="modal-note">Serás redirigido al siguiente paso.</span>
+          </div>
         </div>
-      </div>
+      }
     </form>
   </div>
 </div>

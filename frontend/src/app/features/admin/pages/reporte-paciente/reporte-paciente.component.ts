@@ -1,11 +1,11 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, OnInit } from '@angular/core';
 import { MonitoreoService, ConteoPaciente } from '../../services/monitoreo.service';
 import { PacienteMonitoreo } from '../../models/paciente-monitoreo.model';
 
 @Component({
   selector: 'app-reporte-paciente',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './reporte-paciente.component.html',
   styleUrls: ['./reporte-paciente.component.scss'],
 })

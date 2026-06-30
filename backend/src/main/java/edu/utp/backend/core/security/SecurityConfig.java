@@ -70,6 +70,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/tutores/**")
                         .hasAnyAuthority("tutor", "admin")
 
+                        .requestMatchers("/api/sedes/**")
+                        .hasAnyAuthority("instructor", "admin")
+
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

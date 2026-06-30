@@ -1,57 +1,61 @@
 <div class="auth-page">
-    <div class="auth-card">
-        <div class="auth-header">
-            <h2>Verificar Token</h2>
-            <p>Se te envió un token de seguridad a tu<br>correo electrónico. Ingrésalo para continuar.</p>
-        </div>
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Verificar Token</h2>
+      <p>Se te envió un token de seguridad a tu<br>correo electrónico. Ingrésalo para continuar.</p>
+    </div>
 
-        <form [formGroup]="tokenForm" class="auth-form" (ngSubmit)="onSubmit()" autocomplete="off">
-            <div class="code-group">
-                <div class="code-box">
-                    <input type="text" maxlength="1" formControlName="token1" autocomplete="one-time-code"
-                        placeholder="•" (input)="onInput($event, 0)" (keydown)="onKeydown($event, 0)" />
-                </div>
-                <div class="code-box">
-                    <input type="text" maxlength="1" formControlName="token2" autocomplete="one-time-code"
-                        placeholder="•" (input)="onInput($event, 1)" (keydown)="onKeydown($event, 1)" />
-                </div>
-                <div class="code-box">
-                    <input type="text" maxlength="1" formControlName="token3" autocomplete="one-time-code"
-                        placeholder="•" (input)="onInput($event, 2)" (keydown)="onKeydown($event, 2)" />
-                </div>
-                <div class="code-box">
-                    <input type="text" maxlength="1" formControlName="token4" autocomplete="one-time-code"
-                        placeholder="•" (input)="onInput($event, 3)" (keydown)="onKeydown($event, 3)" />
-                </div>
+    <form [formGroup]="tokenForm" class="auth-form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <div class="code-group">
+        <div class="code-box">
+          <input type="text" maxlength="1" formControlName="token1" autocomplete="one-time-code"
+            placeholder="•" (input)="onInput($event, 0)" (keydown)="onKeydown($event, 0)" />
+          </div>
+          <div class="code-box">
+            <input type="text" maxlength="1" formControlName="token2" autocomplete="one-time-code"
+              placeholder="•" (input)="onInput($event, 1)" (keydown)="onKeydown($event, 1)" />
             </div>
+            <div class="code-box">
+              <input type="text" maxlength="1" formControlName="token3" autocomplete="one-time-code"
+                placeholder="•" (input)="onInput($event, 2)" (keydown)="onKeydown($event, 2)" />
+              </div>
+              <div class="code-box">
+                <input type="text" maxlength="1" formControlName="token4" autocomplete="one-time-code"
+                  placeholder="•" (input)="onInput($event, 3)" (keydown)="onKeydown($event, 3)" />
+                </div>
+              </div>
 
-            <button type="submit" [disabled]="tokenForm.invalid" class="btn-primary">Validar Token</button>
+              <button type="submit" [disabled]="tokenForm.invalid" class="btn-primary">Validar Token</button>
 
-            <div class="resend-section">
-                <p *ngIf="countdown > 0" class="countdown-text">
+              <div class="resend-section">
+                @if (countdown > 0) {
+                  <p class="countdown-text">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-                        <path d="M3 3v5h5" />
-                        <path d="M12 7v5l4 2" />
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                      <path d="M3 3v5h5" />
+                      <path d="M12 7v5l4 2" />
                     </svg>
                     Reenviar código en <strong>{{ countdown }}s</strong>
-                </p>
+                  </p>
+                }
 
-                <button type="button" class="btn-resend" *ngIf="countdown === 0" (click)="resendCode()">
+                @if (countdown === 0) {
+                  <button type="button" class="btn-resend" (click)="resendCode()">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-                        <path d="M3 3v5h5" />
-                        <path d="M12 7v5l4 2" />
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                      <path d="M3 3v5h5" />
+                      <path d="M12 7v5l4 2" />
                     </svg>
                     Reenviar código
-                </button>
-            </div>
+                  </button>
+                }
+              </div>
 
-            <p class="secondary-text">
+              <p class="secondary-text">
                 <a routerLink="/login">← Volver al inicio de sesión</a>
-            </p>
-        </form>
-    </div>
-</div>
+              </p>
+            </form>
+          </div>
+        </div>

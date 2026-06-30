@@ -1,6 +1,6 @@
 import { FormsModule } from '@angular/forms';
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { Location, Ubication } from '../../../../shared/services/location.service';
@@ -12,7 +12,7 @@ import { HeaderComponent } from '../../../../shared/components/header/landing-he
 @Component({
   selector: 'app-formulario-tutor',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule, HeaderComponent],
+  imports: [FormsModule, HttpClientModule, HeaderComponent],
   providers: [Location],
   templateUrl: './formulario-tutor.component.html',
   styleUrls: ['./formulario-tutor.component.scss'],
@@ -240,7 +240,3 @@ export class FormularioTutor implements OnInit, OnDestroy {
     }
   }
 }
-
-
-
-

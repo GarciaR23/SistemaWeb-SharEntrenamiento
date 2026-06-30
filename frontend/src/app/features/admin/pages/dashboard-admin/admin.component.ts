@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -7,7 +7,7 @@ import { MonitoreoService } from '../../services/monitoreo.service';
 
 @Component({
   selector: 'app-admin-inicio',
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
 })

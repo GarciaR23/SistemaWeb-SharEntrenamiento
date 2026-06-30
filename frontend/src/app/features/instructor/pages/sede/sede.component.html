@@ -1,1 +1,176 @@
-<p>sede works!</p>
+<section class="sede-page">
+  <header class="sede-header">
+    <div>
+      <h1>Gestión de mis Sedes</h1>
+      <p>Supervisa y administra el estado de tus locales en tiempo real.</p>
+    </div>
+
+    <button type="button" class="btn-add-sede" (click)="abrirModal()">
+      <span>+</span>
+      Agregar Sede
+    </button>
+  </header>
+
+  <section class="sede-toolbar">
+    <label class="sede-search">
+      <span class="sede-icon"><img src="assets/icons/Icon_lupa.png" alt="Busqueda"></span>
+      <input type="text" placeholder="Buscar sede por nombre o dirección..." [(ngModel)]="busqueda"
+        (input)="filtrar()" />
+      </label>
+
+      <label class="sede-select">
+        <span class="sede-icon"><img src="assets/icons/Icon_filt_dist.png" alt="Filtro"></span>
+        <select [(ngModel)]="distritoFiltro" (change)="filtrar()">
+          <option value="">Filtrar por Distrito</option>
+          @for (distrito of distritos; track distrito) {
+            <option [value]="distrito">
+              {{ distrito }}
+            </option>
+          }
+        </select>
+      </label>
+    </section>
+
+    @if (mensajeInfo) {
+      <div class="sede-alert sede-alert-info">
+        {{ mensajeInfo }}
+      </div>
+    }
+
+    @if (mensajeError) {
+      <div class="sede-alert sede-alert-error">
+        {{ mensajeError }}
+      </div>
+    }
+
+    @if (cargando) {
+      <section class="sede-loading">
+        Cargando sedes...
+      </section>
+    }
+
+    @if (!cargando && sedes.length > 0) {
+      <section class="sede-grid">
+        @for (sede of sedes; track sede) {
+          <article class="sede-card" [class.sede-card-inactive]="!sede.estadoActivacion">
+            <div class="sede-card-image">
+              <img [src]="imagenPrincipal(sede)" [alt]="sede.nombreCard" />
+              <span class="sede-badge" [class.sede-badge-danger]="!sede.estadoActivacion">
+                {{ sede.estadoActivacion ? sede.etiqueta : 'MANTENIMIENTO' }}
+              </span>
+              @if (sede.imagenes && sede.imagenes.length > 1) {
+                <div class="sede-dots">
+                  @for (imagen of sede.imagenes; track imagen; let i = $index) {
+                    <span [class.active]="i === obtenerIndiceImagen(sede)"
+                    (click)="cambiarImagenSede(sede, i, $event)" style="cursor: pointer;"></span>
+                  }
+                </div>
+              }
+            </div>
+            <div class="sede-card-body">
+              <h2>{{ sede.nombreCard }}</h2>
+              <p class="sede-address">
+                <span><img src="assets/icons/Icon_gps.png" alt="Ubicacion"></span>
+                {{ sede.direccionSede }}, {{ sede.distritoSede }}
+              </p>
+              <footer class="sede-card-footer">
+                <div>
+                  <span>ESTADO</span>
+                  <strong [class.inactive]="!sede.estadoActivacion">
+                    {{ sede.estadoActivacion ? 'Sede Activa' : 'Inactiva' }}
+                  </strong>
+                </div>
+                <button type="button" class="sede-switch" [class.active]="sede.estadoActivacion"
+                  (click)="cambiarEstado(sede)">
+                  <span></span>
+                </button>
+              </footer>
+            </div>
+          </article>
+        }
+      </section>
+    }
+
+    @if (!cargando && sedes.length === 0) {
+      <section class="sede-empty">
+        <h2>No tienes sedes registradas</h2>
+        <p>
+          Registra al menos tres sedes para poder aparecer en el catálogo de instructores.
+        </p>
+        <button type="button" class="btn-add-sede" (click)="abrirModal()">
+          <span>+</span>
+          Agregar primera sede
+        </button>
+      </section>
+    }
+  </section>
+
+  @if (modalAbierto) {
+    <div class="modal-backdrop">
+      <section class="sede-modal">
+        <button type="button" class="modal-close" (click)="cerrarModal()">×</button>
+        <header class="modal-header">
+          <h2>Registrar Nueva Sede</h2>
+          <p>Ingresa los detalles para habilitar un nuevo centro de entrenamiento.</p>
+        </header>
+        <form class="sede-form" (ngSubmit)="guardarSede()">
+          <label>
+            <span>Distrito</span>
+            <select name="distritoSede" [(ngModel)]="nuevaSede.distritoSede" required>
+              <option value="">Selecciona un distrito</option>
+              @for (distrito of distritos; track distrito) {
+                <option [value]="distrito">
+                  {{ distrito }}
+                </option>
+              }
+            </select>
+          </label>
+          <label>
+            <span>Dirección Exacta</span>
+            <input type="text" name="direccionSede" placeholder="Ej: Av. Javier Prado Este 1234, Oficina 502"
+              [(ngModel)]="nuevaSede.direccionSede" required />
+            </label>
+            <label>
+              <span>Descripción de la Sede</span>
+              <textarea name="descripcionSede"
+                placeholder="Describe las instalaciones, horarios de acceso y puntos de referencia..."
+              [(ngModel)]="nuevaSede.descripcionSede" required></textarea>
+            </label>
+            <div>
+              <span>Galería de Imágenes</span>
+              <div class="upload-box" (click)="fileInput.click()" style="cursor: pointer;">
+                <div class="upload-icon"><img src="assets/icons/Icon_camara.png" alt="Camara"></div>
+                <strong>Sube al menos 3 fotos de la sede</strong>
+                <!-- Imágenes -->
+                <div class="file-label-modern">
+                  <input #fileInput type="file" accept="image/*" multiple (change)="onImagenesSedeChange($event)" hidden />
+                  <span class="upload-title">
+                    {{ nombresImagenes || 'Arrastra y suelta tus archivos aquí o haz clic para explorar. Aceptamos JPG, PNG y
+                    WEBP.' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="modal-note">
+              <svg class="note-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              <p class="modal-help">
+                Las fotos ayudan a los usuarios a reconocer el lugar y mejoran la tasa de reserva.
+              </p>
+            </div>
+            <footer class="modal-actions">
+              <button type="button" class="btn-cancel" (click)="cerrarModal()">
+                Cancelar
+              </button>
+              <button type="submit" class="btn-save" [disabled]="!formularioValido() || guardando">
+                {{ guardando ? 'Guardando...' : 'Guardar Sede' }}
+              </button>
+            </footer>
+          </form>
+        </section>
+      </div>
+    }

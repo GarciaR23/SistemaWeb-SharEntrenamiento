@@ -4,7 +4,7 @@
   <div class="login-background">
   </div>
 
-  <ng-container *ngIf="showSuccessModal">
+  @if (showSuccessModal) {
     <div class="modal-backdrop" role="presentation">
       <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
         <p class="modal-kicker">Inicio de sesión correcto</p>
@@ -13,9 +13,9 @@
         <button type="button" class="btn-primary modal-button" (click)="closeSuccessModal()">Continuar</button>
       </div>
     </div>
-  </ng-container>
+  }
 
-  <ng-container *ngIf="showErrorModal">
+  @if (showErrorModal) {
     <div class="modal-backdrop" role="presentation" (click)="closeErrorModal()">
       <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title"
         (click)="$event.stopPropagation()">
@@ -26,34 +26,35 @@
         <button type="button" class="btn-primary modal-button" (click)="closeErrorModal()">Intentar de nuevo</button>
       </div>
     </div>
-  </ng-container>
+  }
 
   <!-- Modal Subsanación -->
-  <ng-container *ngIf="showSubsanacionModal">
+  @if (showSubsanacionModal) {
     <div class="modal-backdrop" role="presentation">
       <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="subsanacion-title">
         <p class="modal-kicker error-kicker">Documentos observados</p>
         <h3 id="subsanacion-title">El administrador ha revisado tus documentos</h3>
         <p class="modal-text">Debes corregir los siguientes documentos:</p>
         <ul class="documentos-rechazados">
-          <li *ngFor="let doc of documentosRechazados">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x">
-              <path d="M18 6 6 18" />
-              <path d="m6 6 12 12" />
-            </svg>
-            {{ doc }}
-          </li>
+          @for (doc of documentosRechazados; track doc) {
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x">
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+              </svg>
+              {{ doc }}
+            </li>
+          }
         </ul>
         <button type="button" class="btn-primary modal-button" (click)="irACorregirDocumentos()">Ver documentos</button>
       </div>
     </div>
-  </ng-container>
+  }
 
-  <ng-container *ngIf="showDocumentosCorreccionModal">
+  @if (showDocumentosCorreccionModal) {
     <div class="correction-backdrop" role="presentation">
       <div class="correction-modal" role="dialog" aria-modal="true" aria-labelledby="correction-title">
-
         <div class="correction-header">
           <div class="correction-title-box">
             <h2 id="correction-title">
@@ -62,147 +63,148 @@
               </span>
               Documentos por Corregir
             </h2>
-
             <p>
               Por favor, revise las observaciones del administrador y suba las versiones corregidas de sus documentos
               profesionales.
             </p>
           </div>
-
           <button type="button" class="close-button" aria-label="Cerrar modal" (click)="cerrarModalCorreccion()">
             ×
           </button>
         </div>
-
         <div class="correction-body">
-
-          <div *ngIf="loadingDocumentos" class="modal-message">
-            Cargando documentos observados...
-          </div>
-
-          <div *ngIf="errorCorreccion" class="alert-error">
-            {{ errorCorreccion }}
-          </div>
-
-          <div *ngIf="successCorreccion" class="alert-success">
-            {{ successCorreccion }}
-          </div>
-
-          <div *ngIf="!loadingDocumentos && !errorCorreccion && documentosObservados.length === 0" class="modal-message">
-            No tienes documentos observados.
-          </div>
-
-          <div class="documents-table" *ngIf="!loadingDocumentos && documentosObservados.length > 0">
-
-            <div class="documents-head">
-              <span>Nombre del Documento</span>
-              <span>Estado</span>
-              <span>Comentario del Administrador</span>
-              <span>Archivo Corregido</span>
+          @if (loadingDocumentos) {
+            <div class="modal-message">
+              Cargando documentos observados...
             </div>
-
-            <div class="document-row" *ngFor="let documento of documentosObservados">
-
-              <div class="document-name">
-                <div class="document-icon" aria-hidden="true">
-                  <img src="assets/icons/icon_document.png" alt="Icono de documento" />
-                </div>
-
-                <span [title]="documento.nombreDocumento">
-                  {{ documento.nombreDocumento }}
-                </span>
-              </div>
-
-              <div class="status-column">
-                <span class="status-pill">
-                  <span class="status-dot"></span>
-                  Pendiente Subsanación
-                </span>
-              </div>
-
-              <div class="admin-comment" [title]="documento.comentarioAdmin || 'Sin comentario del administrador.'">
-                "{{ documento.comentarioAdmin || 'Sin comentario del administrador.' }}"
-              </div>
-
-              <div class="upload-column">
-                <input type="file" hidden #fileInput accept=".pdf,.jpg,.jpeg,.png"
-                  (change)="seleccionarArchivo($event, documento)" />
-
-                <button type="button" class="upload-button" (click)="fileInput.click()">
-                  <img src="assets/icons/Icon_update.png" alt="Icono de subir archivo" />
-                  Subir archivo
-                </button>
-
-                <small class="file-selected" *ngIf="documento.archivoCorregido"
-                  [title]="documento.archivoCorregido.name">
-                  {{ documento.archivoCorregido.name }}
-                </small>
-              </div>
-
+          }
+          @if (errorCorreccion) {
+            <div class="alert-error">
+              {{ errorCorreccion }}
             </div>
+          }
+          @if (successCorreccion) {
+            <div class="alert-success">
+              {{ successCorreccion }}
+            </div>
+          }
+          @if (!loadingDocumentos && !errorCorreccion && documentosObservados.length === 0) {
+            <div class="modal-message">
+              No tienes documentos observados.
+            </div>
+          }
+          @if (!loadingDocumentos && documentosObservados.length > 0) {
+            <div class="documents-table">
+              <div class="documents-head">
+                <span>Nombre del Documento</span>
+                <span>Estado</span>
+                <span>Comentario del Administrador</span>
+                <span>Archivo Corregido</span>
+              </div>
+              @for (documento of documentosObservados; track documento) {
+                <div class="document-row">
+                  <div class="document-name">
+                    <div class="document-icon" aria-hidden="true">
+                      <img src="assets/icons/icon_document.png" alt="Icono de documento" />
+                    </div>
+                    <span [title]="documento.nombreDocumento">
+                      {{ documento.nombreDocumento }}
+                    </span>
+                  </div>
+                  <div class="status-column">
+                    <span class="status-pill">
+                      <span class="status-dot"></span>
+                      Pendiente Subsanación
+                    </span>
+                  </div>
+                  <div class="admin-comment" [title]="documento.comentarioAdmin || 'Sin comentario del administrador.'">
+                    "{{ documento.comentarioAdmin || 'Sin comentario del administrador.' }}"
+                  </div>
+                  <div class="upload-column">
+                    <input type="file" hidden #fileInput accept=".pdf,.jpg,.jpeg,.png"
+                      (change)="seleccionarArchivo($event, documento)" />
+                      <button type="button" class="upload-button" (click)="fileInput.click()">
+                        <img src="assets/icons/Icon_update.png" alt="Icono de subir archivo" />
+                        Subir archivo
+                      </button>
+                      @if (documento.archivoCorregido) {
+                        <small class="file-selected"
+                          [title]="documento.archivoCorregido.name">
+                          {{ documento.archivoCorregido.name }}
+                        </small>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+          <div class="correction-footer">
+            <button type="button" class="cancel-button" (click)="cerrarModalCorreccion()">
+              Cancelar
+            </button>
+            <button type="button" class="send-button" [disabled]="enviandoCorreccion || !todosTienenArchivo()"
+              (click)="enviarCorreccion()">
+              {{ enviandoCorreccion ? 'Enviando...' : 'Enviar Corrección' }}
+            </button>
           </div>
         </div>
-
-        <div class="correction-footer">
-          <button type="button" class="cancel-button" (click)="cerrarModalCorreccion()">
-            Cancelar
-          </button>
-
-          <button type="button" class="send-button" [disabled]="enviandoCorreccion || !todosTienenArchivo()"
-            (click)="enviarCorreccion()">
-            {{ enviandoCorreccion ? 'Enviando...' : 'Enviar Corrección' }}
-          </button>
-        </div>
-
       </div>
-    </div>
-  </ng-container>
+    }
 
-  <div class="login-card">
-    <div class="login-header">
-      <h2>Bienvenido</h2>
-      <p>Accede a tu plataforma de entrenamiento</p>
-    </div>
-
-    <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off">
-      <label class="form-label">
-        <span>Correo electrónico</span>
-        <div class="input-wrapper">
-          <input type="email" formControlName="email" placeholder="ejemplo@entreno.com" autocomplete="email" />
-          <span class="input-icon">
-            <img src="assets/icons/Icon_email.png" alt="Icono de correo" />
-          </span>
-        </div>
-        <div class="field-error" *ngIf="loginForm.controls.email.touched && loginForm.controls.email.invalid">
-          <small *ngIf="loginForm.controls.email.errors?.['required']">El correo es obligatorio.</small>
-          <small *ngIf="loginForm.controls.email.errors?.['email']">Ingresa un correo válido.</small>
-        </div>
-      </label>
-
-      <label class="form-label">
-        <span>Contraseña</span>
-        <div class="input-wrapper">
-          <input [type]="showPassword ? 'text': 'password'" formControlName="password" placeholder="********"
-            autocomplete="current-password" />
-          <button type="button" (click)="togglePassword()" class="icon-button"
-            aria-label="Mostrar contraseña">👁</button>
-        </div>
-        <div class="field-error" *ngIf="loginForm.controls.password.touched && loginForm.controls.password.invalid">
-          <small>La contraseña es obligatoria.</small>
-        </div>
-      </label>
-
-      <div class="form-footer">
-        <a routerLink="/recuperar-contrasena" class="secondary-link">¿Olvidaste tu contraseña?</a>
+    <div class="login-card">
+      <div class="login-header">
+        <h2>Bienvenido</h2>
+        <p>Accede a tu plataforma de entrenamiento</p>
       </div>
 
-      <button type="submit" [disabled]="loginForm.invalid || loading" class="btn-primary">{{ loading ? 'Iniciando...' :
-        'Iniciar Sesión' }}</button>
+      <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off">
+        <label class="form-label">
+          <span>Correo electrónico</span>
+          <div class="input-wrapper">
+            <input type="email" formControlName="email" placeholder="ejemplo@entreno.com" autocomplete="email" />
+            <span class="input-icon">
+              <img src="assets/icons/Icon_email.png" alt="Icono de correo" />
+            </span>
+          </div>
+          @if (loginForm.controls.email.touched && loginForm.controls.email.invalid) {
+            <div class="field-error">
+              @if (loginForm.controls.email.errors?.['required']) {
+                <small>El correo es obligatorio.</small>
+              }
+              @if (loginForm.controls.email.errors?.['email']) {
+                <small>Ingresa un correo válido.</small>
+              }
+            </div>
+          }
+        </label>
 
-      <p class="register-link">
-        ¿No tienes una cuenta? <a [routerLink]="['/seleccion-rol']" routerLinkActive="router-link-active"
+        <label class="form-label">
+          <span>Contraseña</span>
+          <div class="input-wrapper">
+            <input [type]="showPassword ? 'text': 'password'" formControlName="password" placeholder="********"
+              autocomplete="current-password" />
+              <button type="button" (click)="togglePassword()" class="icon-button"
+              aria-label="Mostrar contraseña">👁</button>
+            </div>
+            @if (loginForm.controls.password.touched && loginForm.controls.password.invalid) {
+              <div class="field-error">
+                <small>La contraseña es obligatoria.</small>
+              </div>
+            }
+          </label>
+
+          <div class="form-footer">
+            <a routerLink="/recuperar-contrasena" class="secondary-link">¿Olvidaste tu contraseña?</a>
+          </div>
+
+          <button type="submit" [disabled]="loginForm.invalid || loading" class="btn-primary">{{ loading ? 'Iniciando...' :
+          'Iniciar Sesión' }}</button>
+
+          <p class="register-link">
+            ¿No tienes una cuenta? <a [routerLink]="['/seleccion-rol']" routerLinkActive="router-link-active"
           (click)="closeMenu()">Registrarse</a>
-      </p>
-    </form>
+        </p>
+      </form>
+    </div>
   </div>
-</div>

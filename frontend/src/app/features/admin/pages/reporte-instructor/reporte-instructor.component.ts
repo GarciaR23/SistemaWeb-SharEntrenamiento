@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InstructorMonitoreo } from '../../models/instructor-monitoreo.model';
@@ -7,7 +7,7 @@ import { FiltroInstructorService } from '../../services/filtro-instructor.servic
 
 @Component({
   selector: 'app-reporte-instructor',
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './reporte-instructor.component.html',
   styleUrls: ['./reporte-instructor.component.scss'],
 })

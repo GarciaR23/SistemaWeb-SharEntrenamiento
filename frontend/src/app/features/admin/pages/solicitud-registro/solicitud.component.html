@@ -1,95 +1,93 @@
 <div class="solicitudes-container">
 
-    <header class="solicitudes-header">
-        <div>
-            <h1>Solicitudes de Registro</h1>
-            <p>
-                Gestione las peticiones de nuevos profesionales que desean unirse a la plataforma Elite de
-                ShareEntrenamiento.
-            </p>
-        </div>
-
-        <div class="metrics-wrapper">
-            <div class="metric-box">
-                <span class="metric-label">PENDIENTES</span>
-                <span class="metric-value alert-neon">{{ totalPendientes }}</span>
-            </div>
-
-            <div class="metric-box">
-                <span class="metric-label">HOY</span>
-                <span class="metric-value blue-neon">+{{ pendientesHoy }}</span>
-            </div>
-
-            <div class="metric-box metric-warning">
-                <span class="metric-label">POR VENCER</span>
-                <span class="metric-value warning-neon">{{ solicitudesPorVencer }}</span>
-            </div>
-        </div>
-    </header>
-
-    <div *ngIf="cargando" class="loading-placeholder">
-        <p>Recuperando credenciales...</p>
+  <header class="solicitudes-header">
+    <div>
+      <h1>Solicitudes de Registro</h1>
+      <p>
+        Gestione las peticiones de nuevos profesionales que desean unirse a la plataforma Elite de
+        ShareEntrenamiento.
+      </p>
     </div>
 
-    <section *ngIf="!cargando" class="cards-grid">
-        <div class="card-solicitud" *ngFor="let solicitud of listaSolicitudes" [ngClass]="obtenerClaseCard(solicitud)">
+    <div class="metrics-wrapper">
+      <div class="metric-box">
+        <span class="metric-label">PENDIENTES</span>
+        <span class="metric-value alert-neon">{{ totalPendientes }}</span>
+      </div>
 
-            <div class="card-header-info">
-                <div class="avatar-container">
-                    <img [src]="solicitud.urlImagenPerfil" [alt]="solicitud.instructorNombre" class="avatar-img">
-                    <span class="status-dot-active"></span>
-                </div>
+      <div class="metric-box">
+        <span class="metric-label">HOY</span>
+        <span class="metric-value blue-neon">+{{ pendientesHoy }}</span>
+      </div>
 
-                <div class="meta-profile">
-                    <h3>{{ solicitud.instructorNombre }}</h3>
-                    <p class="specialty-text">{{ solicitud.especialidad }}</p>
-                </div>
+      <div class="metric-box metric-warning">
+        <span class="metric-label">POR VENCER</span>
+        <span class="metric-value warning-neon">{{ solicitudesPorVencer }}</span>
+      </div>
+    </div>
+  </header>
 
-                <span [ngClass]="obtenerClaseEstado(solicitud)">
-                    {{ solicitud.estadoUsuario | uppercase }}
-                </span>
+  @if (cargando) {
+    <div class="loading-placeholder">
+      <p>Recuperando credenciales...</p>
+    </div>
+  }
+
+  @if (!cargando) {
+    <section class="cards-grid">
+      @for (solicitud of listaSolicitudes; track solicitud) {
+        <div class="card-solicitud" [ngClass]="obtenerClaseCard(solicitud)">
+          <div class="card-header-info">
+            <div class="avatar-container">
+              <img [src]="solicitud.urlImagenPerfil" [alt]="solicitud.instructorNombre" class="avatar-img">
+              <span class="status-dot-active"></span>
             </div>
-
-            <div class="card-body-details">
-                <div class="detail-row">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        class="icon-inline">
-                        <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-                        <path d="M16 2v4M8 2v4M3 10h18" />
-                    </svg>
-                    <span>Enviado: {{ solicitud.fechaUltimoEnvio | date:'dd MMM, yyyy' }}</span>
-                </div>
-
-                <div class="detail-row" [ngClass]="obtenerClaseVencimiento(solicitud)">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        class="icon-inline">
-                        <circle cx="12" cy="12" r="10" />
-                        <polyline points="12 6 12 12 16 14" />
-                    </svg>
-                    <span>{{ obtenerTextoVencimiento(solicitud) }}</span>
-                </div>
-
-                <div class="detail-row">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        class="icon-inline">
-                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-                        <polyline points="14 2 14 8 20 8" />
-                    </svg>
-                    <span>{{ solicitud.totalDocumentosEnviados }} documentos cargados</span>
-                </div>
+            <div class="meta-profile">
+              <h3>{{ solicitud.instructorNombre }}</h3>
+              <p class="specialty-text">{{ solicitud.especialidad }}</p>
             </div>
-
-            <button class="btn-validate"
-                (click)="componenteRevision.activarRevisionDocumento(solicitud.idInstructor, solicitud.instructorNombre)">
-                Validar Credenciales
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                    class="arrow-icon">
-                    <path d="m9 18 6-6-6-6" />
-                </svg>
-            </button>
-
+            <span [ngClass]="obtenerClaseEstado(solicitud)">
+              {{ solicitud.estadoUsuario | uppercase }}
+            </span>
+          </div>
+          <div class="card-body-details">
+            <div class="detail-row">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                class="icon-inline">
+                <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                <path d="M16 2v4M8 2v4M3 10h18" />
+              </svg>
+              <span>Enviado: {{ solicitud.fechaUltimoEnvio | date:'dd MMM, yyyy' }}</span>
+            </div>
+            <div class="detail-row" [ngClass]="obtenerClaseVencimiento(solicitud)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                class="icon-inline">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              <span>{{ obtenerTextoVencimiento(solicitud) }}</span>
+            </div>
+            <div class="detail-row">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                class="icon-inline">
+                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+              <span>{{ solicitud.totalDocumentosEnviados }} documentos cargados</span>
+            </div>
+          </div>
+          <button class="btn-validate"
+            (click)="componenteRevision.activarRevisionDocumento(solicitud.idInstructor, solicitud.instructorNombre)">
+            Validar Credenciales
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              class="arrow-icon">
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </button>
         </div>
+      }
     </section>
+  }
 
 </div>
 
