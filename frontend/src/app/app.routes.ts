@@ -35,25 +35,25 @@ import { ErrorConnection } from './shared/errors/error-connection/error-connecti
 import { PerfilInstructorComponent } from './features/tutor/pages/perfil-instructor/perfil-instructor.component';
 
 export const routes: Routes = [
-  { path: '', component: LandingComponent },
-  { path: 'metodologia', component: LandingComponent },
-  { path: 'testimonios', component: LandingComponent },
-  { path: 'seguridad', component: LandingComponent },
-  { path: 'soporte', component: LandingComponent },
+  { path: '', component: LandingComponent, title: 'Inicio | SharEntrenamiento' },
+  { path: 'metodologia', component: LandingComponent, title: 'Metodología | SharEntrenamiento' },
+  { path: 'testimonios', component: LandingComponent, title: 'Testimonios | SharEntrenamiento' },
+  { path: 'seguridad', component: LandingComponent, title: 'Seguridad | SharEntrenamiento' },
+  { path: 'soporte', component: LandingComponent, title: 'Soporte | SharEntrenamiento' },
 
   {
     path: '',
     canActivate: [statusGuard],
     children: [
-      { path: 'login', component: Login },
-      { path: 'seleccion-rol', component: SeleccionRolComponent },
-      { path: 'recuperar-contrasena', component: RecuperarContrasena },
-      { path: 'token-contrasena', component: TokenContrasena },
-      { path: 'restaurar-contrasena', component: RestaurarContrasena },
-      { path: 'formulario', component: Perfil },
-      { path: 'certificado', component: Certificado },
-      { path: 'cuenta', component: Cuenta },
-      { path: 'formulario-tutor', component: FormularioTutor },
+      { path: 'login', component: Login, title: 'Iniciar Sesión | SharEntrenamiento' },
+      { path: 'seleccion-rol', component: SeleccionRolComponent, title: 'Selección de Rol | SharEntrenamiento' },
+      { path: 'recuperar-contrasena', component: RecuperarContrasena, title: 'Recuperar Contraseña | SharEntrenamiento' },
+      { path: 'token-contrasena', component: TokenContrasena, title: 'Verificar Token | SharEntrenamiento' },
+      { path: 'restaurar-contrasena', component: RestaurarContrasena, title: 'Restaurar Contraseña | SharEntrenamiento' },
+      { path: 'formulario', component: Perfil, title: 'Perfil de Instructor | SharEntrenamiento' },
+      { path: 'certificado', component: Certificado, title: 'Certificado | SharEntrenamiento' },
+      { path: 'cuenta', component: Cuenta, title: 'Configuración de Cuenta | SharEntrenamiento' },
+      { path: 'formulario-tutor', component: FormularioTutor, title: 'Perfil de Tutor | SharEntrenamiento' },
 
       {
         path: 'admin',
@@ -61,10 +61,10 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         children: [
           { path: '', redirectTo: 'inicio', pathMatch: 'full' },
-          { path: 'inicio', component: AdminInicio },
-          { path: 'solicitud-instructor', component: Solicitud },
-          { path: 'reporte-instructor', component: ReporteInstructor },
-          { path: 'reporte-paciente', component: ReportePaciente }
+          { path: 'inicio', component: AdminInicio, title: 'Dashboard Admin | SharEntrenamiento' },
+          { path: 'solicitud-instructor', component: Solicitud, title: 'Solicitudes de Instructores | SharEntrenamiento' },
+          { path: 'reporte-instructor', component: ReporteInstructor, title: 'Reportes de Instructores | SharEntrenamiento' },
+          { path: 'reporte-paciente', component: ReportePaciente, title: 'Reportes de Pacientes | SharEntrenamiento' }
         ]
       },
 
@@ -74,10 +74,10 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         children: [
           { path: '', redirectTo: 'inicio', pathMatch: 'full' },
-          { path: 'inicio', component: InstructorInicio },
-          { path: 'sede', component: Sede },
-          { path: 'bitacora', component: Bitacora },
-          { path: 'pago', component: Pago }
+          { path: 'inicio', component: InstructorInicio, title: 'Dashboard Instructor | SharEntrenamiento' },
+          { path: 'sede', component: Sede, title: 'Gestión de Sedes | SharEntrenamiento' },
+          { path: 'bitacora', component: Bitacora, title: 'Bitácora de Sesiones | SharEntrenamiento' },
+          { path: 'pago', component: Pago, title: 'Pagos | SharEntrenamiento' }
         ]
       },
 
@@ -87,25 +87,25 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         children: [
           { path: '', redirectTo: 'inicio', pathMatch: 'full' },
-          { path: 'inicio', component: TutorInicio },
-          { path: 'catalogo-instructor', component: CatalogoInstructor },
+          { path: 'inicio', component: TutorInicio, title: 'Dashboard Tutor | SharEntrenamiento' },
+          { path: 'catalogo-instructor', component: CatalogoInstructor, title: 'Catálogo de Instructores | SharEntrenamiento' },
           { path: 'perfil-instructor/:idInstructor', component: PerfilInstructorComponent },
-          { path: 'sesion', component: Sesion },
-          { path: 'progreso', component: Progreso }
+          { path: 'sesion', component: Sesion, title: 'Sesiones | SharEntrenamiento' },
+          { path: 'progreso', component: Progreso, title: 'Progreso del Paciente | SharEntrenamiento' }
         ]
       },
 
       {
         path: 'error',
         children: [
-          { path: '403', component: Error403 },
-          { path: '404', component: Error404 },
-          { path: '500', component: Error500 },
-          { path: 'connection', component: ErrorConnection },
+          { path: '403', component: Error403, title: 'Acceso Denegado | SharEntrenamiento' },
+          { path: '404', component: Error404, title: 'Página no encontrada | SharEntrenamiento' },
+          { path: '500', component: Error500, title: 'Error Interno | SharEntrenamiento' },
+          { path: 'connection', component: ErrorConnection, title: 'Error de Conexión | SharEntrenamiento' },
         ]
       },
     ]
   },
 
-  { path: '**', component: Error404 }
+  { path: '**', component: Error404, title: 'Página no encontrada | SharEntrenamiento' }
 ];

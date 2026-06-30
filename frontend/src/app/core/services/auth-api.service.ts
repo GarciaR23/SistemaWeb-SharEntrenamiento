@@ -16,6 +16,7 @@ export interface LoginResponse {
   token: string;
   usuario: UsuarioAuth | null;
   idInstructor: number | null;
+  estadoCuenta?: string | null;
 }
 
 export interface ApiMessage {
@@ -73,8 +74,23 @@ export class AuthApiService {
     return null;
   }
 
+  getIdInstructorLogueado(): number | null {
+  const idInstructor = localStorage.getItem('idInstructor');
+    if (!idInstructor) {
+      return null;
+    }
+
+    const parsedId = Number(idInstructor);
+
+    return Number.isNaN(parsedId) ? null : parsedId;
+  }
+
   logout(rol: string): void {
     localStorage.removeItem(`authToken_${rol}`);
     localStorage.removeItem(`authUser_${rol}`);
+
+    if (rol === 'instructor') {
+      localStorage.removeItem('idInstructor');
+    }
   }
 }

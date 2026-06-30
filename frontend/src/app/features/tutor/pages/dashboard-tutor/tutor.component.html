@@ -1,89 +1,95 @@
 <div class="page-container">
-    <section class="hero">
-        <div class="hero-card">
-            <h1>¡Hola, {{ obtenerPrimerNombre(tutor?.nombreCompleto) || 'Tutor' }}!</h1>
+  <section class="hero">
+    <div class="hero-card">
+      <h1>¡Hola, {{ obtenerPrimerNombre(tutor?.nombreCompleto) || 'Tutor' }}!</h1>
 
-            <h2>
-                Impulsa el desarrollo de
-                {{ obtenerPrimerNombre(paciente?.nombreCompleto) || 'tu paciente' }}.
-            </h2>
-            <p>
-                Monitorea el progreso de hoy y encuentra el mejor apoyo
-                especializado para el entrenamiento de esta semana.
-            </p>
+      <h2>
+        Impulsa el desarrollo de
+        {{ obtenerPrimerNombre(paciente?.nombreCompleto) || 'tu paciente' }}.
+      </h2>
+      <p>
+        Monitorea el progreso de hoy y encuentra el mejor apoyo
+        especializado para el entrenamiento de esta semana.
+      </p>
+    </div>
+  </section>
+
+  <section class="dashboard-grid">
+
+    <div class="progress-panel">
+      <div class="panel-header">
+        <div>
+          <h3>Panel de Progreso</h3>
+          <p>Rendimiento semanal de {{ obtenerPrimerNombre(paciente?.nombreCompleto) || 'tu paciente' }}</p>
         </div>
-    </section>
+        <a>Ver Reporte Completo ›</a>
+      </div>
 
-    <section class="dashboard-grid">
+      <div class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+          stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-no-axes-combined">
+          <path d="M12 20V10" />
+          <path d="M18 20v-4" />
+          <path d="M6 20V4" />
+        </svg>
+        <h4>¡Comienza a registrar sesiones!</h4>
+        <p>El progreso de {{ obtenerPrimerNombre(paciente?.nombreCompleto) || 'tu paciente' }} se reflejará aquí
+        cuando se completen las primeras sesiones.</p>
+      </div>
+    </div>
 
-        <div class="progress-panel">
-            <div class="panel-header">
-                <div>
-                    <h3>Panel de Progreso</h3>
-                    <p>Rendimiento semanal de {{ obtenerPrimerNombre(paciente?.nombreCompleto) || 'tu paciente' }}</p>
-                </div>
-                <a>Ver Reporte Completo ›</a>
+    <div class="next-session">
+      <h3> Próxima Sesión</h3>
+
+      <div class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+          stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-plus">
+          <path d="M8 2v4" />
+          <path d="M16 2v4" />
+          <rect width="18" height="18" x="3" y="4" rx="2" />
+          <path d="M3 10h18" />
+          <path d="M10 16h4" />
+          <path d="M12 14v4" />
+        </svg>
+        <h4>Sin sesiones programadas</h4>
+        <p>Explora instructores verificados y agenda tu primera sesión de entrenamiento adaptado.</p>
+        <a routerLink="/tutor/catalogo-instructor" class="btn-primary" style="margin-top: 12px;">Explorar
+          Instructores
+        </a>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="suggestions">
+    <div class="suggestions-header">
+      <h3>Sugerencias de Confianza</h3>
+      <a routerLink="/tutor/catalogo-instructor">Explorar Todos ›</a>
+    </div>
+    <div class="trainer-wrapper">
+      @if (paginaActual > 1) {
+        <button class="arrow-left" (click)="irPagina(paginaActual - 1)">‹</button>
+      }
+      <div class="trainer-list">
+        @for (instructor of instructoresPaginados; track instructor) {
+          <div class="trainer-card">
+            <div class="trainer-img">
+              <img [src]="instructor.instructorFoto || 'assets/instructores/default.jpg'"
+                [alt]="instructor.instructorNombre" />
+                <span class="verified">✔ VERIFICADO</span>
+              </div>
+              <h4>{{ instructor.instructorNombre }}</h4>
+              <p>{{ instructor.especialidad }}</p>
+              <small>
+                ☆ <strong>{{ instructor.calificacionEstrellas }}</strong> ({{ instructor.numeroSesionesDictadas
+                }} sesiones)
+              </small>
             </div>
-
-            <div class="empty-state">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
-                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-no-axes-combined">
-                    <path d="M12 20V10" />
-                    <path d="M18 20v-4" />
-                    <path d="M6 20V4" />
-                </svg>
-                <h4>¡Comienza a registrar sesiones!</h4>
-                <p>El progreso de {{ obtenerPrimerNombre(paciente?.nombreCompleto) || 'tu paciente' }} se reflejará aquí
-                    cuando se completen las primeras sesiones.</p>
-            </div>
+          }
         </div>
-
-        <div class="next-session">
-            <h3> Próxima Sesión</h3>
-
-            <div class="empty-state">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
-                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-plus">
-                    <path d="M8 2v4" />
-                    <path d="M16 2v4" />
-                    <rect width="18" height="18" x="3" y="4" rx="2" />
-                    <path d="M3 10h18" />
-                    <path d="M10 16h4" />
-                    <path d="M12 14v4" />
-                </svg>
-                <h4>Sin sesiones programadas</h4>
-                <p>Explora instructores verificados y agenda tu primera sesión de entrenamiento adaptado.</p>
-                <a routerLink="/tutor/catalogo-instructor" class="btn-primary" style="margin-top: 12px;">Explorar
-                    Instructores
-                </a>
-            </div>
-        </div>
-
-    </section>
-
-    <section class="suggestions">
-        <div class="suggestions-header">
-            <h3>Sugerencias de Confianza</h3>
-            <a routerLink="/tutor/catalogo-instructor">Explorar Todos ›</a>
-        </div>
-        <div class="trainer-wrapper">
-            <button class="arrow-left" *ngIf="paginaActual > 1" (click)="irPagina(paginaActual - 1)">‹</button>
-            <div class="trainer-list">
-                <div class="trainer-card" *ngFor="let instructor of instructoresPaginados">
-                    <div class="trainer-img">
-                        <img [src]="instructor.instructorFoto || 'assets/instructores/default.jpg'"
-                            [alt]="instructor.instructorNombre" />
-                        <span class="verified">✔ VERIFICADO</span>
-                    </div>
-                    <h4>{{ instructor.instructorNombre }}</h4>
-                    <p>{{ instructor.especialidad }}</p>
-                    <small>
-                        ☆ <strong>{{ instructor.calificacionEstrellas }}</strong> ({{ instructor.numeroSesionesDictadas
-                        }} sesiones)
-                    </small>
-                </div>
-            </div>
-            <button class="arrow-right" *ngIf="totalPaginas > 1 && paginaActual < totalPaginas"
-                [class.disabled]="paginaActual === totalPaginas" (click)="irPagina(paginaActual + 1)">›</button>
-        </div>
+        @if (totalPaginas > 1 && paginaActual < totalPaginas) {
+          <button class="arrow-right"
+          [class.disabled]="paginaActual === totalPaginas" (click)="irPagina(paginaActual + 1)">›</button>
+        }
+      </div>
     </section>

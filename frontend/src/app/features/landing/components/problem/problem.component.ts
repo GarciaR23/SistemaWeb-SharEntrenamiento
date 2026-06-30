@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 interface Problem {
   icon: string;
@@ -10,7 +9,7 @@ interface Problem {
 @Component({
   selector: 'app-problem',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './problem.component.html',
   styleUrls: ['./problem.component.scss']
 })

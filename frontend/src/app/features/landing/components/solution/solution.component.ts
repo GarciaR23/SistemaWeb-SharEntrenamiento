@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 interface Feature {
   title: string;
@@ -11,7 +10,7 @@ interface Feature {
 @Component({
   selector: 'app-solution',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './solution.component.html',
   styleUrls: ['./solution.component.scss']
 })
@@ -35,4 +34,3 @@ export class SolutionComponent {
     }
   ];
 }
-

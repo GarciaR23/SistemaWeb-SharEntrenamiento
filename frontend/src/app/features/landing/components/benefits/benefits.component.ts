@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 interface Benefit {
   icon: string;
@@ -10,7 +9,7 @@ interface Benefit {
 @Component({
   selector: 'app-benefits',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './benefits.component.html',
   styleUrls: ['./benefits.component.scss']
 })
@@ -36,5 +35,3 @@ export class BenefitsComponent {
     'Tranquilidad total para el entorno familiar.'
   ];
 }
-
-

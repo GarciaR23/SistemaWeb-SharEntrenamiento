@@ -1,6 +1,8 @@
 package edu.utp.backend.features.sede.dtos;
 
-public record SedeDto(
+import java.util.List;
+
+public record SedeResponse(
         Integer idSede,
         Integer idInstructor,
         String urlImagenSede1,
@@ -9,5 +11,8 @@ public record SedeDto(
         String descripcionSede,
         String direccionSede,
         String distritoSede,
-        Boolean estadoActivacion) {
+        Boolean estadoActivacion,
+        String nombreCard,
+        List<String> imagenes,
+        String etiqueta) {
 }

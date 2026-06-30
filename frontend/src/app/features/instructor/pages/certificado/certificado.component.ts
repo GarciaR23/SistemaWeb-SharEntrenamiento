@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -9,7 +8,7 @@ import { DocumentKey } from '../../../auth/models/registration.model';
 @Component({
   selector: 'app-certificado',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, HeaderComponent],
+  imports: [ReactiveFormsModule, RouterLink, RouterLinkActive, HeaderComponent],
   templateUrl: './certificado.component.html',
   styleUrls: ['./certificado.component.scss'],
 })
@@ -80,4 +79,3 @@ export class Certificado {
     this.missingDocuments = [];
   }
 }
-

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy } from '@angular/core';
 import {
   FormBuilder,
@@ -14,9 +13,8 @@ import { AuthApiService } from '../../../core/services/auth-api.service';
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    CommonModule,
     RouterLink
-  ],
+],
   templateUrl: './token-contrasena.component.html',
   styleUrls: ['./token-contrasena.component.scss']
 })
@@ -179,4 +177,3 @@ export class TokenContrasena implements OnDestroy {
     clearInterval(this.intervalId);
   }
 }
-

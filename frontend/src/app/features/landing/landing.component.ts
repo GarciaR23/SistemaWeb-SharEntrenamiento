@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { HeroComponent } from './components/hero/hero.component';
@@ -15,7 +15,6 @@ import { FaqComponent } from './components/faq/faq.component';
   selector: 'app-landing',
   standalone: true,
   imports: [
-    CommonModule,
     HeroComponent,
     HeaderComponent,
     TestimonialsComponent,
@@ -23,8 +22,8 @@ import { FaqComponent } from './components/faq/faq.component';
     SolutionComponent,
     CommunityComponent,
     BenefitsComponent,
-    FaqComponent,
-  ],
+    FaqComponent
+],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss']
 })

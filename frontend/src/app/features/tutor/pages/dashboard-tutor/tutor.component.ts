@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { TutorApiService, TutorDto } from '../../services/tutor-api.service';
 import { PacienteDto } from '../../models/paciente.model';
 import { InstructorExplorarDto } from '../../models/instructor-explorar.model';
@@ -8,7 +8,7 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-inicio',
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './tutor.component.html',
   styleUrls: ['./tutor.component.scss'],
 })

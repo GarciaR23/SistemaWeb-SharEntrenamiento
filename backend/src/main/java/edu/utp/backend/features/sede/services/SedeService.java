@@ -2,16 +2,25 @@ package edu.utp.backend.features.sede.services;
 
 import java.util.List;
 
-import edu.utp.backend.features.sede.dtos.SedeDto;
+import edu.utp.backend.features.sede.dtos.SedeRequest;
+import edu.utp.backend.features.sede.dtos.SedeResponse;
 
 public interface SedeService {
-    List<SedeDto> findAll();
+    List<SedeResponse> findAll();
 
-    SedeDto findById(Integer id);
+    SedeResponse findById(Integer id);
 
-    SedeDto create(SedeDto request);
+    SedeResponse create(SedeRequest request);
 
-    SedeDto update(Integer id, SedeDto request);
+    SedeResponse update(Integer id, SedeRequest request);
 
     void delete(Integer id);
+
+    List<SedeResponse> listarPorInstructor(Integer idInstructor);
+
+    List<SedeResponse> buscarPorDistrito(Integer idInstructor, String distrito);
+
+    List<SedeResponse> buscarPorDireccion(Integer idInstructor, String direccion);
+
+    SedeResponse actualizarEstado(Integer idSede, Boolean estadoActivacion);
 }

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, ɵInternalFormsSharedModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -26,7 +25,7 @@ function matchPasswords(controlName: string, confirmName: string) {
 @Component({
   selector: 'app-restaurar-contrasena',
   standalone: true,
-  imports: [ɵInternalFormsSharedModule, ReactiveFormsModule, CommonModule, HeaderComponent],
+  imports: [ɵInternalFormsSharedModule, ReactiveFormsModule, HeaderComponent],
   templateUrl: './restaurar-contrasena.component.html',
   styleUrls: ['./restaurar-contrasena.component.scss'],
 })
@@ -85,4 +84,3 @@ export class RestaurarContrasena {
     });
   }
 }
-
