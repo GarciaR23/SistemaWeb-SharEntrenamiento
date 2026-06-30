@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { HeaderComponent } from '../../shared/components/header/header.component';
 import { RouterOutlet } from '@angular/router';
 import { AuthApiService } from '../../core/services/auth-api.service';
+import { SidebarComponent } from '../../shared/components/sidebar/sidebar.component';
+import { PanelHeaderComponent } from '../../shared/components/header/panel-header/panel-header.component';
 
 @Component({
   selector: 'app-admin',
-  imports: [HeaderComponent, RouterOutlet],
+  imports: [PanelHeaderComponent,SidebarComponent, RouterOutlet],
   templateUrl: './admin.html',
   styleUrls: ['./admin.scss'],
 })

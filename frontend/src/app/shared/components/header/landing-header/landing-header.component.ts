@@ -6,8 +6,8 @@ import { RouterModule } from '@angular/router';
   selector: 'app-header',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  templateUrl: './landing-header.component.html',
+  styleUrls: ['./landing-header.component.scss']
 })
 export class HeaderComponent {
   @Input() modo: 'landing' | 'admin' | 'instructor' | 'tutor' = 'landing';

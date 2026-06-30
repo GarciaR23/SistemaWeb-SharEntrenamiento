@@ -1,16 +1,12 @@
-@use 'variables' as *;
-@use 'mixins' as *;
-
-.workspace-layout {
-    display: flex !important;
-    flex-direction: row;
+.dashboard-layout {
+    display: flex;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
     background-color: #0c0f17;
 }
 
-.workspace-body {
+.dashboard-body {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -18,10 +14,9 @@
     overflow: hidden;
 }
 
-.tutor-workspace {
+.dashboard-content {
     flex: 1;
     overflow-y: auto;
-    background-color: #0c0f17;
     padding: 32px;
     box-sizing: border-box;
 }

@@ -6,7 +6,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FormStateService } from '../../services/form-state.service';
 import { RegistrationApiService } from '../../../auth/services/registration-api.service';
-import { HeaderComponent } from '../../../../shared/components/header/header.component';
+import { HeaderComponent } from '../../../../shared/components/header/landing-header/landing-header.component';
 
 @Component({
   selector: 'app-cuenta',

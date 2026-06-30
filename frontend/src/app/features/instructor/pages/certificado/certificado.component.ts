@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { HeaderComponent } from '../../../../shared/components/header/header.component';
+import { HeaderComponent } from '../../../../shared/components/header/landing-header/landing-header.component';
 import { FormStateService } from '../../services/form-state.service';
 import { DocumentKey } from '../../../auth/models/registration.model';
 

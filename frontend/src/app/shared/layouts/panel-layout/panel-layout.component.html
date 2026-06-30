@@ -1,0 +1,14 @@
+<div class="dashboard-layout">
+
+    <app-sidebar [modo]="modo"></app-sidebar>
+
+    <div class="dashboard-body">
+
+        <app-panel-header [modo]="modo" (logoutClick)="handleLogout()"></app-panel-header>
+
+        <main class="dashboard-content">
+            <router-outlet></router-outlet>
+        </main>
+
+    </div>
+</div>
