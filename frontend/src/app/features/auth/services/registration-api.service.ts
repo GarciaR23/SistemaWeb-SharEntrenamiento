@@ -7,7 +7,7 @@ import { DocumentKey } from '../models/registration.model';
 import { RegistroTutorResponse } from '../models/response-tutor.model';
 import { RegistroInstructorResponse } from '../models/response-instructor.model';
 import { DocumentoDto } from '../../admin/models/documento.model';
-import { PacienteDto } from '../../tutor/modules/paciente.model';
+import { PacienteDto } from '../../tutor/models/paciente.model';
 
 interface ProtocoloEmergenciaDto {
   idProtocolo: number | null;

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { HeaderComponent } from '../../../shared/components/header/header.component';
+import { HeaderComponent } from '../../../shared/components/header/landing-header/landing-header.component';
 
 @Component({
   selector: 'app-seleccion-rol',

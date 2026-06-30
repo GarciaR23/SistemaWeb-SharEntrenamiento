@@ -7,7 +7,7 @@ import { Location, Ubication } from '../../../../shared/services/location.servic
 import { Subscription } from 'rxjs';
 
 import { RegistrationApiService } from '../../../auth/services/registration-api.service';
-import { HeaderComponent } from '../../../../shared/components/header/header.component';
+import { HeaderComponent } from '../../../../shared/components/header/landing-header/landing-header.component';
 
 @Component({
   selector: 'app-formulario-tutor',

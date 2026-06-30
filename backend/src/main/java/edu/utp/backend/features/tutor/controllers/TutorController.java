@@ -3,17 +3,11 @@ package edu.utp.backend.features.tutor.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import edu.utp.backend.features.tutor.repositories.TutorRepository;
-import edu.utp.backend.features.tutor.entities.Tutor;
+import org.springframework.web.bind.annotation.*;
+
 import edu.utp.backend.features.tutor.dtos.TutorDto;
+import edu.utp.backend.features.tutor.explorar_instructor.entities.VistaExplorarIns;
+import edu.utp.backend.features.tutor.explorar_instructor.services.VistaExplorarInsServices;
 import edu.utp.backend.features.tutor.services.TutorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,25 +18,21 @@ import lombok.RequiredArgsConstructor;
 public class TutorController {
 
     private final TutorService tutorService;
+    private final VistaExplorarInsServices explorarService;
 
     @GetMapping
     public ResponseEntity<List<TutorDto>> findAll() {
         return ResponseEntity.ok(tutorService.findAll());
     }
 
-    private final TutorRepository tutorRepository;
-
     @GetMapping("/usuario/{idUsuario}")
     public ResponseEntity<TutorDto> findByIdUsuario(@PathVariable Long idUsuario) {
-        Tutor tutor = tutorRepository.findByIdUsuario(idUsuario)
-                .orElseThrow(() -> new IllegalArgumentException("Tutor no encontrado para el usuario: " + idUsuario));
+        return ResponseEntity.ok(tutorService.findByIdUsuario(idUsuario));
+    }
 
-        TutorDto response = new TutorDto(
-                tutor.getIdTutor(),
-                tutor.getIdUsuario(),
-                tutor.getNombreCompleto());
-
-        return ResponseEntity.ok(response);
+    @GetMapping("/explorar")
+    public ResponseEntity<List<VistaExplorarIns>> explorar() {
+        return ResponseEntity.ok(explorarService.findAll());
     }
 
     @GetMapping("/{id}")

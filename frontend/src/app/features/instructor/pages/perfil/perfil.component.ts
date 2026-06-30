@@ -21,7 +21,7 @@ import {
   Location,
   Ubication
 } from '../../../../shared/services/location.service';
-import { HeaderComponent } from '../../../../shared/components/header/header.component';
+import { HeaderComponent } from '../../../../shared/components/header/landing-header/landing-header.component';
 
 @Component({
   selector: 'app-perfil',

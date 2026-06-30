@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { HeroComponent } from './components/hero/hero.component';
-import { HeaderComponent } from '../../shared/components/header/header.component';
+import { HeaderComponent } from '../../shared/components/header/landing-header/landing-header.component';
 import { TestimonialsComponent } from './components/testimonials/testimonials.component';
 import { ProblemComponent } from './components/problem/problem.component';
 import { SolutionComponent } from './components/solution/solution.component';
@@ -58,7 +58,6 @@ export class LandingComponent implements OnInit {
     }, 0);
   }
 
-  // ✅ NUEVO: Redirigir según rol
   irAPanel(rol: 'tutor' | 'instructor'): void {
     const token = localStorage.getItem(`authToken_${rol}`);
 
