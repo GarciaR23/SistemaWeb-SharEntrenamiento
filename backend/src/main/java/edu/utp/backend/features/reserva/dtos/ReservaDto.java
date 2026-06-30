@@ -1,7 +1,6 @@
 package edu.utp.backend.features.reserva.dtos;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 public record ReservaDto(
@@ -10,8 +9,9 @@ public record ReservaDto(
         Integer idInstructor,
         Integer idSede,
         LocalDateTime seleccionHorario,
-        Duration duracionEntrenamiento,
+        Integer duracionMinutos,
         BigDecimal montoTotal,
         String estadoReserva,
-        LocalDateTime fechaCreacion) {
+        LocalDateTime fechaCreacion
+) {
 }

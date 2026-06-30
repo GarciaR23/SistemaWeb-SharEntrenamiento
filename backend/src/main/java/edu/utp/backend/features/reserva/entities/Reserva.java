@@ -4,16 +4,12 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -39,15 +35,26 @@ public class Reserva {
     private LocalDateTime seleccionHorario;
 
     @JdbcTypeCode(SqlTypes.INTERVAL_SECOND)
-    @Column(name = "duracion_entrenamiento", nullable = false)
+    @Column(name = "duracion_entrenamiento", nullable = false, columnDefinition = "interval")
     private Duration duracionEntrenamiento;
 
     @Column(name = "monto_total", nullable = false)
     private BigDecimal montoTotal;
 
-    @Column(name = "estado_reserva")
-    private String estadoReserva = "pendiente";
+    @Column(name = "estado_reserva", nullable = false, length = 20)
+    private String estadoReserva;
 
-    @Column(name = "fecha_creacion", insertable = false, updatable = false)
+    @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion;
+
+    @PrePersist
+    public void prePersist() {
+        if (fechaCreacion == null) {
+            fechaCreacion = LocalDateTime.now();
+        }
+
+        if (estadoReserva == null || estadoReserva.isBlank()) {
+            estadoReserva = "pendiente";
+        }
+    }
 }
