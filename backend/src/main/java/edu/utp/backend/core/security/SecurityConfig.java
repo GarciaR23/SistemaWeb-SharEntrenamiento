@@ -46,15 +46,30 @@ public class SecurityConfig {
                         .requestMatchers("/api/cloudinary/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/documentos/instructor/*/observados").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/documentos/*/corregir").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/documentos/instructor/*/finalizar-correccion").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/documentos/instructor/*/finalizar-correccion")
+                        .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/admin/revisiones/instructor/*/documentos-rechazados")
                         .permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/instructores", "/api/tutores", "/api/pacientes",
                                 "/api/documentos")
                         .permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority("admin")
-                        .requestMatchers("/api/instructores/**").hasAnyAuthority("instructor", "admin")
-                        .requestMatchers("/api/tutores/**").hasAnyAuthority("tutor", "admin")
+
+                        .requestMatchers(HttpMethod.GET, "/api/instructores/busqueda")
+                        .hasAnyAuthority("tutor", "admin")
+
+                        .requestMatchers(HttpMethod.GET, "/api/instructores/*/perfil/**")
+                        .hasAnyAuthority("tutor", "admin")
+
+                        .requestMatchers(HttpMethod.GET, "/api/instructores")
+                        .hasAnyAuthority("tutor", "admin", "instructor")
+
+                        .requestMatchers("/api/instructores/**")
+                        .hasAnyAuthority("instructor", "admin")
+
+                        .requestMatchers("/api/tutores/**")
+                        .hasAnyAuthority("tutor", "admin")
+
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

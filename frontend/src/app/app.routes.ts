@@ -32,6 +32,7 @@ import { Error403 } from './shared/errors/error-403/error-403';
 import { Error404 } from './shared/errors/error-404/error-404';
 import { Error500 } from './shared/errors/error-500/error-500';
 import { ErrorConnection } from './shared/errors/error-connection/error-connection';
+import { PerfilInstructorComponent } from './features/tutor/pages/perfil-instructor/perfil-instructor.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -88,6 +89,7 @@ export const routes: Routes = [
           { path: '', redirectTo: 'inicio', pathMatch: 'full' },
           { path: 'inicio', component: TutorInicio },
           { path: 'catalogo-instructor', component: CatalogoInstructor },
+          { path: 'perfil-instructor/:idInstructor', component: PerfilInstructorComponent },
           { path: 'sesion', component: Sesion },
           { path: 'progreso', component: Progreso }
         ]

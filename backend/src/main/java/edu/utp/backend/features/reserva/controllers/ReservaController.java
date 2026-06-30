@@ -2,17 +2,12 @@ package edu.utp.backend.features.reserva.controllers;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import edu.utp.backend.features.reserva.dtos.ReservaDto;
+import edu.utp.backend.features.reserva.dtos.ReservaRequestDto;
 import edu.utp.backend.features.reserva.services.ReservaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,19 +29,24 @@ public class ReservaController {
         return ResponseEntity.ok(reservaService.findById(id));
     }
 
+    @GetMapping("/paciente/{idPaciente}")
+    public ResponseEntity<List<ReservaDto>> findByPaciente(@PathVariable Integer idPaciente) {
+        return ResponseEntity.ok(reservaService.findByPaciente(idPaciente));
+    }
+
+    @GetMapping("/instructor/{idInstructor}")
+    public ResponseEntity<List<ReservaDto>> findByInstructor(@PathVariable Integer idInstructor) {
+        return ResponseEntity.ok(reservaService.findByInstructor(idInstructor));
+    }
+
     @PostMapping
-    public ResponseEntity<ReservaDto> create(@Valid @RequestBody ReservaDto request) {
-        return ResponseEntity.ok(reservaService.create(request));
+    public ResponseEntity<ReservaDto> create(@Valid @RequestBody ReservaRequestDto request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(reservaService.create(request));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ReservaDto> update(@PathVariable Integer id, @Valid @RequestBody ReservaDto request) {
-        return ResponseEntity.ok(reservaService.update(id, request));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        reservaService.delete(id);
+    @PatchMapping("/{id}/cancelar")
+    public ResponseEntity<Void> cancelar(@PathVariable Integer id) {
+        reservaService.cancelar(id);
         return ResponseEntity.noContent().build();
     }
 }
