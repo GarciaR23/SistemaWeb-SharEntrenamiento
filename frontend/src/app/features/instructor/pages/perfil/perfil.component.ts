@@ -22,6 +22,8 @@ import {
   Ubication
 } from '../../../../shared/services/location.service';
 import { HeaderComponent } from '../../../../shared/components/header/landing-header/landing-header.component';
+import { FooterComponent } from '../../../../shared/components/footer/footer.component';
+
 
 @Component({
   selector: 'app-perfil',
@@ -31,8 +33,9 @@ import { HeaderComponent } from '../../../../shared/components/header/landing-he
     ReactiveFormsModule,
     RouterLink,
     RouterLinkActive,
-    HeaderComponent
-  ],
+    HeaderComponent,
+    FooterComponent
+],
   templateUrl: './perfil.component.html',
   styleUrls: ['./perfil.component.scss']
 })

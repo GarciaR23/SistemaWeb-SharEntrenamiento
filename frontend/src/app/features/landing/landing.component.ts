@@ -10,6 +10,7 @@ import { SolutionComponent } from './components/solution/solution.component';
 import { CommunityComponent } from './components/community/community.component';
 import { BenefitsComponent } from './components/benefits/benefits.component';
 import { FaqComponent } from './components/faq/faq.component';
+import { FooterComponent } from '../../shared/components/footer/footer.component';
 
 @Component({
   selector: 'app-landing',
@@ -22,7 +23,8 @@ import { FaqComponent } from './components/faq/faq.component';
     SolutionComponent,
     CommunityComponent,
     BenefitsComponent,
-    FaqComponent
+    FaqComponent,
+    FooterComponent
 ],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss']

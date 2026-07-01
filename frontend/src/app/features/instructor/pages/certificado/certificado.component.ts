@@ -4,11 +4,12 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { HeaderComponent } from '../../../../shared/components/header/landing-header/landing-header.component';
 import { FormStateService } from '../../services/form-state.service';
 import { DocumentKey } from '../../../auth/models/registration.model';
+import { FooterComponent } from '../../../../shared/components/footer/footer.component';
 
 @Component({
   selector: 'app-certificado',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, RouterLinkActive, HeaderComponent],
+  imports: [ReactiveFormsModule, RouterLink, RouterLinkActive, HeaderComponent, FooterComponent],
   templateUrl: './certificado.component.html',
   styleUrls: ['./certificado.component.scss'],
 })
