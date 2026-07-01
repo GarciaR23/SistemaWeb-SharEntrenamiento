@@ -21,8 +21,7 @@ export class Instructor {
     logout(): void {
         const sesion = this.authApiService.getSesionActiva();
         if (sesion) {
-            localStorage.removeItem(`authToken_${sesion.rol}`);
-            localStorage.removeItem(`authUser_${sesion.rol}`);
+            this.authApiService.logout(sesion.rol);
         }
         this.router.navigate(['/']);
     }

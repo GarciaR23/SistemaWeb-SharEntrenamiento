@@ -8,11 +8,12 @@ import { HistorialRespuestaService } from '../../admin/services/historial-respue
 import { HeaderComponent } from '../../../shared/components/header/landing-header/landing-header.component';
 import { DocumentoObservado } from '../models/documento-observado.model';
 import { SubsanacionDocumentosService } from '../services/subsanacion-documentos.service';
+import { FooterComponent } from '../../../shared/components/footer/footer.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, HeaderComponent],
+  imports: [ReactiveFormsModule, RouterLink, HeaderComponent, FooterComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
@@ -239,18 +240,15 @@ export class Login {
           const msg = (response.message || '').toLowerCase();
 
           if (/subsanar|observaciones|pendiente_subsanacion/.test(msg)) {
-            this.idInstructorPendiente = response.idInstructor ?? null;
-            this.idInstructorSubsanacion = response.idInstructor ?? null;
+            this.idInstructorPendiente = response.usuario?.idInstructor ?? null;
+            this.idInstructorSubsanacion = response.usuario?.idInstructor ?? null;
 
             if (this.idInstructorPendiente) {
               this.obtenerDocumentosRechazados();
             } else {
-              this.documentosRechazados = [
-                'No se pudo obtener el detalle de los documentos observados.',
-              ];
+              this.documentosRechazados = ['No se pudo obtener el detalle de los documentos observados.'];
               this.showSubsanacionModal = true;
             }
-
             return;
           }
 
@@ -283,14 +281,11 @@ export class Login {
         }
         localStorage.setItem(`authUser_${rol}`, JSON.stringify(response.usuario));
 
-        if (rol === 'instructor' && response.idInstructor) {
-          localStorage.setItem('idInstructor', response.idInstructor.toString());
-        }
-
         this.pendingRedirectUrl = `/${rol}/inicio`;
         this.successMessage = 'Bienvenido, Usuario';
         this.showSuccessModal = true;
       },
+
       error: (error) => {
         this.loading = false;
         const rawMessage = error?.error?.message ?? 'Error de conexión con el servidor';
