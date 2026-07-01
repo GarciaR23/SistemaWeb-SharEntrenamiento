@@ -81,8 +81,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         return new UsuarioResponse(
                 usuario.getIdUsuario(),
                 usuario.getEmail(),
-                usuario.getRol(),
-                usuario.getEstadoCuenta(),
-                usuario.getFechaRegistro());
+                usuario.getRol().name(),
+                usuario.getEstadoCuenta().name(),
+                usuario.getFechaRegistro(),
+                null, null, null, null);
     }
 }
