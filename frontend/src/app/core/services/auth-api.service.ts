@@ -8,6 +8,10 @@ export interface UsuarioAuth {
   rol: 'admin' | 'tutor' | 'instructor';
   estadoCuenta: 'pendiente_validacion' | 'activo' | 'suspendido';
   fechaRegistro: string;
+  idInstructor?: number;
+  idTutor?: number;
+  idPaciente?: number;
+  idAdmin?: number;
 }
 
 export interface LoginResponse {
@@ -15,8 +19,6 @@ export interface LoginResponse {
   message: string;
   token: string;
   usuario: UsuarioAuth | null;
-  idInstructor: number | null;
-  estadoCuenta?: string | null;
 }
 
 export interface ApiMessage {
@@ -74,23 +76,8 @@ export class AuthApiService {
     return null;
   }
 
-  getIdInstructorLogueado(): number | null {
-  const idInstructor = localStorage.getItem('idInstructor');
-    if (!idInstructor) {
-      return null;
-    }
-
-    const parsedId = Number(idInstructor);
-
-    return Number.isNaN(parsedId) ? null : parsedId;
-  }
-
   logout(rol: string): void {
     localStorage.removeItem(`authToken_${rol}`);
     localStorage.removeItem(`authUser_${rol}`);
-
-    if (rol === 'instructor') {
-      localStorage.removeItem('idInstructor');
-    }
   }
 }

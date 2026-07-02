@@ -7,11 +7,13 @@ import { Subscription } from 'rxjs';
 import { FormStateService } from '../../services/form-state.service';
 import { RegistrationApiService } from '../../../auth/services/registration-api.service';
 import { HeaderComponent } from '../../../../shared/components/header/landing-header/landing-header.component';
+import { FooterComponent } from '../../../../shared/components/footer/footer.component';
+
 
 @Component({
   selector: 'app-cuenta',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, HeaderComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterLinkActive, HeaderComponent, FooterComponent],
   templateUrl: './cuenta.component.html',
   styleUrls: ['./cuenta.component.scss'],
 })

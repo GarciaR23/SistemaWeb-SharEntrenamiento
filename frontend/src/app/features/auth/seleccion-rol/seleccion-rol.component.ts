@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { HeaderComponent } from '../../../shared/components/header/landing-header/landing-header.component';
+import { FooterComponent } from '../../../shared/components/footer/footer.component';
+
 
 @Component({
   selector: 'app-seleccion-rol',
   standalone: true,
-  imports: [RouterLink, HeaderComponent],
+  imports: [RouterLink, HeaderComponent, FooterComponent],
   templateUrl: './seleccion-rol.component.html',
   styleUrls: ['./seleccion-rol.component.scss']
 })

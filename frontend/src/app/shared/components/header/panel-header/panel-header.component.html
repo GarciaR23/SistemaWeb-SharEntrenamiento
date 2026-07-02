@@ -18,7 +18,7 @@
       </button>
 
       <div class="user-avatar-wrapper" (click)="toggleDropdown($event)">
-        <img src="../../../../../assets/instructores/instructor4.jpg" alt="Avatar Usuario" class="user-avatar">
+        <img [src]="fotoPerfil" alt="Avatar Usuario" class="user-avatar">
 
         @if (showDropdown) {
         <div class="profile-dropdown" (click)="$event.stopPropagation()">

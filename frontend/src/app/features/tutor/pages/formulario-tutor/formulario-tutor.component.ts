@@ -8,11 +8,12 @@ import { Subscription } from 'rxjs';
 
 import { RegistrationApiService } from '../../../auth/services/registration-api.service';
 import { HeaderComponent } from '../../../../shared/components/header/landing-header/landing-header.component';
+import { FooterComponent } from '../../../../shared/components/footer/footer.component';
 
 @Component({
   selector: 'app-formulario-tutor',
   standalone: true,
-  imports: [FormsModule, HttpClientModule, HeaderComponent],
+  imports: [FormsModule, HttpClientModule, HeaderComponent, FooterComponent],
   providers: [Location],
   templateUrl: './formulario-tutor.component.html',
   styleUrls: ['./formulario-tutor.component.scss'],

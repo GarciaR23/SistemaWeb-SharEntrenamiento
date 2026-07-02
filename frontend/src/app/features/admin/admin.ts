@@ -7,7 +7,7 @@ import { PanelHeaderComponent } from '../../shared/components/header/panel-heade
 
 @Component({
   selector: 'app-admin',
-  imports: [PanelHeaderComponent,SidebarComponent, RouterOutlet],
+  imports: [PanelHeaderComponent, SidebarComponent, RouterOutlet],
   templateUrl: './admin.html',
   styleUrls: ['./admin.scss'],
 })
@@ -22,8 +22,7 @@ export class Admin {
     const sesion = this.authApiService.getSesionActiva();
 
     if (sesion) {
-      localStorage.removeItem(`authToken_${sesion.rol}`);
-      localStorage.removeItem(`authUser_${sesion.rol}`);
+      this.authApiService.logout(sesion.rol);
     }
 
     this.router.navigate(['/']);

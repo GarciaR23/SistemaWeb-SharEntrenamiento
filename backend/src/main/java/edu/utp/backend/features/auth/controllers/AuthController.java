@@ -97,9 +97,11 @@ public class AuthController {
         UsuarioResponse usuarioResponse = new UsuarioResponse(
                 usuarioGuardado.getIdUsuario(),
                 usuarioGuardado.getEmail(),
-                usuarioGuardado.getRol(),
-                usuarioGuardado.getEstadoCuenta(),
-                usuarioGuardado.getFechaRegistro());
+                usuarioGuardado.getRol().name(),
+                usuarioGuardado.getEstadoCuenta().name(),
+                usuarioGuardado.getFechaRegistro(),
+                instructorGuardado.getIdInstructor().longValue(),
+                null, null, null);
 
         return ResponseEntity.ok(new RegistroInstructorResponse(
                 true, "Registro exitoso", usuarioResponse, instructorGuardado.getIdInstructor()));
@@ -132,9 +134,10 @@ public class AuthController {
         UsuarioResponse usuarioResponse = new UsuarioResponse(
                 usuarioGuardado.getIdUsuario(),
                 usuarioGuardado.getEmail(),
-                usuarioGuardado.getRol(),
-                usuarioGuardado.getEstadoCuenta(),
-                usuarioGuardado.getFechaRegistro());
+                usuarioGuardado.getRol().name(),
+                usuarioGuardado.getEstadoCuenta().name(),
+                usuarioGuardado.getFechaRegistro(),
+                null, tutorGuardado.getIdTutor().longValue(), null, null);
 
         String token = jwtService.GenerarToken(usuarioGuardado);
 

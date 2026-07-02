@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { SedeRequest, SedeResponse } from '../../models/sede.model';
 import { SedeService } from '../../services/sede.service';
 import { AuthApiService } from '../../../../core/services/auth-api.service';
@@ -14,7 +14,7 @@ import { firstValueFrom } from 'rxjs';
   templateUrl: './sede.component.html',
   styleUrls: ['./sede.component.scss'],
 })
-export class Sede {
+export class Sede implements OnInit {
   private sedeService = inject(SedeService);
   private authApiService = inject(AuthApiService);
   private locationService = inject(LocationService);
@@ -38,7 +38,8 @@ export class Sede {
   nuevaSede: SedeRequest = this.obtenerFormularioInicial();
 
   ngOnInit(): void {
-    this.idInstructor = this.authApiService.getIdInstructorLogueado();
+    const user = this.authApiService.getSesionActiva()?.usuario;
+    this.idInstructor = user?.idInstructor ?? null;
 
     if (!this.idInstructor) {
       this.mensajeError = 'No se encontró el instructor asociado a la sesión actual.';
@@ -51,56 +52,31 @@ export class Sede {
   }
 
   distritosFallback: string[] = [
-    'Ate',
-    'Barranco',
-    'Breña',
-    'Callao',
-    'Chorrillos',
-    'Comas',
-    'Jesús María',
-    'La Molina',
-    'La Victoria',
-    'Lince',
-    'Los Olivos',
-    'Miraflores',
-    'Pueblo Libre',
-    'San Borja',
-    'San Isidro',
-    'San Juan de Lurigancho',
-    'San Juan de Miraflores',
-    'San Luis',
-    'San Martín de Porres',
-    'San Miguel',
-    'Santa Anita',
-    'Santiago de Surco',
-    'Surquillo',
-    'Villa El Salvador',
-    'Villa María del Triunfo',
+    'Ate', 'Barranco', 'Breña', 'Callao', 'Chorrillos', 'Comas',
+    'Jesús María', 'La Molina', 'La Victoria', 'Lince', 'Los Olivos',
+    'Miraflores', 'Pueblo Libre', 'San Borja', 'San Isidro',
+    'San Juan de Lurigancho', 'San Juan de Miraflores', 'San Luis',
+    'San Martín de Porres', 'San Miguel', 'Santa Anita',
+    'Santiago de Surco', 'Surquillo', 'Villa El Salvador', 'Villa María del Triunfo',
   ];
 
   cargarDistritos(): void {
     this.locationService.getDistrictsByUbigeoPrefix('1401').subscribe({
       next: (list) => {
         if (list && list.length) {
-          this.distritos = [...new Set(list.map((d) => d.district))].sort((a, b) =>
-            a.localeCompare(b),
-          );
+          this.distritos = [...new Set(list.map((d) => d.district))].sort((a, b) => a.localeCompare(b));
         } else {
           this.distritos = [...this.distritosFallback];
         }
       },
-      error: () => {
-        this.distritos = [...this.distritosFallback];
-      },
+      error: () => { this.distritos = [...this.distritosFallback]; },
     });
   }
 
   cargarSedes(): void {
     if (!this.idInstructor) return;
-
     this.cargando = true;
     this.mensajeError = '';
-
     this.sedeService.listarPorInstructor(this.idInstructor).subscribe({
       next: (sedes) => {
         this.sedes = sedes;
@@ -122,39 +98,22 @@ export class Sede {
     this.modalAbierto = true;
   }
 
-  cerrarModal(): void {
-    this.modalAbierto = false;
-  }
+  cerrarModal(): void { this.modalAbierto = false; }
 
   async guardarSede(): Promise<void> {
-    if (!this.idInstructor) {
-      this.mensajeError = 'No se encontró el instructor asociado a la sesión actual.';
-      return;
+    if (!this.idInstructor) { this.mensajeError = 'No se encontró el instructor asociado a la sesión actual.'; return; }
+    if (!this.nuevaSede.distritoSede.trim() || !this.nuevaSede.direccionSede.trim() || !this.nuevaSede.descripcionSede.trim()) {
+      this.mensajeError = 'Completa distrito, dirección y descripción.'; return;
     }
-
-    if (
-      !this.nuevaSede.distritoSede.trim() ||
-      !this.nuevaSede.direccionSede.trim() ||
-      !this.nuevaSede.descripcionSede.trim()
-    ) {
-      this.mensajeError = 'Completa distrito, dirección y descripción.';
-      return;
-    }
-
-    if (this.archivosSeleccionados.length === 0) {
-      this.mensajeError = 'Debes seleccionar al menos una imagen.';
-      return;
-    }
+    if (this.archivosSeleccionados.length === 0) { this.mensajeError = 'Debes seleccionar al menos una imagen.'; return; }
 
     this.guardando = true;
     this.mensajeError = '';
 
     try {
       const urls: string[] = [];
-
       for (const file of this.archivosSeleccionados) {
         const response = await firstValueFrom(this.fileService.uploadImage(file));
-
         urls.push(response.url);
       }
 
@@ -164,14 +123,12 @@ export class Sede {
         direccionSede: this.nuevaSede.direccionSede,
         descripcionSede: this.nuevaSede.descripcionSede,
         estadoActivacion: true,
-
         urlImagenSede1: urls[0] ?? '',
         urlImagenSede2: urls[1] ?? '',
         urlImagenSede3: urls[2] ?? '',
       };
 
       await firstValueFrom(this.sedeService.crearSede(request));
-
       this.cerrarModal();
       this.cargarSedes();
     } catch (error) {
@@ -184,47 +141,26 @@ export class Sede {
 
   cambiarEstado(sede: SedeResponse): void {
     const nuevoEstado = !sede.estadoActivacion;
-
     this.sedeService.actualizarEstado(sede.idSede, nuevoEstado).subscribe({
-      next: (sedeActualizada) => {
-        sede.estadoActivacion = sedeActualizada.estadoActivacion;
-      },
-      error: () => {
-        this.mensajeError = 'No se pudo actualizar el estado de la sede.';
-      },
+      next: (sedeActualizada) => { sede.estadoActivacion = sedeActualizada.estadoActivacion; },
+      error: () => { this.mensajeError = 'No se pudo actualizar el estado de la sede.'; },
     });
   }
 
   filtrar(): void {
     if (!this.idInstructor) return;
-
     const texto = this.busqueda.trim();
-
-    if (!texto && !this.distritoFiltro) {
-      this.cargarSedes();
-      return;
-    }
-
+    if (!texto && !this.distritoFiltro) { this.cargarSedes(); return; }
     if (this.distritoFiltro) {
       this.sedeService.buscarPorDistrito(this.idInstructor, this.distritoFiltro).subscribe({
-        next: (sedes) => {
-          this.sedes = sedes;
-        },
-        error: () => {
-          this.mensajeError = 'No se pudo filtrar por distrito.';
-        },
+        next: (sedes) => { this.sedes = sedes; },
+        error: () => { this.mensajeError = 'No se pudo filtrar por distrito.'; },
       });
-
       return;
     }
-
     this.sedeService.buscarPorDireccion(this.idInstructor, texto).subscribe({
-      next: (sedes) => {
-        this.sedes = sedes;
-      },
-      error: () => {
-        this.mensajeError = 'No se pudo realizar la búsqueda.';
-      },
+      next: (sedes) => { this.sedes = sedes; },
+      error: () => { this.mensajeError = 'No se pudo realizar la búsqueda.'; },
     });
   }
 
@@ -244,12 +180,11 @@ export class Sede {
       const index = this.indicesImagenes[sede.idSede] || 0;
       return sede.imagenes[index] || sede.imagenes[0];
     }
-
     return 'assets/images/sede-placeholder.jpg';
   }
 
   cambiarImagenSede(sede: SedeResponse, index: number, event: Event): void {
-    event.stopPropagation(); // Evitar que el clic se propague si la card tiene otros clics
+    event.stopPropagation();
     this.indicesImagenes[sede.idSede] = index;
   }
 
@@ -260,28 +195,20 @@ export class Sede {
   private obtenerFormularioInicial(): SedeRequest {
     return {
       idInstructor: this.idInstructor ?? 0,
-      urlImagenSede1: '',
-      urlImagenSede2: '',
-      urlImagenSede3: '',
-      descripcionSede: '',
-      direccionSede: '',
-      distritoSede: '',
-      estadoActivacion: true,
+      urlImagenSede1: '', urlImagenSede2: '', urlImagenSede3: '',
+      descripcionSede: '', direccionSede: '', distritoSede: '', estadoActivacion: true,
     };
   }
 
   private actualizarMensajeInicial(): void {
     if (this.sedes.length === 0) {
-      this.mensajeInfo =
-        'Aún no existen sedes registradas. Debes configurar al menos tres sedes para aparecer en el catálogo de instructores.';
+      this.mensajeInfo = 'Aún no existen sedes registradas. Debes configurar al menos tres sedes para aparecer en el catálogo de instructores.';
       return;
     }
-
     if (this.sedes.length < 3) {
       this.mensajeInfo = `Tienes ${this.sedes.length} sede(s) registrada(s). Debes configurar al menos tres sedes para aparecer en el catálogo de instructores.`;
       return;
     }
-
     this.mensajeInfo = '';
   }
 
@@ -290,13 +217,9 @@ export class Sede {
 
   onImagenesSedeChange(event: Event): void {
     const input = event.target as HTMLInputElement;
-
-    if (!input.files || input.files.length === 0) {
-      return; // No borrar lo que ya estaba si cancelan el selector
-    }
+    if (!input.files || input.files.length === 0) return;
 
     const archivosNuevos = Array.from(input.files);
-
     const imagenesValidas = archivosNuevos.filter((file) =>
       ['image/jpeg', 'image/png', 'image/webp'].includes(file.type),
     );
@@ -307,7 +230,6 @@ export class Sede {
 
     for (const file of imagenesValidas) {
       if (this.archivosSeleccionados.length < 3) {
-        // Evitar agregar la misma imagen repetida
         if (!this.archivosSeleccionados.some(f => f.name === file.name)) {
           this.archivosSeleccionados.push(file);
         }
@@ -318,8 +240,6 @@ export class Sede {
     }
 
     this.nombresImagenes = this.archivosSeleccionados.map((file) => file.name).join(', ');
-
-    // Limpiar el input para permitir seleccionar más imágenes en otro clic
     input.value = '';
   }
 }
