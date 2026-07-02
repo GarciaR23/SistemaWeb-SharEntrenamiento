@@ -36,6 +36,8 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .modal-close {
@@ -452,13 +454,15 @@
 
 .admin-comment {
   color: #c8d0d2;
-  line-height: 1.45;
   font-size: 15px;
-  max-height: 48px;
+  line-height: 1.45;
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  display: box;
   -webkit-box-orient: vertical;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  max-height: calc(1.45em * 2);
 }
 
 .upload-column {
