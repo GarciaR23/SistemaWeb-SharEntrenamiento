@@ -1,10 +1,28 @@
 import { Component, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { TutorApiService, TutorDto } from '../../services/tutor-api.service';
 import { PacienteDto } from '../../models/paciente.model';
 import { InstructorExplorarDto } from '../../models/instructor-explorar.model';
 import { ExplorarInstructorApiService } from '../../services/explorar-instructor-api.service';
-import { RouterLink } from '@angular/router';
+
+export interface StatCard {
+  id: string;
+  title: string;
+  score: number;
+  maxScore: number;
+  trend: string;
+  color: string;
+  bgColor: string;
+}
+
+export interface ProximaSesion {
+  instructorNombre: string;
+  instructorEspecialidad: string;
+  instructorFoto: string;
+  fechaHora: string;
+  ubicacion: string;
+}
 
 @Component({
   selector: 'app-inicio',
@@ -17,6 +35,13 @@ export class Inicio implements OnInit {
   paciente: PacienteDto | null = null;
   instructores: InstructorExplorarDto[] = [];
   instructoresPaginados: InstructorExplorarDto[] = [];
+
+  // Datos simulados para el Panel de Progreso
+  // Sin datos por defecto — mostrar estado vacío cuando no hay registros en backend
+  stats: StatCard[] = [];
+
+  // Sin próxima sesión por defecto — quedará en null si no hay datos del backend
+  proximaSesion: ProximaSesion | null = null;
 
   pageSize = 4;
   paginaActual = 1;
