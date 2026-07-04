@@ -9,7 +9,7 @@
       <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
         <p class="modal-kicker">Inicio de sesión correcto</p>
         <h3 id="welcome-title">{{ successMessage }}</h3>
-        <p class="modal-text">Tu acceso fue validado correctamente.</p>
+        <p class="modal-text">{{ successSubtitle }}</p>
         <button type="button" class="btn-primary modal-button" (click)="closeSuccessModal()">Continuar</button>
       </div>
     </div>

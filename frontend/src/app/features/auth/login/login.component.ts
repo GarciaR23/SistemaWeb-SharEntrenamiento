@@ -37,7 +37,8 @@ export class Login {
   errorTitle = 'Error de autenticación';
   showErrorModal = false;
   showSuccessModal = false;
-  successMessage = 'Bienvenido, Usuario';
+  successMessage = 'Inicio de sesión exitoso';
+  successSubtitle = 'Tu acceso fue validado correctamente.';
 
   showSubsanacionModal = false;
   showDocumentosCorreccionModal = false;
@@ -202,6 +203,19 @@ export class Login {
     this.successCorreccion = '';
   }
 
+  private getRolMostrable(rol: string | undefined): string {
+    switch (rol) {
+      case 'admin':
+        return 'Administrador';
+      case 'tutor':
+        return 'Tutor';
+      case 'instructor':
+        return 'Instructor';
+      default:
+        return '';
+    }
+  }
+
   private mapAuthError(message: string): string {
     const normalized = (message || '').toLowerCase();
     if (/usuario inexistente|no existe|no encontrado/.test(normalized)) {
@@ -282,7 +296,9 @@ export class Login {
         localStorage.setItem(`authUser_${rol}`, JSON.stringify(response.usuario));
 
         this.pendingRedirectUrl = `/${rol}/inicio`;
-        this.successMessage = 'Bienvenido, Usuario';
+        const rolMostrable = this.getRolMostrable(rol);
+        this.successMessage = rolMostrable ? `Bienvenido ${rolMostrable}` : 'Bienvenido';
+        this.successSubtitle = 'Tu acceso fue validado correctamente.';
         this.showSuccessModal = true;
       },
 

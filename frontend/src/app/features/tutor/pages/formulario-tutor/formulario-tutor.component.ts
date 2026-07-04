@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
@@ -13,7 +14,7 @@ import { FooterComponent } from '../../../../shared/components/footer/footer.com
 @Component({
   selector: 'app-formulario-tutor',
   standalone: true,
-  imports: [FormsModule, HttpClientModule, HeaderComponent, FooterComponent],
+  imports: [CommonModule, FormsModule, HttpClientModule, HeaderComponent, FooterComponent],
   providers: [Location],
   templateUrl: './formulario-tutor.component.html',
   styleUrls: ['./formulario-tutor.component.scss'],
@@ -136,7 +137,32 @@ export class FormularioTutor implements OnInit, OnDestroy {
     );
   }
 
+  get canContinue(): boolean {
+    switch (this.paso) {
+      case 1:
+        return this.isStep1Valid();
+      case 2:
+        return this.isStep2Valid();
+      case 3:
+        return this.isStep3Valid();
+      case 4:
+        return this.isStep4Valid();
+      default:
+        return false;
+    }
+  }
+
   siguiente() {
+    if (this.paso === 1 && !this.isStep1Valid()) {
+      return;
+    }
+    if (this.paso === 2 && !this.isStep2Valid()) {
+      return;
+    }
+    if (this.paso === 3 && !this.isStep3Valid()) {
+      return;
+    }
+
     if (this.paso < 4) {
       this.paso++;
     } else {

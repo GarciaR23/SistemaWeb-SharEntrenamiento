@@ -394,6 +394,30 @@ button:hover {
     box-shadow: 0 8px 20px rgba(109, 255, 208, 0.2);
 }
 
+.btn-continuar {
+    border-radius: 40px;
+    border: none;
+    background: #6dffd0;
+    color: #06131c;
+    font-weight: 600;
+    padding: 14px 32px;
+    transition: all .25s ease;
+}
+
+.btn-continuar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(109, 255, 208, 0.18);
+}
+
+.btn-continuar:disabled {
+    background: #116a4b;
+    color: #082117;
+    opacity: 0.9;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
 .back-btn {
     background: transparent;
     border: 1px solid rgba(109, 255, 208, .35);
