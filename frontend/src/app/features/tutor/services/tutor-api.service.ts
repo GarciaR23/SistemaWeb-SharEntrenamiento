@@ -2,73 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PacienteDto } from '../models/paciente.model';
+import { InstructorCatalogoDto } from '../models/instructor-catalogo.model';
+import { InstructorPerfilSedeDto } from '../models/instructor-perfil-sede.model';
+import { InstructorPerfilResumenDto } from '../models/instructor-perfil.model';
+import { InstructorPerfilCalificacionDto } from '../models/instructor-perfil-calificacion.model';
+import { InstructorPerfilServicioDto } from '../models/instructor-perfil-servicio.model';
 
 export interface TutorDto {
     idTutor: number;
     idUsuario: number;
     nombreCompleto: string;
-}
-
-export interface InstructorCatalogoDto {
-    idInstructor: number;
-    nombreCompleto: string;
-    urlImagenPerfil: string | null;
-    especialidad: string | null;
-    biografia: string | null;
-    distrito: string | null;
-    direccion: string | null;
-
-    idSede: number | null;
-    direccionSede: string | null;
-    distritoSede: string | null;
-
-    tarifaHora: number | null;
-    horarioPreferencia: string | null;
-    diaDisponible: string | null;
-    horarioInicio: string | null;
-    horarioFinal: string | null;
-
-    promedioCalificacion: number | null;
-    totalSesiones: number | null;
-
-}
-export interface InstructorPerfilResumenDto {
-    idInstructor: number;
-    nombreCompleto: string;
-    urlImagenPerfil: string | null;
-    especialidad: string | null;
-    biografia: string | null;
-    direccion: string | null;
-    distrito: string | null;
-}
-
-export interface InstructorPerfilSedeDto {
-    idSede: number;
-    urlImagenSede1: string | null;
-    urlImagenSede2: string | null;
-    urlImagenSede3: string | null;
-    descripcionSede: string | null;
-    direccionSede: string | null;
-    distritoSede: string | null;
-    estadoActivacion: boolean | null;
-}
-
-export interface InstructorPerfilServicioDto {
-    idServicio: number;
-    tarifaHora: number | null;
-    horarioPreferencia: string | null;
-    diaDisponible: string | null;
-    horarioInicio: string | null;
-    horarioFinal: string | null;
-}
-
-export interface InstructorPerfilCalificacionDto {
-    idCalificacion: number;
-    idPaciente: number;
-    pacienteNombre: string;
-    puntajeEstrellas: number | null;
-    comentarioCliente: string | null;
-    fechaCalificacion: string | null;
 }
 
 @Injectable({

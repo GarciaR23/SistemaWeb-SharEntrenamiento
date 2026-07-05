@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import edu.utp.backend.features.tutor.dtos.TutorDto;
 import edu.utp.backend.features.tutor.explorar_instructor.entities.VistaExplorarIns;
 import edu.utp.backend.features.tutor.explorar_instructor.services.VistaExplorarInsServices;
+import edu.utp.backend.features.tutor.progreso_paciente.dtos.ProgresoKpiDto;
+import edu.utp.backend.features.tutor.progreso_paciente.services.ProgresoPacienteService;
 import edu.utp.backend.features.tutor.services.TutorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class TutorController {
 
     private final TutorService tutorService;
     private final VistaExplorarInsServices explorarService;
+    private final ProgresoPacienteService progresoService;
 
     @GetMapping
     public ResponseEntity<List<TutorDto>> findAll() {
@@ -33,6 +36,11 @@ public class TutorController {
     @GetMapping("/explorar")
     public ResponseEntity<List<VistaExplorarIns>> explorar() {
         return ResponseEntity.ok(explorarService.findAll());
+    }
+
+    @GetMapping("progreso/paciente/{idPaciente}/kpi")
+    public ResponseEntity<ProgresoKpiDto> obtenerKpi(@PathVariable Integer idPaciente) {
+        return ResponseEntity.ok(progresoService.obtenerProgresoKpi(idPaciente));
     }
 
     @GetMapping("/{id}")
