@@ -93,6 +93,8 @@ public class SedeServiceImpl implements SedeService {
 
     private void apply(Sede sede, SedeRequest request) {
         sede.setIdInstructor(request.idInstructor());
+        sede.setZonaSede(request.zonaSede());
+        sede.setNombreSede(request.nombreSede());
         sede.setUrlImagenSede1(request.urlImagenSede1());
         sede.setUrlImagenSede2(request.urlImagenSede2());
         sede.setUrlImagenSede3(request.urlImagenSede3());
@@ -106,6 +108,8 @@ public class SedeServiceImpl implements SedeService {
         return new SedeResponse(
                 sede.getIdSede(),
                 sede.getIdInstructor(),
+                sede.getZonaSede() != null ? sede.getZonaSede() : null,
+                sede.getNombreSede(),
                 sede.getUrlImagenSede1(),
                 sede.getUrlImagenSede2(),
                 sede.getUrlImagenSede3(),
@@ -119,33 +123,33 @@ public class SedeServiceImpl implements SedeService {
     }
 
     private String generarNombreCard(Sede sede) {
-        return "Sede " + normalizarTexto(sede.getDistritoSede());
+        return "Sede " + sede.getZonaSede() + " - " + normalizarTexto(sede.getNombreSede());
     }
 
     private String generarEtiqueta(String distrito) {
         if (distrito == null || distrito.isBlank()) {
-            return "TRAINING SPACE";
+            return "ESPACIO DE ENTRENAMIENTO";
         }
 
         String distritoNormalizado = distrito.trim().toLowerCase();
 
         if (distritoNormalizado.contains("miraflores")) {
-            return "ELITE SPACE";
+            return "ESPACIO DE ÉLITE";
         }
 
         if (distritoNormalizado.contains("san isidro")) {
-            return "WELLNESS";
+            return "BIENESTAR";
         }
 
         if (distritoNormalizado.contains("la molina")) {
-            return "DOJO CENTER";
+            return "CENTRO DOJO";
         }
 
         if (distritoNormalizado.contains("barranco")) {
-            return "STUDIO";
+            return "ESTUDIO";
         }
 
-        return "TRAINING SPACE";
+        return "ESPACIO DE ENTRENAMIENTO";
     }
 
     private List<String> obtenerImagenes(Sede sede) {

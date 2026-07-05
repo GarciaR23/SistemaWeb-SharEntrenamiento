@@ -3,13 +3,11 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
-import {
-  InstructorPerfilCalificacionDto,
-  InstructorPerfilResumenDto,
-  InstructorPerfilSedeDto,
-  InstructorPerfilServicioDto,
-  TutorApiService
-} from '../../services/tutor-api.service';
+import { TutorApiService } from '../../services/tutor-api.service';
+import { InstructorPerfilCalificacionDto } from '../../models/instructor-perfil-calificacion.model';
+import { InstructorPerfilResumenDto } from '../../models/instructor-perfil.model';
+import { InstructorPerfilSedeDto } from '../../models/instructor-perfil-sede.model';
+import { InstructorPerfilServicioDto } from '../../models/instructor-perfil-servicio.model';
 
 @Component({
   selector: 'app-perfil-instructor',
