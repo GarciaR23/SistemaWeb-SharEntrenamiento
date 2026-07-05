@@ -54,6 +54,35 @@
   }
 }
 
+.fab-add-sede {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  border: none;
+  border-radius: 50%;
+  background: $color-primary;
+  color: #061016;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 14px 30px rgba($color-primary, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  z-index: 100;
+
+  span {
+    margin-top: -2px; /* para centrar visualmente el '+' */
+  }
+
+  &:hover {
+    transform: scale(1.08);
+    box-shadow: 0 18px 40px rgba($color-primary, 0.55);
+  }
+}
+
 .sede-toolbar {
   display: grid;
   grid-template-columns: 1fr 256px;
@@ -91,6 +120,17 @@
   select {
     appearance: none;
     color: $color-text-secondary;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 30px;
+  }
+
+  select option {
+    background-color: #343746;
+    color: #f8fafc;
   }
 }
 
@@ -186,7 +226,7 @@
     width: 8px;
     height: 8px;
     border-radius: $border-radius-full;
-    background: rgba(255, 255, 255, 0.25);
+    background: $color-sideways;
 
     &.active {
       background: $color-primary;
@@ -215,6 +255,18 @@
   span {
     color: $color-text-secondary;
   }
+}
+
+.sede-description {
+  margin: 12px 0 0 0;
+  color: $color-text-secondary;
+  font-size: 13px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sede-card-footer {
@@ -491,4 +543,225 @@
     font-size: 13px;
     line-height: 1.5;
   }
+}
+
+/* ==========================================================================
+   ESTILOS PARA PREVISUALIZACIÓN DE IMÁGENES EN MODAL
+   ========================================================================== */
+.documento-revision-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background-color: #1a2235;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    border: 1px solid transparent;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.documento-revision-row.approved {
+    border-color: #2ecc71;
+    box-shadow: 0 0 0 1px rgba(46, 204, 113, 0.12);
+}
+
+.documento-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #94a3b8;
+}
+
+.icon-documento-tipo {
+    color: #64748b;
+    flex-shrink: 0;
+}
+
+.documento-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.documento-actions-group {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.btn-action-neon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s ease;
+}
+
+.btn-action-neon:hover {
+    transform: scale(1.1);
+}
+
+.btn-action-neon:not(.selected) svg {
+    opacity: 0.4;
+}
+
+.btn-action-neon.selected svg,
+.btn-action-neon:hover svg {
+    opacity: 1;
+}
+
+.btn-view svg {
+    color: #94a3b8;
+}
+
+.btn-view.selected {
+    background-color: rgba(255, 255, 255, 0.16) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+}
+
+.btn-view.selected svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    opacity: 1 !important;
+}
+
+.icon-check {
+    color: #5effad;
+}
+
+.icon-x {
+    color: #ff6b6b;
+}
+
+/* =========================================================
+   Mini-panel / modal de previsualización de imagen
+   ========================================================= */
+.preview-imagen-backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(4px);
+  z-index: 2000; /* Por encima del .modal-backdrop del modal principal */
+  animation: preview-fade 0.2s ease-out;
+}
+
+@keyframes preview-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.preview-imagen-modal {
+  position: relative;
+  width: min(960px, 100%);
+  max-height: 92vh;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0d1119;
+  border: 1px solid #222b3e;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  animation: preview-zoom 0.2s ease-out;
+}
+
+@keyframes preview-zoom {
+  from { transform: scale(0.96); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.preview-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+  z-index: 3;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+    transform: scale(1.06);
+  }
+}
+
+.preview-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+  z-index: 3;
+
+  &.preview-prev { left: 12px; }
+  &.preview-next { right: 12px; }
+
+  &:hover {
+    background: rgba(94, 255, 173, 0.18);
+    color: #5effad;
+    transform: translateY(-50%) scale(1.06);
+  }
+}
+
+.preview-imagen-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.preview-imagen-img {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border-radius: 12px;
+  display: block;
+}
+
+.preview-imagen-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.preview-imagen-nombre {
+  color: #f1f5f9;
+  font-size: 14px;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.preview-imagen-contador {
+  color: #64748b;
+  font-size: 13px;
+}
+
+@media (max-width: $breakpoint-sm) {
+  .preview-imagen-modal { padding: 16px; }
+  .preview-imagen-img   { max-height: 55vh; }
+  .preview-nav          { width: 40px; height: 40px; }
 }

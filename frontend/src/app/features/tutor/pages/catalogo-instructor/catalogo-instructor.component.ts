@@ -3,10 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import {
-  InstructorCatalogoDto,
-  TutorApiService
-} from '../../services/tutor-api.service';
+import { TutorApiService } from '../../services/tutor-api.service';
+import { InstructorCatalogoDto } from '../../models/instructor-catalogo.model';
 
 @Component({
   selector: 'app-catalogo-instructor',

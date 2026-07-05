@@ -200,6 +200,25 @@ export class RegistrationApiService {
       urlImagenPerfil = uploadedImage.url;
     }
 
+    const documentNames: Record<DocumentKey, string> = {
+      dni: 'DNI',
+      titulo: 'Titulo universitario',
+      antecedentes: 'Antecedentes penales',
+      certificacion: 'Certificacion entrenamiento adaptado',
+    };
+
+    const uploadedDocuments: Partial<Record<DocumentKey, string>> = {};
+
+    for (const key of Object.keys(payload.documentos) as DocumentKey[]) {
+      const file = payload.documentos[key];
+      if (!file) {
+        continue;
+      }
+
+      const uploaded = await firstValueFrom(this.fileService.uploadFile(file));
+      uploadedDocuments[key] = uploaded.url;
+    }
+
     const registerResult = await firstValueFrom(
       this.http.post<RegistroInstructorResponse>(`${this.registroUrl}/instructor`, {
         email: payload.email,
@@ -215,6 +234,8 @@ export class RegistrationApiService {
         diaDisponible: payload.diaDisponible,
         horarioInicio: payload.horarioInicio,
         horarioFinal: payload.horarioFinal,
+      }, {
+        headers: { 'X-Skip-Error-Interceptor': 'true' },
       }),
     );
 
@@ -224,28 +245,22 @@ export class RegistrationApiService {
 
     const idInstructor = registerResult.idInstructor;
 
-    const documentNames: Record<DocumentKey, string> = {
-      dni: 'DNI',
-      titulo: 'Titulo universitario',
-      antecedentes: 'Antecedentes penales',
-      certificacion: 'Certificacion entrenamiento adaptado',
-    };
-
-    for (const key of Object.keys(payload.documentos) as DocumentKey[]) {
-      const file = payload.documentos[key];
-
-      if (!file) continue;
-
-      const uploaded = await firstValueFrom(this.fileService.uploadFile(file));
+    for (const key of Object.keys(uploadedDocuments) as DocumentKey[]) {
+      const uploadedUrl = uploadedDocuments[key];
+      if (!uploadedUrl) {
+        continue;
+      }
 
       await firstValueFrom(
         this.http.post<DocumentoDto>(this.documentoUrl, {
           idDocumento: null,
           idInstructor: idInstructor,
           nombreDocumento: documentNames[key],
-          urlArchivo: uploaded.url,
+          urlArchivo: uploadedUrl,
           estadoAprobacion: 'pendiente',
           fechaSubida: null,
+        }, {
+          headers: { 'X-Skip-Error-Interceptor': 'true' },
         }),
       );
     }

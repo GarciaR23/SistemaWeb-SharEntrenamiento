@@ -20,8 +20,8 @@ import { Inicio as TutorInicio } from './features/tutor/pages/dashboard-tutor/tu
 import { Solicitud } from './features/admin/pages/solicitud-registro/solicitud.component';
 import { Admin } from './features/admin/admin';
 import { Sede } from './features/instructor/pages/sede/sede.component';
-import { Bitacora } from './features/instructor/pages/bitacora/bitacora.component';
-import { Pago } from './features/instructor/pages/pago/pago.component';
+import { BitacoraComponent } from './features/instructor/pages/bitacora/bitacora.component';
+import { PagoComponent } from './features/instructor/pages/pago/pago.component';
 import { Instructor } from './features/instructor/instructor';
 import { Tutor } from './features/tutor/tutor';
 import { CatalogoInstructor } from './features/tutor/pages/catalogo-instructor/catalogo-instructor.component';
@@ -76,8 +76,8 @@ export const routes: Routes = [
           { path: '', redirectTo: 'inicio', pathMatch: 'full' },
           { path: 'inicio', component: InstructorInicio, title: 'Dashboard Instructor | SharEntrenamiento' },
           { path: 'sede', component: Sede, title: 'Gestión de Sedes | SharEntrenamiento' },
-          { path: 'bitacora', component: Bitacora, title: 'Bitácora de Sesiones | SharEntrenamiento' },
-          { path: 'pago', component: Pago, title: 'Pagos | SharEntrenamiento' }
+          { path: 'bitacora', component: BitacoraComponent, title: 'Bitácora de Sesiones | SharEntrenamiento' },
+          { path: 'pago', component: PagoComponent, title: 'Pagos | SharEntrenamiento' }
         ]
       },
 

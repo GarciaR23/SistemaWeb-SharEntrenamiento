@@ -2,9 +2,13 @@ package edu.utp.backend.features.sede.dtos;
 
 import java.util.List;
 
+import edu.utp.backend.features.sede.enums.ZonaSedeEnum;
+
 public record SedeResponse(
         Integer idSede,
         Integer idInstructor,
+        ZonaSedeEnum zonaSede,
+        String nombreSede,
         String urlImagenSede1,
         String urlImagenSede2,
         String urlImagenSede3,

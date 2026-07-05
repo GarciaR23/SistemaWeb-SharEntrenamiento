@@ -1,1 +1,197 @@
-<p>inicio works!</p>
+<div class="dashboard-page">
+  <!-- Bienvenida -->
+  <header class="welcome-banner">
+    <div class="welcome-content">
+      <h1>¡Bienvenido instructor <span>{{ nombreInstructor }}</span>!</h1>
+      <p>Estamos listos para transformar vidas hoy. Tu impacto comienza ahora.</p>
+    </div>
+  </header>
+
+  <!-- Tarjetas de Estadísticas -->
+  <section class="stats-grid">
+    <article class="stat-card">
+      <div class="stat-header">
+        <span>SESIONES REALIZADAS</span>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2a454d" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+      </div>
+      <h2>{{ sesionesRealizadas }}</h2>
+      <p class="stat-trend trend-up">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+          <polyline points="16 7 22 7 22 13"></polyline>
+        </svg>
+        +8% este mes
+      </p>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-header">
+        <span>PACIENTES ACTIVOS</span>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2a454d" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
+      <h2>{{ pacientesActivos }}</h2>
+      <p class="stat-trend trend-neutral">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="16"></line>
+          <line x1="8" y1="12" x2="16" y2="12"></line>
+        </svg>
+        +3 nuevos esta semana
+      </p>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-header">
+        <span>CALIFICACIÓN</span>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2a454d" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polygon
+            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+          </polygon>
+        </svg>
+      </div>
+      <div class="rating-box">
+        <h2>{{ calificacion }}</h2>
+        <div class="stars">
+          <svg *ngFor="let i of [1,2,3,4,5]" width="16" height="16" viewBox="0 0 24 24"
+            [attr.fill]="i <= calificacion ? '#00e59b' : 'none'"
+            [attr.stroke]="i <= calificacion ? '#00e59b' : '#334155'" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+            </polygon>
+          </svg>
+        </div>
+      </div>
+      <p class="stat-text">Basado en {{ valoraciones }} valoraciones</p>
+    </article>
+  </section>
+
+  <!-- Sección Principal: Evolución y Promoción -->
+  <section class="main-grid">
+    <article class="chart-card">
+      <div class="chart-header">
+        <h3>Evolución de Actividad</h3>
+        <p>Sesiones realizadas por día en la última semana</p>
+      </div>
+      <div class="chart-area">
+        <div class="chart-bars">
+          <div class="bar-group" *ngFor="let item of evolucionData">
+            <div class="bar-bg">
+              <div class="bar-fill" [style.height]="item.height"></div>
+            </div>
+            <span class="bar-label">{{ item.dia }}</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="promo-card">
+      <div class="promo-content">
+        <h3>¡Potencia tu<br>alcance!</h3>
+        <p>Configura tus sedes o zonas de entrenamiento para aparecer en más distritos. <span class="highlight">¡Faltan
+            2!</span></p>
+        <button class="btn-promo">CONFIGURAR AHORA</button>
+      </div>
+    </article>
+  </section>
+
+  <!-- Sección Inferior: Agenda y Pendientes -->
+  <section class="bottom-grid">
+    <div class="agenda-section">
+      <div class="section-header">
+        <h3>Agenda de Hoy</h3>
+        <span class="date">Martes, 24 de Octubre</span>
+      </div>
+      <div class="agenda-list">
+        <!-- Empty State si no hay agenda -->
+        <div class="empty-state" *ngIf="agendaHoy.length === 0">
+          <p>No tienes sesiones programadas para hoy.</p>
+        </div>
+
+        <div class="agenda-item" *ngFor="let cita of agendaHoy">
+          <div class="time-box">
+            <span>{{ cita.hora }}</span>
+          </div>
+          <div class="agenda-card">
+            <div class="agenda-info">
+              <div class="avatar">
+                <img *ngIf="cita.img" [src]="cita.img" alt="Avatar">
+                <svg *ngIf="!cita.img" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#64748b"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div class="details">
+                <h4>{{ cita.paciente }}</h4>
+                <p>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  {{ cita.sede }}
+                </p>
+              </div>
+            </div>
+            <div class="agenda-actions">
+              <span class="status-badge" [ngClass]="cita.claseEstado">
+                <span class="dot"></span> {{ cita.estado }}
+              </span>
+              <button *ngIf="cita.claseEstado === 'sin-configurar'" class="btn-configurar">CONFIGURAR</button>
+              <svg *ngIf="cita.claseEstado !== 'sin-configurar'" class="icon-chevron" width="20" height="20"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pendientes-section">
+      <div class="section-header">
+        <h3>Pendientes</h3>
+      </div>
+      <div class="pendientes-list">
+        <!-- Empty State si no hay pendientes -->
+        <div class="empty-state" *ngIf="pendientes.length === 0">
+          <p>Todo al día. No hay tareas pendientes.</p>
+        </div>
+
+        <article class="pendiente-card" *ngFor="let pen of pendientes">
+          <div class="pendiente-icon" [ngClass]="pen.tipo">
+            <svg *ngIf="pen.tipo === 'alerta'" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <svg *ngIf="pen.tipo === 'reporte'" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <div class="pendiente-content">
+            <h4>{{ pen.titulo }}</h4>
+            <p>{{ pen.descripcion }}</p>
+            <button class="btn-accion-pendiente">{{ pen.accion }}</button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</div>

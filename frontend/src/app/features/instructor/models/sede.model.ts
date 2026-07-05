@@ -15,6 +15,8 @@ export interface SedeResponse {
 
 export interface SedeRequest {
   idInstructor: number;
+  zonaSede: string;
+  nombreSede: string;
   urlImagenSede1: string;
   urlImagenSede2: string | null;
   urlImagenSede3: string | null;

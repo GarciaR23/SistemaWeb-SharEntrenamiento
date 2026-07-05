@@ -18,13 +18,16 @@ export class FileService {
   uploadImage(file: File): Observable<CloudinaryUploadResponse> {
     const formData = new FormData();
     formData.append('file', file, file.name);
-    return this.http.post<CloudinaryUploadResponse>(`${this.baseUrl}/images`, formData);
+    return this.http.post<CloudinaryUploadResponse>(`${this.baseUrl}/images`, formData, {
+      headers: { 'X-Skip-Error-Interceptor': 'true' },
+    });
   }
 
   uploadFile(file: File): Observable<CloudinaryUploadResponse> {
     const formData = new FormData();
     formData.append('file', file, file.name);
-    return this.http.post<CloudinaryUploadResponse>(`${this.baseUrl}/files`, formData);
+    return this.http.post<CloudinaryUploadResponse>(`${this.baseUrl}/files`, formData, {
+      headers: { 'X-Skip-Error-Interceptor': 'true' },
+    });
   }
 }
-  

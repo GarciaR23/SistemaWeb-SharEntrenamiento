@@ -1,13 +1,18 @@
 package edu.utp.backend.features.sede.entities;
 
+import edu.utp.backend.features.sede.enums.ZonaSedeEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Data
 @NoArgsConstructor
@@ -43,4 +48,12 @@ public class Sede {
 
     @Column(name = "estado_activacion")
     private Boolean estadoActivacion = true;
+
+    @Column(name = "nombre_sede", nullable = false)
+    private String nombreSede;
+
+    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(name = "zona_sede", columnDefinition = "zona_sede_enum")
+    private ZonaSedeEnum zonaSede;
 }

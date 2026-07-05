@@ -8,8 +8,15 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     const router = inject(Router);
     const authService = inject(AuthApiService);
 
+    const bypassHeader = req.headers.get('X-Skip-Error-Interceptor');
+    const shouldBypass = bypassHeader === 'true';
+
     return next(req).pipe(
         catchError((error) => {
+            if (shouldBypass) {
+                return throwError(() => error);
+            }
+
             switch (error.status) {
                 case 0:
                     router.navigate(['/error/connection']);

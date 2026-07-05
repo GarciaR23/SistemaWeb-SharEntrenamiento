@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { SedeRequest, SedeResponse } from '../../models/sede.model';
 import { SedeService } from '../../services/sede.service';
 import { AuthApiService } from '../../../../core/services/auth-api.service';
@@ -7,20 +7,27 @@ import { Location as LocationService } from '../../../../shared/services/locatio
 import { FormsModule } from '@angular/forms';
 import { FileService } from '../../../../core/services/file.service';
 import { firstValueFrom } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-sede',
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './sede.component.html',
   styleUrls: ['./sede.component.scss'],
 })
-export class Sede implements OnInit {
+export class Sede implements OnInit, OnDestroy {
   private sedeService = inject(SedeService);
   private authApiService = inject(AuthApiService);
   private locationService = inject(LocationService);
   private fileService = inject(FileService);
 
+  private carouselInterval: any;
+
   sedes: SedeResponse[] = [];
+  sedesOriginales: SedeResponse[] = [];
+
+  zonas: string[] = ['Norte', 'Sur', 'Este', 'Oeste', 'Centro'];
+
   distritos: string[] = [];
 
   idInstructor: number | null = null;
@@ -34,6 +41,7 @@ export class Sede implements OnInit {
 
   mensajeInfo = '';
   mensajeError = '';
+  mensajeErrorModal = '';
 
   nuevaSede: SedeRequest = this.obtenerFormularioInicial();
 
@@ -49,6 +57,27 @@ export class Sede implements OnInit {
     this.nuevaSede = this.obtenerFormularioInicial();
     this.cargarSedes();
     this.cargarDistritos();
+    this.iniciarCarrusel();
+  }
+
+  ngOnDestroy(): void {
+    if (this.carouselInterval) {
+      clearInterval(this.carouselInterval);
+    }
+  }
+
+  iniciarCarrusel(): void {
+    this.carouselInterval = setInterval(() => {
+      if (this.sedes && this.sedes.length > 0) {
+        this.sedes.forEach(sede => {
+          if (sede.imagenes && sede.imagenes.length > 1) {
+            const currentIndex = this.obtenerIndiceImagen(sede);
+            const nextIndex = (currentIndex + 1) % sede.imagenes.length;
+            this.indicesImagenes[sede.idSede] = nextIndex;
+          }
+        });
+      }
+    }, 2000);
   }
 
   distritosFallback: string[] = [
@@ -60,11 +89,18 @@ export class Sede implements OnInit {
     'Santiago de Surco', 'Surquillo', 'Villa El Salvador', 'Villa María del Triunfo',
   ];
 
+  private toTitleCase(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/\b\w/g, c => c.toUpperCase());
+  }
+
   cargarDistritos(): void {
     this.locationService.getDistrictsByUbigeoPrefix('1401').subscribe({
       next: (list) => {
         if (list && list.length) {
-          this.distritos = [...new Set(list.map((d) => d.district))].sort((a, b) => a.localeCompare(b));
+          this.distritos = [...new Set(list.map(d => this.toTitleCase(d.district)))
+          ].sort((a, b) => a.localeCompare(b));
         } else {
           this.distritos = [...this.distritosFallback];
         }
@@ -79,9 +115,13 @@ export class Sede implements OnInit {
     this.mensajeError = '';
     this.sedeService.listarPorInstructor(this.idInstructor).subscribe({
       next: (sedes) => {
+        this.sedesOriginales = sedes;
         this.sedes = sedes;
         this.actualizarMensajeInicial();
         this.cargando = false;
+        if (this.busqueda || this.distritoFiltro) {
+           this.filtrar();
+        }
       },
       error: () => {
         this.mensajeError = 'No se pudieron cargar las sedes registradas.';
@@ -93,22 +133,32 @@ export class Sede implements OnInit {
   abrirModal(): void {
     this.nuevaSede = this.obtenerFormularioInicial();
     this.mensajeError = '';
+    this.mensajeErrorModal = '';
     this.nombresImagenes = '';
     this.archivosSeleccionados = [];
+    this.archivosConPreview.forEach(a => URL.revokeObjectURL(a.url));
+    this.archivosConPreview = [];
     this.modalAbierto = true;
   }
 
   cerrarModal(): void { this.modalAbierto = false; }
 
   async guardarSede(): Promise<void> {
-    if (!this.idInstructor) { this.mensajeError = 'No se encontró el instructor asociado a la sesión actual.'; return; }
-    if (!this.nuevaSede.distritoSede.trim() || !this.nuevaSede.direccionSede.trim() || !this.nuevaSede.descripcionSede.trim()) {
-      this.mensajeError = 'Completa distrito, dirección y descripción.'; return;
+    if (!this.idInstructor) { this.mensajeErrorModal = 'No se encontró el instructor asociado a la sesión actual.'; return; }
+    if (!this.nuevaSede.zonaSede.trim() || !this.nuevaSede.nombreSede.trim() || !this.nuevaSede.distritoSede.trim() || !this.nuevaSede.direccionSede.trim() || !this.nuevaSede.descripcionSede.trim()) {
+      this.mensajeErrorModal = 'Completa todos los campos requeridos.'; return;
     }
-    if (this.archivosSeleccionados.length === 0) { this.mensajeError = 'Debes seleccionar al menos una imagen.'; return; }
+
+    const wordCount = this.nuevaSede.descripcionSede.trim().split(/\s+/).filter(w => w.length > 0).length;
+    if (wordCount < 40) {
+      this.mensajeErrorModal = 'La descripción de la sede debe tener al menos 40 palabras.';
+      return;
+    }
+
+    if (this.archivosSeleccionados.length !== 3) { this.mensajeErrorModal = 'Debes tener exactamente 3 imágenes aprobadas.'; return; }
 
     this.guardando = true;
-    this.mensajeError = '';
+    this.mensajeErrorModal = '';
 
     try {
       const urls: string[] = [];
@@ -119,6 +169,8 @@ export class Sede implements OnInit {
 
       const request: SedeRequest = {
         idInstructor: this.idInstructor,
+        zonaSede: this.nuevaSede.zonaSede,
+        nombreSede: this.nuevaSede.nombreSede,
         distritoSede: this.nuevaSede.distritoSede,
         direccionSede: this.nuevaSede.direccionSede,
         descripcionSede: this.nuevaSede.descripcionSede,
@@ -149,27 +201,29 @@ export class Sede implements OnInit {
 
   filtrar(): void {
     if (!this.idInstructor) return;
-    const texto = this.busqueda.trim();
-    if (!texto && !this.distritoFiltro) { this.cargarSedes(); return; }
-    if (this.distritoFiltro) {
-      this.sedeService.buscarPorDistrito(this.idInstructor, this.distritoFiltro).subscribe({
-        next: (sedes) => { this.sedes = sedes; },
-        error: () => { this.mensajeError = 'No se pudo filtrar por distrito.'; },
-      });
-      return;
-    }
-    this.sedeService.buscarPorDireccion(this.idInstructor, texto).subscribe({
-      next: (sedes) => { this.sedes = sedes; },
-      error: () => { this.mensajeError = 'No se pudo realizar la búsqueda.'; },
+
+    const texto = this.busqueda.trim().toLowerCase();
+    const distrito = this.distritoFiltro;
+
+    this.sedes = this.sedesOriginales.filter(sede => {
+      const matchTexto = texto.length === 0 ||
+                         (sede.nombreCard && sede.nombreCard.toLowerCase().includes(texto)) ||
+                         (sede.direccionSede && sede.direccionSede.toLowerCase().includes(texto));
+
+      const matchDistrito = !distrito || sede.distritoSede === distrito;
+
+      return matchTexto && matchDistrito;
     });
   }
 
   formularioValido(): boolean {
     return Boolean(
+      this.nuevaSede.zonaSede.trim() &&
+      this.nuevaSede.nombreSede.trim() &&
       this.nuevaSede.distritoSede.trim() &&
       this.nuevaSede.direccionSede.trim() &&
       this.nuevaSede.descripcionSede.trim() &&
-      this.archivosSeleccionados.length > 0,
+      this.archivosSeleccionados.length === 3,
     );
   }
 
@@ -195,6 +249,7 @@ export class Sede implements OnInit {
   private obtenerFormularioInicial(): SedeRequest {
     return {
       idInstructor: this.idInstructor ?? 0,
+      zonaSede: '', nombreSede: '',
       urlImagenSede1: '', urlImagenSede2: '', urlImagenSede3: '',
       descripcionSede: '', direccionSede: '', distritoSede: '', estadoActivacion: true,
     };
@@ -214,6 +269,7 @@ export class Sede implements OnInit {
 
   nombresImagenes = '';
   archivosSeleccionados: File[] = [];
+  archivosConPreview: { file: File, url: string, estado: 'pendiente' | 'aceptado' | 'rechazado' }[] = [];
 
   onImagenesSedeChange(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -225,21 +281,97 @@ export class Sede implements OnInit {
     );
 
     if (imagenesValidas.length !== archivosNuevos.length) {
-      this.mensajeError = 'Solo se permiten imágenes JPG, PNG o WEBP.';
+      this.mensajeErrorModal = 'Solo se permiten imágenes JPG, PNG o WEBP.';
     }
 
     for (const file of imagenesValidas) {
-      if (this.archivosSeleccionados.length < 3) {
-        if (!this.archivosSeleccionados.some(f => f.name === file.name)) {
-          this.archivosSeleccionados.push(file);
+      if (this.archivosConPreview.length < 3) {
+        if (!this.archivosConPreview.some(f => f.file.name === file.name)) {
+          const url = URL.createObjectURL(file);
+          this.archivosConPreview.push({ file, url, estado: 'pendiente' });
         }
       } else {
-        this.mensajeError = 'Solo puedes subir máximo 3 imágenes.';
+        this.mensajeErrorModal = 'Solo puedes subir máximo 3 imágenes.';
         break;
       }
     }
 
-    this.nombresImagenes = this.archivosSeleccionados.map((file) => file.name).join(', ');
+    this.actualizarArchivosSeleccionados();
     input.value = '';
+  }
+
+  marcarEstadoImagen(index: number, estado: 'aceptado' | 'rechazado') {
+      if (estado === 'rechazado') {
+          URL.revokeObjectURL(this.archivosConPreview[index].url);
+          this.archivosConPreview.splice(index, 1);
+      } else {
+          this.archivosConPreview[index].estado = estado;
+      }
+      this.actualizarArchivosSeleccionados();
+  }
+
+  // ====== Mini-panel / modal de previsualización de imágenes ======
+  previewImagenAbierto = false;
+  previewImagenIndex = 0;
+
+  get previewImagenActual() {
+    return this.archivosConPreview[this.previewImagenIndex] ?? null;
+  }
+
+  get previewImagenTotal(): number {
+    return this.archivosConPreview.length;
+  }
+
+  get hayPreviewAnterior(): boolean {
+    return this.previewImagenIndex > 0;
+  }
+
+  get hayPreviewSiguiente(): boolean {
+    return this.previewImagenIndex < this.archivosConPreview.length - 1;
+  }
+
+  verImagenPreview(index: number, event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    if (index < 0 || index >= this.archivosConPreview.length) return;
+    this.previewImagenIndex = index;
+    this.previewImagenAbierto = true;
+  }
+
+  anteriorPreview(): void {
+    if (this.hayPreviewAnterior) {
+      this.previewImagenIndex--;
+    }
+  }
+
+  siguientePreview(): void {
+    if (this.hayPreviewSiguiente) {
+      this.previewImagenIndex++;
+    }
+  }
+
+  cerrarPreviewImagen(): void {
+    this.previewImagenAbierto = false;
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  manejarTecladoPreview(event: KeyboardEvent): void {
+    if (!this.previewImagenAbierto) return;
+    switch (event.key) {
+      case 'Escape':
+        this.cerrarPreviewImagen();
+        break;
+      case 'ArrowRight':
+        this.siguientePreview();
+        break;
+      case 'ArrowLeft':
+        this.anteriorPreview();
+        break;
+    }
+  }
+
+  actualizarArchivosSeleccionados() {
+      this.archivosSeleccionados = this.archivosConPreview.filter(a => a.estado === 'aceptado').map(a => a.file);
+      this.nombresImagenes = this.archivosSeleccionados.map((file) => file.name).join(', ');
   }
 }
