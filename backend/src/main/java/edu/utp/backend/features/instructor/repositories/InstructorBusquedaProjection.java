@@ -29,7 +29,7 @@ public interface InstructorBusquedaProjection {
 
     String getHorarioPreferencia();
 
-    String getDiaDisponible();
+    String getDiaSemana();
 
     LocalTime getHorarioInicio();
 

@@ -1,7 +1,7 @@
 package edu.utp.backend.features.instructor.dtos;
 
 import java.math.BigDecimal;
-import java.time.LocalTime;
+import java.util.List;
 
 public record InstructorBusquedaResponse(
         Integer idInstructor,
@@ -17,10 +17,8 @@ public record InstructorBusquedaResponse(
         String distritoSede,
 
         BigDecimal tarifaHora,
-        String horarioPreferencia,
-        String diaDisponible,
-        LocalTime horarioInicio,
-        LocalTime horarioFinal,
+        
+        List<InstructorPerfilServicioDto> horarios,
 
         BigDecimal promedioCalificacion,
         Long totalSesiones

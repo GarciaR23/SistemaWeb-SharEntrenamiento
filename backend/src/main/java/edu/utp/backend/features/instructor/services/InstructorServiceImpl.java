@@ -1,7 +1,9 @@
 package edu.utp.backend.features.instructor.services;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import static java.util.stream.Collectors.*;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +21,6 @@ import edu.utp.backend.features.instructor.dtos.InstructorPerfilCalificacionDto;
 
 import edu.utp.backend.features.instructor.projections.InstructorPerfilResumenProjection;
 import edu.utp.backend.features.instructor.projections.InstructorPerfilSedeProjection;
-import edu.utp.backend.features.instructor.projections.InstructorPerfilServicioProjection;
 import edu.utp.backend.features.instructor.projections.InstructorPerfilCalificacionProjection;
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +29,9 @@ import lombok.RequiredArgsConstructor;
 public class InstructorServiceImpl implements InstructorService {
 
     private final InstructorRepository instructorRepository;
+
+    private static final Map<String, Integer> ORDEN_DIAS = Map.of(
+            "L", 1, "M", 2, "Mi", 3, "J", 4, "V", 5, "S", 6, "D", 7);
 
     @Override
     public List<InstructorResponse> findAll() {
@@ -66,35 +70,30 @@ public class InstructorServiceImpl implements InstructorService {
 
     @Override
     public List<InstructorBusquedaResponse> buscarInstructoresParaTutor(
-            String texto,
-            String distrito,
-            String especialidad,
-            BigDecimal tarifaMin,
-            BigDecimal tarifaMax,
-            String turno) {
-        String textoFiltro = normalizarFiltro(texto);
-        String distritoFiltro = normalizarFiltro(distrito);
-        String especialidadFiltro = normalizarFiltro(especialidad);
-        String turnoFiltro = normalizarFiltro(turno);
+            String texto, String distrito, String especialidad,
+            BigDecimal tarifaMin, BigDecimal tarifaMax, String turno) {
 
-        return instructorRepository.buscarInstructoresParaTutor(
-                textoFiltro,
-                distritoFiltro,
-                especialidadFiltro,
-                tarifaMin,
-                tarifaMax,
-                turnoFiltro)
-                .stream()
+        List<InstructorBusquedaProjection> proyecciones = instructorRepository.buscarInstructoresParaTutor(
+                normalizarFiltro(texto), normalizarFiltro(distrito),
+                normalizarFiltro(especialidad), tarifaMin, tarifaMax, normalizarFiltro(turno));
+
+        return proyecciones.stream()
+                .collect(groupingBy(InstructorBusquedaProjection::getIdInstructor))
+                .values().stream()
                 .map(this::toBusquedaResponse)
                 .toList();
     }
 
     private String normalizarFiltro(String valor) {
-        if (valor == null || valor.trim().isBlank()) {
-            return null;
-        }
+        return (valor == null || valor.trim().isBlank()) ? null : valor.trim();
+    }
 
-        return valor.trim();
+    private String ordenarDias(String dias) {
+        if (dias == null)
+            return null;
+        return Arrays.stream(dias.split(", "))
+                .sorted((a, b) -> ORDEN_DIAS.getOrDefault(a, 8) - ORDEN_DIAS.getOrDefault(b, 8))
+                .collect(Collectors.joining(", "));
     }
 
     private void applyRequest(Instructor instructor, InstructorRequest request) {
@@ -108,114 +107,63 @@ public class InstructorServiceImpl implements InstructorService {
     }
 
     private InstructorResponse toResponse(Instructor instructor) {
-        return new InstructorResponse(
-                instructor.getIdInstructor(),
-                instructor.getIdUsuario(),
-                instructor.getNombreCompleto(),
-                instructor.getUrlImagenPerfil(),
-                instructor.getEspecialidad(),
-                instructor.getBiografia(),
-                instructor.getDistrito(),
-                instructor.getDireccion());
+        return new InstructorResponse(instructor.getIdInstructor(), instructor.getIdUsuario(),
+                instructor.getNombreCompleto(), instructor.getUrlImagenPerfil(), instructor.getEspecialidad(),
+                instructor.getBiografia(), instructor.getDistrito(), instructor.getDireccion());
     }
 
-    private InstructorBusquedaResponse toBusquedaResponse(InstructorBusquedaProjection instructor) {
-        return new InstructorBusquedaResponse(
-                instructor.getIdInstructor(),
-                instructor.getNombreCompleto(),
-                instructor.getUrlImagenPerfil(),
-                instructor.getEspecialidad(),
-                instructor.getBiografia(),
-                instructor.getDistrito(),
-                instructor.getDireccion(),
+    private InstructorBusquedaResponse toBusquedaResponse(List<InstructorBusquedaProjection> filas) {
+        InstructorBusquedaProjection p = filas.get(0);
 
-                instructor.getIdSede(),
-                instructor.getDireccionSede(),
-                instructor.getDistritoSede(),
+        List<InstructorPerfilServicioDto> horarios = filas.stream()
+                .filter(f -> f.getDiaSemana() != null)
+                .map(f -> new InstructorPerfilServicioDto(null, null, f.getHorarioPreferencia(),
+                        ordenarDias(f.getDiaSemana()), f.getHorarioInicio(), f.getHorarioFinal()))
+                .distinct().toList();
 
-                instructor.getTarifaHora(),
-                instructor.getHorarioPreferencia(),
-                instructor.getDiaDisponible(),
-                instructor.getHorarioInicio(),
-                instructor.getHorarioFinal(),
-
-                instructor.getPromedioCalificacion(),
-                instructor.getTotalSesiones());
-
+        return new InstructorBusquedaResponse(p.getIdInstructor(), p.getNombreCompleto(), p.getUrlImagenPerfil(),
+                p.getEspecialidad(), p.getBiografia(), p.getDistrito(), p.getDireccion(),
+                p.getIdSede(), p.getDireccionSede(), p.getDistritoSede(), p.getTarifaHora(),
+                horarios, p.getPromedioCalificacion(), p.getTotalSesiones());
     }
 
     @Override
     public InstructorPerfilResumenDto obtenerPerfilResumen(Integer idInstructor) {
-        InstructorPerfilResumenProjection instructor = instructorRepository.obtenerPerfilResumen(idInstructor);
-
-        if (instructor == null) {
+        InstructorPerfilResumenProjection p = instructorRepository.obtenerPerfilResumen(idInstructor);
+        if (p == null)
             throw new IllegalArgumentException("Instructor no encontrado: " + idInstructor);
-        }
-
-        return new InstructorPerfilResumenDto(
-                instructor.getIdInstructor(),
-                instructor.getNombreCompleto(),
-                instructor.getUrlImagenPerfil(),
-                instructor.getEspecialidad(),
-                instructor.getBiografia(),
-                instructor.getDireccion(),
-                instructor.getDistrito());
+        return new InstructorPerfilResumenDto(p.getIdInstructor(), p.getNombreCompleto(), p.getUrlImagenPerfil(),
+                p.getEspecialidad(), p.getBiografia(), p.getDireccion(), p.getDistrito());
     }
 
     @Override
     public List<InstructorPerfilSedeDto> obtenerPerfilSedes(Integer idInstructor) {
-        return instructorRepository.obtenerPerfilSedes(idInstructor)
-                .stream()
-                .map(this::toPerfilSedeDto)
-                .toList();
+        return instructorRepository.obtenerPerfilSedes(idInstructor).stream().map(this::toPerfilSedeDto).toList();
     }
 
     @Override
     public List<InstructorPerfilServicioDto> obtenerPerfilServicios(Integer idInstructor) {
-        return instructorRepository.obtenerPerfilServicios(idInstructor)
-                .stream()
-                .map(this::toPerfilServicioDto)
+        return instructorRepository.obtenerPerfilServicios(idInstructor).stream()
+                .map(s -> new InstructorPerfilServicioDto(s.getIdServicio(), s.getTarifaHora(),
+                        s.getHorarioPreferencia(), ordenarDias(s.getDiaSemana()),
+                        s.getHorarioInicio(), s.getHorarioFinal()))
                 .toList();
     }
 
     @Override
     public List<InstructorPerfilCalificacionDto> obtenerPerfilCalificaciones(Integer idInstructor) {
-        return instructorRepository.obtenerPerfilCalificaciones(idInstructor)
-                .stream()
-                .map(this::toPerfilCalificacionDto)
-                .toList();
+        return instructorRepository.obtenerPerfilCalificaciones(idInstructor).stream()
+                .map(this::toPerfilCalificacionDto).toList();
     }
 
-    private InstructorPerfilSedeDto toPerfilSedeDto(InstructorPerfilSedeProjection sede) {
-        return new InstructorPerfilSedeDto(
-                sede.getIdSede(),
-                sede.getUrlImagenSede1(),
-                sede.getUrlImagenSede2(),
-                sede.getUrlImagenSede3(),
-                sede.getDescripcionSede(),
-                sede.getDireccionSede(),
-                sede.getDistritoSede(),
-                sede.getEstadoActivacion());
+    private InstructorPerfilSedeDto toPerfilSedeDto(InstructorPerfilSedeProjection s) {
+        return new InstructorPerfilSedeDto(s.getIdSede(), s.getUrlImagenSede1(), s.getUrlImagenSede2(),
+                s.getUrlImagenSede3(), s.getDescripcionSede(), s.getDireccionSede(),
+                s.getDistritoSede(), s.getEstadoActivacion());
     }
 
-    private InstructorPerfilServicioDto toPerfilServicioDto(InstructorPerfilServicioProjection servicio) {
-        return new InstructorPerfilServicioDto(
-                servicio.getIdServicio(),
-                servicio.getTarifaHora(),
-                servicio.getHorarioPreferencia(),
-                servicio.getDiaDisponible(),
-                servicio.getHorarioInicio(),
-                servicio.getHorarioFinal());
-    }
-
-    private InstructorPerfilCalificacionDto toPerfilCalificacionDto(
-            InstructorPerfilCalificacionProjection calificacion) {
-        return new InstructorPerfilCalificacionDto(
-                calificacion.getIdCalificacion(),
-                calificacion.getIdPaciente(),
-                calificacion.getPacienteNombre(),
-                calificacion.getPuntajeEstrellas(),
-                calificacion.getComentarioTutor(),
-                calificacion.getFechaCalificacion());
+    private InstructorPerfilCalificacionDto toPerfilCalificacionDto(InstructorPerfilCalificacionProjection c) {
+        return new InstructorPerfilCalificacionDto(c.getIdCalificacion(), c.getIdPaciente(), c.getPacienteNombre(),
+                c.getPuntajeEstrellas(), c.getComentarioTutor(), c.getFechaCalificacion());
     }
 }

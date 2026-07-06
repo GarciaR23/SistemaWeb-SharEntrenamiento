@@ -54,20 +54,12 @@ public class ServicioInstructorServiceImpl implements ServicioInstructorService 
     private void apply(ServicioInstructor servicio, ServicioInstructorDto request) {
         servicio.setIdInstructor(request.idInstructor());
         servicio.setTarifaHora(request.tarifaHora());
-        servicio.setHorarioPreferencia(request.horarioPreferencia());
-        servicio.setDiaDisponible(request.diaDisponible());
-        servicio.setHorarioInicio(request.horarioInicio());
-        servicio.setHorarioFinal(request.horarioFinal());
     }
 
     private ServicioInstructorDto toDto(ServicioInstructor servicio) {
         return new ServicioInstructorDto(
                 servicio.getIdServicio(),
                 servicio.getIdInstructor(),
-                servicio.getTarifaHora(),
-                servicio.getHorarioPreferencia(),
-                servicio.getDiaDisponible(),
-                servicio.getHorarioInicio(),
-                servicio.getHorarioFinal());
+                servicio.getTarifaHora());
     }
 }
