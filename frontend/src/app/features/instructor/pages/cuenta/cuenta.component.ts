@@ -9,7 +9,6 @@ import { RegistrationApiService } from '../../../auth/services/registration-api.
 import { HeaderComponent } from '../../../../shared/components/header/landing-header/landing-header.component';
 import { FooterComponent } from '../../../../shared/components/footer/footer.component';
 
-
 @Component({
   selector: 'app-cuenta',
   standalone: true,
@@ -57,7 +56,6 @@ export class Cuenta implements OnInit, OnDestroy {
       };
     });
 
-    // Nombre de Archivo
     const existing = this.formState.state.profile.profileImageFile;
     if (existing) {
       this.profileImagePreview = existing.name;
@@ -66,6 +64,12 @@ export class Cuenta implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
+  }
+
+  get disponibilidadResumen(): string {
+    const h = this.formState.state.profile.horarios;
+    if (!h || h.length === 0) return 'No especificado';
+    return h.map(d => `${d.dia} (${d.turno}) ${d.inicio} - ${d.fin}`).join(' | ');
   }
 
   togglePassword(): void {
@@ -77,6 +81,15 @@ export class Cuenta implements OnInit, OnDestroy {
     const file = input.files?.[0] ?? null;
     this.formState.state.profile.profileImageFile = file;
     this.profileImagePreview = file ? file.name : '';
+  }
+
+  private normalizarTurno(turno: string): string {
+    switch (turno) {
+      case 'Mañana': return 'mañana';
+      case 'Tarde': return 'tarde';
+      case 'Noche': return 'noche';
+      default: return turno.toLowerCase();
+    }
   }
 
   async finalizarRegistro(): Promise<void> {
@@ -92,14 +105,19 @@ export class Cuenta implements OnInit, OnDestroy {
     }
 
     const ok = window.confirm('¿Confirmas que deseas enviar el formulario de registro?');
-    if (!ok) {
-      return;
-    }
+    if (!ok) return;
 
     this.loading = true;
     this.feedbackMessage = '';
 
     try {
+      const horarios = (this.formState.state.profile.horarios || []).map(h => ({
+        diaSemana: h.dia,
+        horarioPreferencia: this.normalizarTurno(h.turno),
+        horarioInicio: h.inicio,
+        horarioFinal: h.fin,
+      }));
+
       await this.registrationApiService.registrarInstructorConDocumentos({
         nombreCompleto: this.formState.state.profile.fullName,
         especialidad: this.formState.state.profile.specialty,
@@ -116,10 +134,7 @@ export class Cuenta implements OnInit, OnDestroy {
           antecedentes: this.formState.state.documents.antecedentes.file,
         },
         tarifaHora: Number(this.formState.state.profile.rate),
-        horarioPreferencia: this.formState.state.profile.selectedShift.join(','),
-        diaDisponible: this.formState.state.profile.selectedDay.join(','),
-        horarioInicio: this.formState.state.profile.fromTime,
-        horarioFinal: this.formState.state.profile.toTime,
+        horarios: horarios,
       });
 
       this.modalType = 'success';
@@ -132,16 +147,12 @@ export class Cuenta implements OnInit, OnDestroy {
     } catch (error: any) {
       this.modalType = 'error';
       this.modalTitle = 'Error de conexión o servidor';
-
       if (error instanceof HttpErrorResponse) {
-        console.error('HTTP Error al enviar registro:', error);
         const detailMessage = error.error?.detail ?? error.error?.message ?? error.message;
         this.modalMessage = `Error ${error.status} en ${error.url}: ${detailMessage}`;
       } else {
-        console.error('Error inesperado al enviar registro:', error);
         this.modalMessage = error?.message ?? 'Hubo un problema al enviar tu solicitud. Intenta nuevamente más tarde.';
       }
-
       this.showModal = true;
     } finally {
       this.loading = false;
@@ -150,17 +161,14 @@ export class Cuenta implements OnInit, OnDestroy {
 
   closeModal(): void {
     const goToLogin = this.modalType === 'success';
-
     this.showModal = false;
     this.modalType = null;
     this.modalTitle = '';
     this.modalMessage = '';
     this.missingFields = [];
     this.feedbackMessage = '';
-
     if (goToLogin) {
       this.router.navigate(['/login']);
     }
   }
 }
-

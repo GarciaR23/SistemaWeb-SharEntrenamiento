@@ -44,8 +44,18 @@ export class Solicitud implements OnInit {
     this.listaSolicitudes = this.listaSolicitudes.filter(
       solicitud => solicitud.idInstructor !== idInstructor
     );
+    this.actualizarContadores();
+  }
 
-    this.totalPendientes = this.listaSolicitudes.length;
+  actualizarContadores(): void {
+    this.solicitudesService.obtenerConteo().subscribe({
+      next: (conteo) => {
+        this.totalPendientes = conteo.totalPendientes;
+        this.pendientesHoy = conteo.pendientesHoy;
+        this.solicitudesPorVencer = conteo.pendientesPorVencer;
+      },
+      error: (err) => console.error('Error al actualizar contadores:', err)
+    });
   }
 
   obtenerClaseCard(solicitud: SolicitudInstructor): string {
@@ -142,4 +152,5 @@ export class Solicitud implements OnInit {
       fechaEnvio.getMonth() === hoy.getMonth() &&
       fechaEnvio.getDate() === hoy.getDate()
     );
-  }}
+  }
+}

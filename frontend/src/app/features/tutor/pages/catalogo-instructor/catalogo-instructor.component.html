@@ -1,11 +1,8 @@
 <div class="catalogo-container">
-
     <header class="catalogo-header">
         <div>
             <h1>Búsqueda de Instructores</h1>
-            <p>
-                Encuentra especialistas de alto rendimiento para tu entrenamiento técnico.
-            </p>
+            <p>Encuentra especialistas de alto rendimiento para tu entrenamiento técnico.</p>
         </div>
     </header>
 
@@ -15,44 +12,29 @@
             <input type="text" placeholder="Nombre, especialidad o descripción" [(ngModel)]="textoBusqueda"
                 (keyup.enter)="buscar()">
         </div>
-
         <div class="filter-group">
             <label>Distrito</label>
             <select [(ngModel)]="distritoSeleccionado">
                 <option value="">Todos</option>
-                <option *ngFor="let distrito of distritos" [value]="distrito">
-                    {{ distrito }}
-                </option>
+                <option *ngFor="let d of distritos" [value]="d">{{ d }}</option>
             </select>
         </div>
-
         <div class="filter-group">
             <label>Especialidad</label>
             <select [(ngModel)]="especialidadSeleccionada">
                 <option value="">Todas</option>
-                <option *ngFor="let especialidad of especialidades" [value]="especialidad">
-                    {{ especialidad }}
-                </option>
+                <option *ngFor="let e of especialidades" [value]="e">{{ e }}</option>
             </select>
         </div>
-
         <div class="filter-actions">
-            <button class="btn-primary" type="button" (click)="buscar()">
-                Buscar
-            </button>
-
-            <button class="btn-secondary" type="button" (click)="limpiarFiltros()">
-                Limpiar
-            </button>
-
-            <button class="btn-advanced" type="button" (click)="toggleFiltrosAvanzados()">
-                {{ mostrarFiltrosAvanzados ? 'Ocultar filtros' : 'Más filtros' }}
-            </button>
+            <button class="btn-primary" (click)="buscar()">Buscar</button>
+            <button class="btn-secondary" (click)="limpiarFiltros()">Limpiar</button>
+            <button class="btn-advanced" (click)="toggleFiltrosAvanzados()">{{ mostrarFiltrosAvanzados ? 'Ocultar' :
+                'Más filtros' }}</button>
         </div>
     </section>
 
     <section class="advanced-filters" *ngIf="mostrarFiltrosAvanzados">
-
         <div class="filter-group">
             <label>Tarifa</label>
             <select [(ngModel)]="tarifaSeleccionada" (change)="buscar()">
@@ -63,7 +45,6 @@
                 <option value="120-mas">Más de S/ 120</option>
             </select>
         </div>
-
         <div class="filter-group">
             <label>Turno</label>
             <select [(ngModel)]="turnoSeleccionado" (change)="buscar()">
@@ -73,26 +54,19 @@
                 <option value="noche">Noche</option>
             </select>
         </div>
-
     </section>
 
     <div *ngIf="cargando" class="loading-placeholder">
         <p>Cargando instructores...</p>
     </div>
-
-    <div *ngIf="!cargando && errorMessage" class="error-message">
-        {{ errorMessage }}
-    </div>
-
+    <div *ngIf="!cargando && errorMessage" class="error-message">{{ errorMessage }}</div>
     <div *ngIf="!cargando && !errorMessage && instructores.length === 0" class="empty-state">
         <h3>No se encontraron instructores</h3>
         <p>Prueba con otro distrito, especialidad o término de búsqueda.</p>
     </div>
 
     <section *ngIf="!cargando && !errorMessage && instructores.length > 0" class="catalogo-grid">
-
         <article class="instructor-card" *ngFor="let instructor of instructores">
-
             <div class="card-hero">
                 <span class="badge-verificado">
                     <svg viewBox="0 0 24 24" fill="currentColor" class="badge-verified-icon">
@@ -102,41 +76,26 @@
                     </svg>
                     VERIFICADO
                 </span>
-
                 <img class="instructor-image" [src]="obtenerImagen(instructor)" [alt]="instructor.nombreCompleto">
-
                 <div class="hero-overlay"></div>
-
                 <div class="hero-content">
-                    <p class="especialidad-superior">
-                        {{ instructor.especialidad || 'Sin especialidad' }}
-                    </p>
-
-                    <h3 class="nombre-instructor">
-                        {{ instructor.nombreCompleto }}
-                    </h3>
+                    <p class="especialidad-superior">{{ instructor.especialidad || 'Sin especialidad' }}</p>
+                    <h3 class="nombre-instructor">{{ instructor.nombreCompleto }}</h3>
                 </div>
             </div>
 
             <div class="card-content">
-
                 <div class="card-top-info">
                     <div class="rating-box">
                         <span class="star">★</span>
                         <span class="rating">{{ obtenerRating(instructor) }}</span>
                         <span class="sesiones">({{ obtenerSesiones(instructor) }} sesiones)</span>
                     </div>
-
-                    <div class="precio">
-                        {{ obtenerTarifa(instructor) }}
-                    </div>
+                    <div class="precio">{{ obtenerTarifa(instructor) }}</div>
                 </div>
 
                 <div class="disponibilidad-box">
-                    <div class="icon-clock">
-                        ◷
-                    </div>
-
+                    <div class="icon-clock">◷</div>
                     <div class="disponibilidad-texto">
                         <span class="label">Disponibilidad</span>
                         <strong>{{ obtenerHorario(instructor) }}</strong>
@@ -144,19 +103,10 @@
                 </div>
 
                 <div class="card-actions">
-                    <button class="btn-outline" type="button" (click)="verPerfil(instructor)">
-                        Ver Perfil
-                    </button>
-
-                    <button class="btn-reserve" type="button">
-                        Solicitar Sesión
-                    </button>
+                    <button class="btn-outline" (click)="verPerfil(instructor)">Ver Perfil</button>
+                    <button class="btn-reserve">Solicitar Sesión</button>
                 </div>
-
             </div>
-
         </article>
-
     </section>
-
 </div>
