@@ -23,7 +23,9 @@ import edu.utp.backend.features.auth.services.AuthService;
 import edu.utp.backend.features.auth.services.PasswordRecoveryService;
 import edu.utp.backend.features.instructor.entities.Instructor;
 import edu.utp.backend.features.instructor.repositories.InstructorRepository;
+import edu.utp.backend.features.servicio.entities.HorarioDisponibilidad;
 import edu.utp.backend.features.servicio.entities.ServicioInstructor;
+import edu.utp.backend.features.servicio.repositories.HorarioDisponibilidadRepository;
 import edu.utp.backend.features.servicio.repositories.ServicioInstructorRepository;
 import edu.utp.backend.features.auth.dtos.RegistroTutorRequest;
 import edu.utp.backend.features.auth.dtos.RegistroTutorResponse;
@@ -52,6 +54,7 @@ public class AuthController {
     private final TutorRepository tutorRepository;
     private final JwtService jwtService;
     private final ServicioInstructorRepository serviInstructorRepo;
+    private final HorarioDisponibilidadRepository horarioDisponibilidadRepo;
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
@@ -88,11 +91,19 @@ public class AuthController {
         ServicioInstructor serviInstructor = new ServicioInstructor();
         serviInstructor.setIdInstructor(instructorGuardado.getIdInstructor());
         serviInstructor.setTarifaHora(request.tarifaHora());
-        serviInstructor.setHorarioPreferencia(request.horarioPreferencia());
-        serviInstructor.setDiaDisponible(request.diaDisponible());
-        serviInstructor.setHorarioInicio(request.horarioInicio());
-        serviInstructor.setHorarioFinal(request.horarioFinal());
-        serviInstructorRepo.save(serviInstructor);
+        ServicioInstructor servicioGuardado = serviInstructorRepo.save(serviInstructor);
+
+        if (request.horarios() != null) {
+            for (var h : request.horarios()) {
+                HorarioDisponibilidad horario = new HorarioDisponibilidad();
+                horario.setIdServicio(servicioGuardado.getIdServicio());
+                horario.setDiaSemana(h.diaSemana());
+                horario.setHorarioPreferencia(h.horarioPreferencia());
+                horario.setHorarioInicio(h.horarioInicio());
+                horario.setHorarioFinal(h.horarioFinal());
+                horarioDisponibilidadRepo.save(horario);
+            }
+        }
 
         UsuarioResponse usuarioResponse = new UsuarioResponse(
                 usuarioGuardado.getIdUsuario(),
@@ -142,45 +153,31 @@ public class AuthController {
         String token = jwtService.GenerarToken(usuarioGuardado);
 
         return ResponseEntity.ok(new RegistroTutorResponse(
-                true,
-                "Registro exitoso",
-                token,
-                usuarioResponse,
-                tutorGuardado.getIdTutor()));
+                true, "Registro exitoso", token, usuarioResponse, tutorGuardado.getIdTutor()));
     }
 
     @PostMapping("/password/forgot")
     public ResponseEntity<Map<String, Object>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
         passwordRecoveryService.solicitarRecuperacion(request.email());
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "Si el correo existe, se envio un token de recuperacion"));
+        return ResponseEntity
+                .ok(Map.of("success", true, "message", "Si el correo existe, se envio un token de recuperacion"));
     }
 
     @PostMapping("/password/verify-token")
     public ResponseEntity<Map<String, Object>> verifyToken(@Valid @RequestBody VerifyTokenRequest request) {
         boolean valid = passwordRecoveryService.verificarToken(request.email(), request.token());
-        if (!valid) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "success", false,
-                    "message", "Token invalido o expirado"));
-        }
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "Token valido"));
+        if (!valid)
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Token invalido o expirado"));
+        return ResponseEntity.ok(Map.of("success", true, "message", "Token valido"));
     }
 
     @PostMapping("/password/reset")
     public ResponseEntity<Map<String, Object>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         boolean changed = passwordRecoveryService.restablecerClave(request.email(), request.token(),
                 request.nuevaClave());
-        if (!changed) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "success", false,
-                    "message", "No se pudo restablecer la contrasena"));
-        }
-        return ResponseEntity.ok(Map.of(
-                "success", true,
-                "message", "Contrasena actualizada correctamente"));
+        if (!changed)
+            return ResponseEntity.badRequest()
+                    .body(Map.of("success", false, "message", "No se pudo restablecer la contrasena"));
+        return ResponseEntity.ok(Map.of("success", true, "message", "Contrasena actualizada correctamente"));
     }
 }

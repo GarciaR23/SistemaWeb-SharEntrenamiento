@@ -7,7 +7,7 @@ public record InstructorPerfilServicioDto(
         Integer idServicio,
         BigDecimal tarifaHora,
         String horarioPreferencia,
-        String diaDisponible,
+        String diaSemana,
         LocalTime horarioInicio,
         LocalTime horarioFinal
 ) {

@@ -5,34 +5,23 @@
     <nav class="perfil-steps" aria-label="Progreso de perfil">
       <button type="button" class="step" routerLink="/formulario" routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }">
-
-        <span>1</span>
-        <small>PERFIL</small>
+        <span>1</span><small>PERFIL</small>
       </button>
-
       <div class="step-separator"></div>
-
       <button type="button" class="step" [class.disabled]="isContinueDisabled" [disabled]="isContinueDisabled"
         (click)="goToCertificado()">
-
-        <span>2</span>
-        <small>CERTIFICADOS</small>
+        <span>2</span><small>CERTIFICADOS</small>
       </button>
-
       <div class="step-separator"></div>
-
       <button type="button" class="step"
         [class.disabled]="profileForm.invalid || formState.getMissingDocumentFields().length > 0"
         [disabled]="profileForm.invalid || formState.getMissingDocumentFields().length > 0"
         (click)="goToCuentaFromPerfil()">
-
-        <span>3</span>
-        <small>CUENTA</small>
+        <span>3</span><small>CUENTA</small>
       </button>
     </nav>
 
     <div class="perfil-card">
-
       <header class="perfil-header">
         <div>
           <h1>Perfil Profesional</h1>
@@ -42,268 +31,90 @@
 
       <form class="perfil-form" [formGroup]="profileForm" autocomplete="off">
 
-        <!-- NOMBRE Y ESPECIALIDAD -->
         <div class="field-row">
-
-          <label class="field-group" [class.invalid]="isInvalid('fullName')">
-            <span>Nombre Completo</span>
-
-            <input type="text" placeholder="Ej. Alex Rivera" formControlName="fullName" />
-
-            @if (fieldError('fullName')) {
-              <p class="invalid-note">
-                {{ fieldError('fullName') }}
-              </p>
-            }
-          </label>
-
-          <label class="field-group" [class.invalid]="isInvalid('specialty')">
-            <span>Especialidad</span>
-
-            <select formControlName="specialty">
-              <option value="">
-                Selecciona tu área
-              </option>
-
-              <option value="Entrenamiento funcional">
-                Entrenamiento funcional
-              </option>
-
-              <option value="Fitness general">
-                Fitness general
-              </option>
-
-              <option value="Pilates">
-                Pilates
-              </option>
-            </select>
-
-            @if (fieldError('specialty')) {
-              <p class="invalid-note">
-                {{ fieldError('specialty') }}
-              </p>
-            }
-          </label>
-
+          <label class="field-group" [class.invalid]="isInvalid('fullName')"><span>Nombre Completo</span><input
+              type="text" placeholder="Ej. Alex Rivera" formControlName="fullName" />@if (fieldError('fullName')) { <p
+              class="invalid-note">{{ fieldError('fullName') }}</p> }</label>
+          <label class="field-group" [class.invalid]="isInvalid('specialty')"><span>Especialidad</span><select
+              formControlName="specialty">
+              <option value="">Selecciona tu área</option>
+              <option value="Entrenamiento funcional">Entrenamiento funcional</option>
+              <option value="Fitness general">Fitness general</option>
+              <option value="Pilates">Pilates</option>
+            </select>@if (fieldError('specialty')) { <p class="invalid-note">{{ fieldError('specialty') }}</p> }</label>
         </div>
 
-        <!-- DISTRITO Y DIRECCIÓN -->
         <div class="field-row">
-
-          <label class="field-group" [class.invalid]="isInvalid('district')">
-            <span>Distrito</span>
-
-            <select formControlName="district">
-
-              <option value="">
-                Selecciona tu distrito
-              </option>
-
-              @for (d of allDistricts; track d) {
-                <option [value]="toTitleCase(d.district)">
-                  {{ d.district | titlecase }}
-                </option>
-              }
-            </select>
-
-            @if (fieldError('district')) {
-              <p class="invalid-note">
-                {{ fieldError('district') }}
-              </p>
-            }
-          </label>
-
-          <label class="field-group" [class.invalid]="isInvalid('address')">
-            <span>Dirección</span>
-
-            <input type="text" placeholder="Ej. Av. Girasol" formControlName="address" />
-
-            @if (fieldError('address')) {
-              <p class="invalid-note">
-                {{ fieldError('address') }}
-              </p>
-            }
-          </label>
-
+          <label class="field-group" [class.invalid]="isInvalid('district')"><span>Distrito</span><select
+              formControlName="district">
+              <option value="">Selecciona tu distrito</option>@for (d of allDistricts; track d) { <option
+                [value]="toTitleCase(d.district)">{{ d.district | titlecase }}</option> }
+            </select>@if (fieldError('district')) { <p class="invalid-note">{{ fieldError('district') }}</p> }</label>
+          <label class="field-group" [class.invalid]="isInvalid('address')"><span>Dirección</span><input type="text"
+              placeholder="Ej. Av. Girasol" formControlName="address" />@if (fieldError('address')) { <p
+              class="invalid-note">{{ fieldError('address') }}</p> }</label>
         </div>
 
-        <!-- TARIFA Y HORARIOS -->
         <div class="field-row">
-
-          <label class="field-group" [class.invalid]="isInvalid('rate')">
-            <span>Tarifa por hora (USD)</span>
-
-            <input type="text" placeholder="$45.00" formControlName="rate" />
-
-            @if (fieldError('rate')) {
-              <p class="invalid-note">
-                {{ fieldError('rate') }}
-              </p>
-            }
-          </label>
-
-          <div class="field-group" [class.invalid]="isInvalid('selectedShift')">
-            <span>Horario disponible</span>
-
-            <div class="toggle-group">
-
-              <button type="button" class="toggle" [class.active]="isShiftActive('Mañana')"
-                (click)="toggleShift('Mañana')">
-
-                Mañana
-              </button>
-
-              <button type="button" class="toggle" [class.active]="isShiftActive('Tarde')"
-                (click)="toggleShift('Tarde')">
-
-                Tarde
-              </button>
-
-              <button type="button" class="toggle" [class.active]="isShiftActive('Noche')"
-                (click)="toggleShift('Noche')">
-
-                Noche
-              </button>
-
-            </div>
-
-            @if (selectedShift.length) {
-              <p class="field-note">
-                {{ selectedShift.join(' • ') }}
-              </p>
-            }
-
-            @if (fieldError('selectedShift')) {
-              <p class="invalid-note">
-                {{ fieldError('selectedShift') }}
-              </p>
-            }
+          <label class="field-group" [class.invalid]="isInvalid('rate')"><span>Tarifa por hora (USD)</span><input
+              type="text" placeholder="$45.00" formControlName="rate" />@if (fieldError('rate')) { <p
+              class="invalid-note">{{ fieldError('rate') }}</p> }</label>
+          <div class="field-group" [class.invalid]="isInvalid('selectedShift')"><span>Horario disponible</span>
+            <div class="toggle-group"><button type="button" class="toggle" [class.active]="isShiftActive('Mañana')"
+                (click)="toggleShift('Mañana')">Mañana</button><button type="button" class="toggle"
+                [class.active]="isShiftActive('Tarde')" (click)="toggleShift('Tarde')">Tarde</button><button
+                type="button" class="toggle" [class.active]="isShiftActive('Noche')"
+                (click)="toggleShift('Noche')">Noche</button></div>@if (selectedShift.length) { <p class="field-note">{{
+              selectedShift.join(' • ') }}</p> }@if (fieldError('selectedShift')) { <p class="invalid-note">{{
+              fieldError('selectedShift') }}</p> }
           </div>
-
         </div>
 
-        <!-- DÍAS -->
-        <div class="section-label">
-          DÍAS DISPONIBLES
+        <div class="section-label">DÍAS DISPONIBLES</div>
+        <div class="days-grid" [class.invalid]="isInvalid('selectedDay')">@for (day of availableDays; track day) {
+          <button type="button" class="day" [class.active]="isDayActive(day.code)" (click)="toggleDay(day.code)">{{
+            day.label }}</button> }
         </div>
+        @if (fieldError('selectedDay')) { <p class="invalid-note">{{ fieldError('selectedDay') }}</p> }
 
-        <div class="days-grid" [class.invalid]="isInvalid('selectedDay')">
-
-          @for (day of availableDays; track day) {
-            <button type="button" class="day" [class.active]="isDayActive(day.code)"
-              (click)="toggleDay(day.code)">
-              {{ day.label }}
-            </button>
-          }
-
-        </div>
-
-        @if (fieldError('selectedDay')) {
-          <p class="invalid-note">
-            {{ fieldError('selectedDay') }}
-          </p>
-        }
-
-        <!-- HORARIOS EXACTOS -->
-        <div class="section-label">
-          HORARIO ESPECÍFICO
-        </div>
-
+        @for (h of horarios; track h.dia) {
+        <div class="section-label">HORARIO ESPECÍFICO — {{ h.dia }} ({{ h.turno }})</div>
         <div class="field-row">
-
-          <label class="field-group" [class.invalid]="isInvalid('fromTime')">
-            <span>Desde</span>
-
-            <select formControlName="fromTime">
-
-              <option value="">
-                Selecciona hora
-              </option>
-
-              @for (hour of availableTimeSlots; track hour) {
-                <option [value]="hour">
-                  {{ formatHour(hour) }}
-                </option>
-              }
-
-            </select>
-          </label>
-
-          <label class="field-group" [class.invalid]="isInvalid('toTime')">
-            <span>Hasta</span>
-
-            <select formControlName="toTime">
-
-              <option value="">
-                Selecciona hora
-              </option>
-
-              @for (hour of availableTimeSlots; track hour) {
-                <option [value]="hour">
-                  {{ formatHour(hour) }}
-                </option>
-              }
-
-            </select>
-            @if (fieldError('toTime')) {
-              <p class="invalid-note">
-                {{ fieldError('toTime') }}
-              </p>
-            }
-          </label>
-
+          <label class="field-group"><span>Desde</span><select [(ngModel)]="h.inicio"
+              [ngModelOptions]="{standalone: true}" (change)="onHorarioChange($index)">
+              <option value="">Selecciona hora</option>@for (hour of getHorasTurno(h.turno); track hour) { <option
+                [value]="hour">{{ formatHour(hour) }}</option> }
+            </select></label>
+          <label class="field-group"><span>Hasta</span><select [(ngModel)]="h.fin" [ngModelOptions]="{standalone: true}"
+              (change)="onHorarioChange($index)">
+              <option value="">Selecciona hora</option>@for (hour of getHorasTurno(h.turno); track hour) { <option
+                [value]="hour">{{ formatHour(hour) }}</option> }
+            </select></label>
         </div>
-
-        @if (timeValidationMessage) {
-          <p class="time-error">
-            {{ timeValidationMessage }}
-          </p>
         }
 
-        <!-- BIO -->
-        <label class="field-group bio-group" [class.invalid]="isInvalid('bio')">
-          <span>Biografía profesional</span>
+        @if (errorHorario) { <p class="time-error">{{ errorHorario }}</p> }
 
-          <textarea rows="4" formControlName="bio"
-            placeholder="Describe tu metodología, años de experiencia y experiencia profesional...">
-          </textarea>
+        <label class="field-group bio-group" [class.invalid]="isInvalid('bio')"><span>Biografía
+            profesional</span><textarea rows="4" formControlName="bio"
+            placeholder="Describe tu metodología, años de experiencia y experiencia profesional..."></textarea>@if
+          (fieldError('bio')) { <p class="invalid-note">{{ fieldError('bio') }}</p> }</label>
 
-          @if (fieldError('bio')) {
-            <p class="invalid-note">
-              {{ fieldError('bio') }}
-            </p>
-          }
-        </label>
-
-        <!-- BOTÓN -->
-        <div class="form-actions">
-
-          <button type="button" class="btn-primary" [disabled]="isContinueDisabled" (click)="goToCertificado()">
-
-            Continuar →
-
-          </button>
-
-        </div>
-
+        <div class="form-actions"><button type="button" class="btn-primary" [disabled]="isContinueDisabled"
+            (click)="goToCertificado()">Continuar →</button></div>
       </form>
 
       @if (showValidationModal) {
-        <div class="modal-backdrop">
-          <div class="validation-modal">
-            <button type="button" class="modal-close" (click)="closeValidationModal()">×</button>
-            <p class="modal-kicker error-kicker">Campos incompletos</p>
-            <h3>Completa los siguientes campos antes de continuar</h3>
-            <ul class="validation-list">
-              @for (item of validationMissingFields; track item) {
-                <li>{{ item }}</li>
-              }
-            </ul>
-            <button type="button" class="btn-primary modal-button" (click)="closeValidationModal()">Volver</button>
-          </div>
+      <div class="modal-backdrop">
+        <div class="validation-modal"><button type="button" class="modal-close"
+            (click)="closeValidationModal()">×</button>
+          <p class="modal-kicker error-kicker">Campos incompletos</p>
+          <h3>Completa los siguientes campos antes de continuar</h3>
+          <ul class="validation-list">@for (item of validationMissingFields; track item) { <li>{{ item }}</li> }</ul>
+          <button type="button" class="btn-primary modal-button" (click)="closeValidationModal()">Volver</button>
         </div>
+      </div>
       }
-
     </div>
   </div>
 </section>

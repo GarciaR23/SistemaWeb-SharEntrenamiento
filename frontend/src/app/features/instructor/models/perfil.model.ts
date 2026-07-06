@@ -12,4 +12,5 @@ export interface ProfileState {
     email: string;
     password: string;
     profileImageFile?: File | null;
+    horarios: { dia: string; turno: string; inicio: string; fin: string }[];
 }

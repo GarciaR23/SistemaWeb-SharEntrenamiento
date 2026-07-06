@@ -40,10 +40,11 @@ public interface InstructorRepository extends JpaRepository<Instructor, Integer>
                 ) AS totalSedes,
 
                 servicio_principal.tarifa_hora AS tarifaHora,
-                servicio_principal.horario_preferencia AS horarioPreferencia,
-                servicio_principal.dia_disponible AS diaDisponible,
-                servicio_principal.horario_inicio AS horarioInicio,
-                servicio_principal.horario_final AS horarioFinal,
+
+                hd.horario_preferencia AS horarioPreferencia,
+                hd.dia_semana AS diaSemana,
+                hd.horario_inicio AS horarioInicio,
+                hd.horario_final AS horarioFinal,
 
                 (
                     SELECT COALESCE(ROUND(AVG(cs.puntaje_estrellas)::numeric, 1), 0)
@@ -54,20 +55,17 @@ public interface InstructorRepository extends JpaRepository<Instructor, Integer>
                 (
                     SELECT COUNT(DISTINCT r.id_reserva)
                     FROM reserva r
+                    INNER JOIN sesion s ON r.id_reserva = s.id_reserva
                     WHERE r.id_instructor = i.id_instructor
-                      AND r.estado_reserva IN ('completada', 'finalizada', 'confirmada', 'pendiente')
+                      AND s.estado_sesion = 'finalizado'::estado_sesion_enum
                 ) AS totalSesiones
 
             FROM instructor i
 
-            INNER JOIN usuario u
-                ON u.id_usuario = i.id_usuario
+            INNER JOIN usuario u ON u.id_usuario = i.id_usuario
 
             LEFT JOIN LATERAL (
-                SELECT
-                    s.id_sede,
-                    s.direccion_sede,
-                    s.distrito_sede
+                SELECT s.id_sede, s.direccion_sede, s.distrito_sede
                 FROM sede s
                 WHERE s.id_instructor = i.id_instructor
                   AND COALESCE(s.estado_activacion, true) = true
@@ -76,71 +74,47 @@ public interface InstructorRepository extends JpaRepository<Instructor, Integer>
             ) s_principal ON true
 
             LEFT JOIN LATERAL (
-                SELECT
-                    si.tarifa_hora,
-                    si.horario_preferencia,
-                    si.dia_disponible,
-                    si.horario_inicio,
-                    si.horario_final
+                SELECT si.id_servicio, si.tarifa_hora
                 FROM servicio_instructor si
                 WHERE si.id_instructor = i.id_instructor
                 ORDER BY si.tarifa_hora ASC NULLS LAST
                 LIMIT 1
             ) servicio_principal ON true
 
+            LEFT JOIN horario_disponibilidad hd
+                ON servicio_principal.id_servicio = hd.id_servicio
+
             WHERE u.estado_cuenta = 'activo'
 
-              AND (
-                    SELECT COUNT(*)
-                    FROM sede sx
-                    WHERE sx.id_instructor = i.id_instructor
-                      AND COALESCE(sx.estado_activacion, true) = true
-              ) >= 3
+              AND (SELECT COUNT(*) FROM sede sx
+                   WHERE sx.id_instructor = i.id_instructor
+                     AND COALESCE(sx.estado_activacion, true) = true) >= 3
 
-              AND (
-                    :texto IS NULL
-                    OR LOWER(i.nombre_completo) LIKE LOWER(CONCAT('%', :texto, '%'))
-                    OR LOWER(COALESCE(i.especialidad, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
-                    OR LOWER(COALESCE(i.biografia_instructor, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
-              )
+              AND (:texto IS NULL
+                   OR LOWER(i.nombre_completo) LIKE LOWER(CONCAT('%', :texto, '%'))
+                   OR LOWER(COALESCE(i.especialidad, '')) LIKE LOWER(CONCAT('%', :texto, '%'))
+                   OR LOWER(COALESCE(i.biografia_instructor, '')) LIKE LOWER(CONCAT('%', :texto, '%')))
 
-              AND (
-                    :distrito IS NULL
-                    OR LOWER(i.distrito) = LOWER(:distrito)
-                    OR EXISTS (
-                        SELECT 1
-                        FROM sede sd
-                        WHERE sd.id_instructor = i.id_instructor
-                          AND LOWER(sd.distrito_sede) = LOWER(:distrito)
-                          AND COALESCE(sd.estado_activacion, true) = true
-                    )
-              )
+              AND (:distrito IS NULL
+                   OR LOWER(i.distrito) = LOWER(:distrito)
+                   OR EXISTS (SELECT 1 FROM sede sd
+                              WHERE sd.id_instructor = i.id_instructor
+                                AND LOWER(sd.distrito_sede) = LOWER(:distrito)
+                                AND COALESCE(sd.estado_activacion, true) = true))
 
-              AND (
-                    :especialidad IS NULL
-                    OR LOWER(COALESCE(i.especialidad, '')) LIKE LOWER(CONCAT('%', :especialidad, '%'))
-              )
+              AND (:especialidad IS NULL
+                   OR LOWER(COALESCE(i.especialidad, '')) LIKE LOWER(CONCAT('%', :especialidad, '%')))
 
-              AND (
-                    (:tarifaMin IS NULL AND :tarifaMax IS NULL)
-                    OR EXISTS (
-                        SELECT 1
-                        FROM servicio_instructor sif
-                        WHERE sif.id_instructor = i.id_instructor
-                          AND (:tarifaMin IS NULL OR sif.tarifa_hora >= :tarifaMin)
-                          AND (:tarifaMax IS NULL OR sif.tarifa_hora <= :tarifaMax)
-                    )
-              )
+              AND ((:tarifaMin IS NULL AND :tarifaMax IS NULL)
+                   OR EXISTS (SELECT 1 FROM servicio_instructor sif
+                              WHERE sif.id_instructor = i.id_instructor
+                                AND (:tarifaMin IS NULL OR sif.tarifa_hora >= :tarifaMin)
+                                AND (:tarifaMax IS NULL OR sif.tarifa_hora <= :tarifaMax)))
 
-              AND (
-                    :turno IS NULL
-                    OR EXISTS (
-                        SELECT 1
-                        FROM servicio_instructor sit
-                        WHERE sit.id_instructor = i.id_instructor
-                          AND LOWER(COALESCE(sit.horario_preferencia, '')) = LOWER(:turno)
-                    )
-              )
+              AND (:turno IS NULL
+                   OR EXISTS (SELECT 1 FROM horario_disponibilidad hdf
+                              WHERE hdf.id_servicio = servicio_principal.id_servicio
+                                AND LOWER(hdf.horario_preferencia::text) = LOWER(:turno)))
 
             ORDER BY i.nombre_completo ASC
             """, nativeQuery = true)
@@ -153,60 +127,42 @@ public interface InstructorRepository extends JpaRepository<Instructor, Integer>
             @Param("turno") String turno);
 
     @Query(value = """
-            SELECT
-                i.id_instructor AS idInstructor,
-                i.nombre_completo AS nombreCompleto,
-                i.url_imagen_perfil AS urlImagenPerfil,
-                i.especialidad AS especialidad,
-                i.biografia_instructor AS biografia,
-                i.direccion AS direccion,
-                i.distrito AS distrito
-            FROM instructor i
-            WHERE i.id_instructor = :idInstructor
+            SELECT i.id_instructor AS idInstructor, i.nombre_completo AS nombreCompleto,
+                   i.url_imagen_perfil AS urlImagenPerfil, i.especialidad AS especialidad,
+                   i.biografia_instructor AS biografia, i.direccion AS direccion, i.distrito AS distrito
+            FROM instructor i WHERE i.id_instructor = :idInstructor
             """, nativeQuery = true)
     InstructorPerfilResumenProjection obtenerPerfilResumen(@Param("idInstructor") Integer idInstructor);
 
     @Query(value = """
-            SELECT
-                s.id_sede AS idSede,
-                s.url_imagen_sede_1 AS urlImagenSede1,
-                s.url_imagen_sede_2 AS urlImagenSede2,
-                s.url_imagen_sede_3 AS urlImagenSede3,
-                s.descripcion_sede AS descripcionSede,
-                s.direccion_sede AS direccionSede,
-                s.distrito_sede AS distritoSede,
-                s.estado_activacion AS estadoActivacion
-            FROM sede s
-            WHERE s.id_instructor = :idInstructor
-            ORDER BY s.id_sede DESC
+            SELECT s.id_sede AS idSede, s.url_imagen_sede_1 AS urlImagenSede1,
+                   s.url_imagen_sede_2 AS urlImagenSede2, s.url_imagen_sede_3 AS urlImagenSede3,
+                   s.descripcion_sede AS descripcionSede, s.direccion_sede AS direccionSede,
+                   s.distrito_sede AS distritoSede, s.estado_activacion AS estadoActivacion
+            FROM sede s WHERE s.id_instructor = :idInstructor ORDER BY s.id_sede DESC
             """, nativeQuery = true)
     List<InstructorPerfilSedeProjection> obtenerPerfilSedes(@Param("idInstructor") Integer idInstructor);
 
     @Query(value = """
-            SELECT
-                si.id_servicio AS idServicio,
-                si.tarifa_hora AS tarifaHora,
-                si.horario_preferencia AS horarioPreferencia,
-                si.dia_disponible AS diaDisponible,
-                si.horario_inicio AS horarioInicio,
-                si.horario_final AS horarioFinal
+            SELECT si.id_servicio AS idServicio, si.tarifa_hora AS tarifaHora,
+                   hd.horario_preferencia AS horarioPreferencia, hd.dia_semana AS diaSemana,
+                   hd.horario_inicio AS horarioInicio, hd.horario_final AS horarioFinal
             FROM servicio_instructor si
+            INNER JOIN horario_disponibilidad hd ON si.id_servicio = hd.id_servicio
             WHERE si.id_instructor = :idInstructor
-            ORDER BY si.dia_disponible ASC, si.horario_inicio ASC
+            ORDER BY CASE hd.dia_semana
+                WHEN 'Lunes' THEN 1 WHEN 'Martes' THEN 2 WHEN 'Miércoles' THEN 3
+                WHEN 'Jueves' THEN 4 WHEN 'Viernes' THEN 5 WHEN 'Sábado' THEN 6 WHEN 'Domingo' THEN 7 ELSE 8 END,
+                hd.horario_inicio ASC
             """, nativeQuery = true)
     List<InstructorPerfilServicioProjection> obtenerPerfilServicios(@Param("idInstructor") Integer idInstructor);
 
     @Query(value = """
-            SELECT
-                cs.id_calificacion AS idCalificacion,
-                cs.id_paciente AS idPaciente,
-                p.nombre_completo AS pacienteNombre,
-                cs.puntaje_estrellas AS puntajeEstrellas,
-                cs.comentario_tutor AS comentarioCliente,
-                cs.fecha_calificacion AS fechaCalificacion
+            SELECT cs.id_calificacion AS idCalificacion, cs.id_paciente AS idPaciente,
+                   p.nombre_completo AS pacienteNombre, cs.puntaje_estrellas AS puntajeEstrellas,
+                   cs.comentario_tutor AS comentarioCliente, cs.fecha_calificacion AS fechaCalificacion
             FROM calificacion_servicio cs
-            INNER JOIN paciente p
-                ON p.id_paciente = cs.id_paciente
+            INNER JOIN paciente p ON p.id_paciente = cs.id_paciente
             WHERE cs.id_instructor = :idInstructor
             ORDER BY cs.fecha_calificacion DESC
             """, nativeQuery = true)

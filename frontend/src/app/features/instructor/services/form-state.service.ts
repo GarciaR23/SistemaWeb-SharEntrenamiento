@@ -14,34 +14,19 @@ export class FormStateService {
       address: '',
       rate: '',
       selectedShift: [],
-      selectedDay: ['L'],
-      fromTime: '08:00',
-      toTime: '17:00',
+      selectedDay: [],
+      fromTime: '',
+      toTime: '',
       bio: '',
       email: '',
       password: '',
+      horarios: [] as { dia: string; turno: string; inicio: string; fin: string }[],
     },
     documents: {
-      certificacion: {
-        file: null,
-        fileName: '',
-        status: 'PENDIENTE',
-      },
-      dni: {
-        file: null,
-        fileName: '',
-        status: 'PENDIENTE',
-      },
-      titulo: {
-        file: null,
-        fileName: '',
-        status: 'PENDIENTE',
-      },
-      antecedentes: {
-        file: null,
-        fileName: '',
-        status: 'PENDIENTE',
-      },
+      certificacion: { file: null, fileName: '', status: 'PENDIENTE' },
+      dni: { file: null, fileName: '', status: 'PENDIENTE' },
+      titulo: { file: null, fileName: '', status: 'PENDIENTE' },
+      antecedentes: { file: null, fileName: '', status: 'PENDIENTE' },
     },
   };
 
@@ -64,9 +49,8 @@ export class FormStateService {
     if (!profile.rate.trim()) missing.push('Tarifa por hora');
     if (!profile.selectedShift.length) missing.push('Horario disponible');
     if (!profile.selectedDay.length) missing.push('Días disponibles');
-    if (!profile.fromTime.trim()) missing.push('Hora desde');
-    if (!profile.toTime.trim()) missing.push('Hora hasta');
     if (!profile.bio.trim()) missing.push('Biografía profesional');
+    if (profile.horarios.length === 0) missing.push('Horario específico');
 
     return missing;
   }
@@ -108,10 +92,7 @@ export class FormStateService {
       documents: Object.fromEntries(
         Object.entries(this.state.documents).map(([key, value]) => [
           key,
-          {
-            fileName: value.fileName,
-            status: value.status,
-          },
+          { fileName: value.fileName, status: value.status },
         ]),
       ),
     };
@@ -126,13 +107,14 @@ export class FormStateService {
         address: '',
         rate: '',
         selectedShift: [],
-        selectedDay: ['L'],
-        fromTime: '08:00',
-        toTime: '17:00',
+        selectedDay: [],
+        fromTime: '',
+        toTime: '',
         bio: '',
         email: '',
         password: '',
         profileImageFile: null,
+        horarios: [] as { dia: string; turno: string; inicio: string; fin: string }[],
       },
       documents: {
         certificacion: { file: null, fileName: '', status: 'PENDIENTE' },

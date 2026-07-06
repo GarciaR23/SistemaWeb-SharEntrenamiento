@@ -7,7 +7,7 @@ public interface InstructorPerfilServicioProjection {
     Integer getIdServicio();
     BigDecimal getTarifaHora();
     String getHorarioPreferencia();
-    String getDiaDisponible();
+    String getDiaSemana();
     LocalTime getHorarioInicio();
     LocalTime getHorarioFinal();
 }

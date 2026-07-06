@@ -19,6 +19,6 @@ public interface AdminSolicitudRepository extends JpaRepository<VistaAdminSolici
     @Query(value = "SELECT COUNT(*) FROM vista_admin_cards_solicitudes WHERE estado_usuario = 'pendiente_validacion' AND DATE(fecha_ultimo_envio) = CURRENT_DATE", nativeQuery = true)
     long contarPendientesHoy();
 
-    @Query(value = "SELECT COUNT(*) FROM vista_admin_cards_solicitudes WHERE estado_usuario = 'pendiente_validacion' AND fecha_ultimo_envio <= NOW() - INTERVAL '24 hours' AND fecha_ultimo_envio > NOW() - INTERVAL '48 hours'", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM vista_admin_cards_solicitudes WHERE estado_usuario = 'pendiente_validacion' AND fecha_ultimo_envio <= NOW() - INTERVAL '24 hours' AND fecha_ultimo_envio > NOW() - INTERVAL '72 hours'", nativeQuery = true)
     long contarPendientesPorVencer();
 }

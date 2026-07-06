@@ -186,10 +186,7 @@ export class RegistrationApiService {
     clave: string;
     documentos: Record<DocumentKey, File | null>;
     tarifaHora: number;
-    horarioPreferencia: string;
-    diaDisponible: string;
-    horarioInicio: string;
-    horarioFinal: string;
+    horarios: { diaSemana: string; horarioPreferencia: string; horarioInicio: string; horarioFinal: string }[];
   }): Promise<void> {
     let urlImagenPerfil: string | null = null;
 
@@ -211,10 +208,7 @@ export class RegistrationApiService {
 
     for (const key of Object.keys(payload.documentos) as DocumentKey[]) {
       const file = payload.documentos[key];
-      if (!file) {
-        continue;
-      }
-
+      if (!file) continue;
       const uploaded = await firstValueFrom(this.fileService.uploadFile(file));
       uploadedDocuments[key] = uploaded.url;
     }
@@ -230,10 +224,7 @@ export class RegistrationApiService {
         distrito: payload.distrito,
         direccion: payload.direccion,
         tarifaHora: payload.tarifaHora,
-        horarioPreferencia: payload.horarioPreferencia,
-        diaDisponible: payload.diaDisponible,
-        horarioInicio: payload.horarioInicio,
-        horarioFinal: payload.horarioFinal,
+        horarios: payload.horarios,
       }, {
         headers: { 'X-Skip-Error-Interceptor': 'true' },
       }),
@@ -247,10 +238,7 @@ export class RegistrationApiService {
 
     for (const key of Object.keys(uploadedDocuments) as DocumentKey[]) {
       const uploadedUrl = uploadedDocuments[key];
-      if (!uploadedUrl) {
-        continue;
-      }
-
+      if (!uploadedUrl) continue;
       await firstValueFrom(
         this.http.post<DocumentoDto>(this.documentoUrl, {
           idDocumento: null,
