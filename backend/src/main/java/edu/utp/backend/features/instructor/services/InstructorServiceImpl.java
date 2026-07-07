@@ -157,13 +157,26 @@ public class InstructorServiceImpl implements InstructorService {
     }
 
     private InstructorPerfilSedeDto toPerfilSedeDto(InstructorPerfilSedeProjection s) {
-        return new InstructorPerfilSedeDto(s.getIdSede(), s.getUrlImagenSede1(), s.getUrlImagenSede2(),
-                s.getUrlImagenSede3(), s.getDescripcionSede(), s.getDireccionSede(),
-                s.getDistritoSede(), s.getEstadoActivacion());
+        return new InstructorPerfilSedeDto(
+                s.getIdSede(),
+                s.getUrlImagenSede1(),
+                s.getUrlImagenSede2(),
+                s.getUrlImagenSede3(),
+                s.getNombreSede(),
+                s.getDescripcionSede(),
+                s.getDireccionSede(),
+                s.getDistritoSede(),
+                s.getZonaSede(),
+                s.getEstadoActivacion());
     }
 
     private InstructorPerfilCalificacionDto toPerfilCalificacionDto(InstructorPerfilCalificacionProjection c) {
-        return new InstructorPerfilCalificacionDto(c.getIdCalificacion(), c.getIdPaciente(), c.getPacienteNombre(),
-                c.getPuntajeEstrellas(), c.getComentarioTutor(), c.getFechaCalificacion());
+        return new InstructorPerfilCalificacionDto(
+                c.getIdCalificacion(),
+                c.getIdPaciente(),
+                c.getPacienteNombre(),
+                c.getPuntajeEstrellas(),
+                c.getComentarioTutor(),
+                c.getFechaCalificacion());
     }
 }

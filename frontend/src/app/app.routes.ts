@@ -25,6 +25,7 @@ import { PagoComponent } from './features/instructor/pages/pago/pago.component';
 import { Instructor } from './features/instructor/instructor';
 import { Tutor } from './features/tutor/tutor';
 import { CatalogoInstructor } from './features/tutor/pages/catalogo-instructor/catalogo-instructor.component';
+import { ReservaSesion} from './features/tutor/pages/reserva-sesion/reserva-sesion.component';
 import { Sesion } from './features/tutor/pages/sesion-paciente/sesion-paciente.component';
 import { Progreso } from './features/tutor/pages/progreso-paciente/progreso-paciente.component';
 import { FormularioTutor } from './features/tutor/pages/formulario-tutor/formulario-tutor.component';
@@ -90,6 +91,7 @@ export const routes: Routes = [
           { path: 'inicio', component: TutorInicio, title: 'Dashboard Tutor | SharEntrenamiento' },
           { path: 'catalogo-instructor', component: CatalogoInstructor, title: 'Catálogo de Instructores | SharEntrenamiento' },
           { path: 'perfil-instructor/:idInstructor', component: PerfilInstructorComponent },
+          { path: 'reserva-sesion', component: ReservaSesion, title: 'Reserva Sesión | SharEntrenamiento' },
           { path: 'sesion', component: Sesion, title: 'Sesiones | SharEntrenamiento' },
           { path: 'progreso', component: Progreso, title: 'Progreso del Paciente | SharEntrenamiento' }
         ]

@@ -1,4 +1,9 @@
-import { InstructorPerfilServicioDto } from "./instructor-perfil-servicio.model";
+export interface HorarioCatalogoDto {
+    diaSemana: string | null;
+    horarioPreferencia: string | null;
+    horarioInicio: string | null;
+    horarioFinal: string | null;
+}
 
 export interface InstructorCatalogoDto {
     idInstructor: number;
@@ -14,9 +19,10 @@ export interface InstructorCatalogoDto {
     distritoSede: string | null;
 
     tarifaHora: number | null;
-    horarios: InstructorPerfilServicioDto[];
 
     promedioCalificacion: number | null;
     totalSesiones: number | null;
+    totalSedes: number | null;
 
+    horarios: HorarioCatalogoDto[];
 }

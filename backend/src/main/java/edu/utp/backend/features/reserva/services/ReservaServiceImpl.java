@@ -12,6 +12,8 @@ import edu.utp.backend.features.reserva.dtos.ReservaRequestDto;
 import edu.utp.backend.features.reserva.entities.Reserva;
 import edu.utp.backend.features.reserva.repositories.ReservaRepository;
 import lombok.RequiredArgsConstructor;
+import edu.utp.backend.features.reserva.dtos.ReservaTutorSesionDto;
+import edu.utp.backend.features.reserva.projections.ReservaTutorSesionProjection;
 
 @Service
 @RequiredArgsConstructor
@@ -61,8 +63,7 @@ public class ReservaServiceImpl implements ReservaService {
         boolean existeCruce = reservaRepository.existeCruceInstructor(
                 request.idInstructor(),
                 fechaInicio,
-                fechaFin
-        );
+                fechaFin);
 
         if (existeCruce) {
             throw new IllegalArgumentException("El instructor ya tiene una reserva en ese horario.");
@@ -88,7 +89,7 @@ public class ReservaServiceImpl implements ReservaService {
         Reserva reserva = reservaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada: " + id));
 
-        reserva.setEstadoReserva("cancelada");
+        reserva.setEstadoReserva("rechazada");
         reservaRepository.save(reserva);
     }
 
@@ -122,6 +123,14 @@ public class ReservaServiceImpl implements ReservaService {
         }
     }
 
+    @Override
+    public List<ReservaTutorSesionDto> findSesionesByTutor(Integer idTutor) {
+        return reservaRepository.findSesionesByTutor(idTutor)
+                .stream()
+                .map(this::toReservaTutorSesionDto)
+                .toList();
+    }
+
     private ReservaDto toDto(Reserva reserva) {
         Integer duracionMinutos = reserva.getDuracionEntrenamiento() != null
                 ? (int) reserva.getDuracionEntrenamiento().toMinutes()
@@ -136,7 +145,27 @@ public class ReservaServiceImpl implements ReservaService {
                 duracionMinutos,
                 reserva.getMontoTotal(),
                 reserva.getEstadoReserva(),
-                reserva.getFechaCreacion()
-        );
+                reserva.getFechaCreacion());
+    }
+
+    private ReservaTutorSesionDto toReservaTutorSesionDto(ReservaTutorSesionProjection r) {
+        return new ReservaTutorSesionDto(
+                r.getIdReserva(),
+                r.getIdPaciente(),
+                r.getPacienteNombre(),
+                r.getPacienteImagen(),
+                r.getIdInstructor(),
+                r.getInstructorNombre(),
+                r.getInstructorImagen(),
+                r.getEspecialidad(),
+                r.getIdSede(),
+                r.getNombreSede(),
+                r.getDireccionSede(),
+                r.getSeleccionHorario(),
+                r.getDuracionMinutos(),
+                r.getMontoTotal(),
+                r.getEstadoReserva(),
+                r.getEstadoSesion(),
+                r.getFechaCreacion());
     }
 }

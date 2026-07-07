@@ -96,17 +96,30 @@
             </h2>
 
             <div class="sedes-grid">
-                <article class="sede-card" *ngFor="let sede of sedes; let i = index">
+                <article class="sede-card" *ngFor="let sede of sedes">
                     <div class="sede-image-box">
-                        <img [src]="obtenerImagenSede(sede)" [alt]="sede.direccionSede || 'Sede'">
-                        <span class="sede-badge" [class.premium]="i === 0">
-                            {{ i === 0 ? 'PREMIUM' : 'ESTÁNDAR' }}
+                        <img [src]="obtenerImagenSede(sede)" [alt]="sede.nombreSede || 'Sede'">
+
+                        <span class="sede-badge">
+                            {{ sede.zonaSede || 'Sin zona' }}
                         </span>
                     </div>
 
-                    <h3>{{ sede.descripcionSede || 'Sede de entrenamiento' }}</h3>
-                    <p>{{ sede.direccionSede || 'Dirección no registrada' }}</p>
-                    <p class="sede-district">{{ obtenerNombreDistrito(sede.distritoSede || '') }}</p>
+                    <div class="sede-content">
+                        <h3>{{ sede.nombreSede || 'Sede sin nombre' }}</h3>
+
+                        <p class="sede-description">
+                            {{ sede.descripcionSede || 'Descripción no registrada.' }}
+                        </p>
+
+                        <p class="sede-address">
+                            {{ sede.direccionSede || 'Dirección no registrada' }}
+                        </p>
+
+                        <p class="sede-district">
+                            {{ obtenerNombreDistrito(sede.distritoSede || '') }}
+                        </p>
+                    </div>
                 </article>
             </div>
         </section>
@@ -138,7 +151,7 @@
                         </div>
 
                         <p class="testimonial-text">
-                            "{{ calificacion.comentarioCliente || 'Sin comentario registrado.' }}"
+                            "{{ calificacion.comentarioTutor || 'Sin comentario registrado.' }}"
                         </p>
                     </article>
                 </div>

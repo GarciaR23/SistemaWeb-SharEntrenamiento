@@ -1,0 +1,168 @@
+<div class="reserva-container">
+
+    <section class="reserva-card">
+
+        <header class="reserva-header">
+            <h1>Reserva de Sesión</h1>
+            <p>
+                Ajuste los parámetros técnicos para su próxima sesión de alto rendimiento con nuestros instructores
+                certificados.
+            </p>
+        </header>
+
+        <div *ngIf="cargando" class="loading-placeholder">
+            Cargando información de reserva...
+        </div>
+
+        <div *ngIf="!cargando && errorMessage" class="error-message">
+            {{ errorMessage }}
+        </div>
+
+        <div *ngIf="!cargando && !errorMessage && resumen" class="reserva-body">
+
+            <section class="reserva-section">
+                <div class="section-label">
+                    <span></span>
+                    01. Instructor y Tarifa
+                </div>
+
+                <article class="instructor-summary">
+                    <div class="instructor-info">
+                        <div class="instructor-avatar">
+                            <img [src]="obtenerImagenInstructor()" [alt]="resumen.nombreCompleto">
+                            <span class="status-dot"></span>
+                        </div>
+
+                        <div>
+                            <h2>{{ resumen.nombreCompleto }}</h2>
+                            <p>{{ resumen.especialidad || 'Instructor certificado' }}</p>
+                        </div>
+                    </div>
+
+                    <div class="total-box">
+                        <span>Inversión total</span>
+                        <strong>
+                            <small>S/</small>
+                            {{ montoTotal.toFixed(2) }}
+                        </strong>
+                    </div>
+                </article>
+            </section>
+
+            <section class="reserva-section">
+                <div class="section-label">
+                    <span></span>
+                    02. Ubicación del entrenamiento
+                </div>
+
+                <div class="sedes-reserva-grid">
+                    <button class="sede-option" type="button" *ngFor="let sede of sedes"
+                        [class.active]="sedeSeleccionada?.idSede === sede.idSede" (click)="seleccionarSede(sede)">
+                        <img [src]="obtenerImagenSede(sede)" [alt]="sede.nombreSede || 'Sede'">
+
+                        <div>
+                            <h3>{{ sede.nombreSede || 'Sede sin nombre' }}</h3>
+                            <p>{{ sede.direccionSede || 'Dirección no registrada' }}</p>
+                        </div>
+
+                        <span class="check-dot" *ngIf="sedeSeleccionada?.idSede === sede.idSede">
+                            ✓
+                        </span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="reserva-grid-two">
+
+                <div class="reserva-section">
+                    <div class="section-label">
+                        <span></span>
+                        03. Bloque horario
+                    </div>
+
+                    <div class="horarios-list" *ngIf="horariosDisponibles.length > 0">
+                        <button class="horario-option" type="button"
+                            *ngFor="let horario of horariosDisponibles; let i = index"
+                            [class.active]="horarioSeleccionado === horario" (click)="seleccionarHorario(horario)">
+                            <span>
+                                {{ horario.diaSemana }} {{ formatearHorario(horario) }}
+                            </span>
+
+                            <small *ngIf="i === 0">Recomendado</small>
+                        </button>
+                    </div>
+                    <p class="duration-warning" *ngIf="!cargando && horariosDisponibles.length === 0">
+                        Este instructor no tiene horarios disponibles registrados.
+                    </p>
+                </div>
+
+                <div class="reserva-section">
+                    <div class="section-label">
+                        <span></span>
+                        04. Duración
+                    </div>
+
+                    <div class="duracion-grid">
+                        <button class="duracion-option" type="button" [class.active]="duracionHoras === 1"
+                            [class.disabled]="!duracionDisponible(1)" [disabled]="!duracionDisponible(1)"
+                            (click)="seleccionarDuracion(1)">
+                            <strong>1.0</strong>
+                            <span>Hora</span>
+                        </button>
+
+                        <button class="duracion-option" type="button" [class.active]="duracionHoras === 1.5"
+                            [class.disabled]="!duracionDisponible(1.5)" [disabled]="!duracionDisponible(1.5)"
+                            (click)="seleccionarDuracion(1.5)">
+                            <strong>1.5</strong>
+                            <span>Horas</span>
+                        </button>
+
+                        <button class="duracion-option" type="button" [class.active]="duracionHoras === 2"
+                            [class.disabled]="!duracionDisponible(2)" [disabled]="!duracionDisponible(2)"
+                            (click)="seleccionarDuracion(2)">
+                            <strong>2.0</strong>
+                            <span>Horas</span>
+                        </button>
+                    </div>
+
+                    <p class="duration-warning" *ngIf="horarioSeleccionado && !duracionPermitida()">
+                        {{ mensajeDuracionNoPermitida() }}
+                    </p>
+                </div>
+
+            </section>
+
+            <section class="warning-box">
+                <div class="warning-icon">!</div>
+
+                <div>
+                    <h3>Protocolo de seguridad de colapso</h3>
+                    <p>
+                        En cumplimiento con nuestro protocolo de seguridad, en caso de colapso del paciente,
+                        se realizará un cobro del <strong>20%</strong> por concepto de asistencia y tiempo invertido
+                        del instructor. La sesión será reprogramada automáticamente.
+                    </p>
+                </div>
+            </section>
+
+            <label class="terms-check">
+                <input type="checkbox" [(ngModel)]="aceptaTerminos">
+                <span>Acepto los <strong>términos de servicio</strong> y el protocolo de seguridad técnica.</span>
+            </label>
+
+            <div class="reserva-actions">
+                <button class="btn-back" type="button" (click)="cancelar()">
+                    ← Cancelar y volver
+                </button>
+
+                <button class="btn-confirm" type="button" [disabled]="!puedeConfirmar() || guardando"
+                    (click)="confirmarReserva()">
+                    {{ guardando ? 'Guardando...' : 'Confirmar Reserva →' }}
+                </button>
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
