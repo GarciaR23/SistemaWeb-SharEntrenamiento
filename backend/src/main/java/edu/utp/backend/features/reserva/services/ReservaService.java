@@ -4,6 +4,7 @@ import java.util.List;
 
 import edu.utp.backend.features.reserva.dtos.ReservaDto;
 import edu.utp.backend.features.reserva.dtos.ReservaRequestDto;
+import edu.utp.backend.features.reserva.dtos.ReservaTutorSesionDto;
 
 public interface ReservaService {
 
@@ -12,6 +13,8 @@ public interface ReservaService {
     List<ReservaDto> findByPaciente(Integer idPaciente);
 
     List<ReservaDto> findByInstructor(Integer idInstructor);
+
+    List<ReservaTutorSesionDto> findSesionesByTutor(Integer idTutor);
 
     ReservaDto findById(Integer id);
 

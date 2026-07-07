@@ -11,6 +11,7 @@ import edu.utp.backend.features.reserva.dtos.ReservaRequestDto;
 import edu.utp.backend.features.reserva.services.ReservaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import edu.utp.backend.features.reserva.dtos.ReservaTutorSesionDto;
 
 @RestController
 @RequestMapping("/api/reservas")
@@ -37,6 +38,11 @@ public class ReservaController {
     @GetMapping("/instructor/{idInstructor}")
     public ResponseEntity<List<ReservaDto>> findByInstructor(@PathVariable Integer idInstructor) {
         return ResponseEntity.ok(reservaService.findByInstructor(idInstructor));
+    }
+
+    @GetMapping("/tutor/{idTutor}")
+    public ResponseEntity<List<ReservaTutorSesionDto>> findSesionesByTutor(@PathVariable Integer idTutor) {
+        return ResponseEntity.ok(reservaService.findSesionesByTutor(idTutor));
     }
 
     @PostMapping

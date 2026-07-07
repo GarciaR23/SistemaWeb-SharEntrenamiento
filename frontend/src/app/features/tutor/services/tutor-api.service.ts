@@ -13,6 +13,52 @@ export interface TutorDto {
     idUsuario: number;
     nombreCompleto: string;
 }
+export interface ReservaRequestDto {
+    idPaciente: number;
+    idInstructor: number;
+    idSede: number;
+    seleccionHorario: string;
+    duracionMinutos: number;
+    montoTotal: number;
+}
+
+export interface ReservaResponseDto {
+    idReserva: number;
+    idPaciente: number;
+    idInstructor: number;
+    idSede: number;
+    seleccionHorario: string;
+    duracionMinutos: number;
+    montoTotal: number;
+    estadoReserva: string;
+    fechaCreacion: string;
+}
+
+export interface PacienteTutorDto {
+    idPaciente: number;
+    idTutor: number;
+    nombreCompleto: string;
+}
+
+export interface ReservaTutorSesionDto {
+    idReserva: number;
+    idPaciente: number;
+    pacienteNombre: string;
+    pacienteImagen: string | null;
+    idInstructor: number;
+    instructorNombre: string;
+    instructorImagen: string | null;
+    especialidad: string | null;
+    idSede: number;
+    nombreSede: string | null;
+    direccionSede: string | null;
+    seleccionHorario: string;
+    duracionMinutos: number;
+    montoTotal: number;
+    estadoReserva: string;
+    estadoSesion: string;
+    fechaCreacion: string;
+}
 
 @Injectable({
     providedIn: 'root',
@@ -21,6 +67,7 @@ export class TutorApiService {
     private readonly tutoresUrl = 'http://localhost:8080/api/tutores';
     private readonly pacientesUrl = 'http://localhost:8080/api/pacientes';
     private readonly instructoresUrl = 'http://localhost:8080/api/instructores';
+    private readonly apiUrl = 'http://localhost:8080/api';
 
     constructor(private http: HttpClient) { }
 
@@ -46,6 +93,15 @@ export class TutorApiService {
             `${this.pacientesUrl}/tutor/${idTutor}`,
             {
                 headers: this.getAuthHeaders(),
+            }
+        );
+    }
+
+    getSesionesTutor(idTutor: number): Observable<ReservaTutorSesionDto[]> {
+        return this.http.get<ReservaTutorSesionDto[]>(
+            `${this.apiUrl}/reservas/tutor/${idTutor}`,
+            {
+                headers: this.getAuthHeaders()
             }
         );
     }
@@ -125,6 +181,16 @@ export class TutorApiService {
             `${this.instructoresUrl}/${idInstructor}/perfil/calificaciones`,
             {
                 headers: this.getAuthHeaders(),
+            }
+        );
+    }
+
+    crearReserva(request: ReservaRequestDto): Observable<ReservaResponseDto> {
+        return this.http.post<ReservaResponseDto>(
+            `${this.apiUrl}/reservas`,
+            request,
+            {
+                headers: this.getAuthHeaders()
             }
         );
     }

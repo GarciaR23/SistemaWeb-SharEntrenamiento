@@ -183,35 +183,23 @@
 }
 
 .sede-card {
-    h3 {
-        color: #e8edf9;
-        margin: 18px 0 4px;
-        font-size: 22px;
-    }
-
-    p {
-        color: #b8c0cc;
-        margin: 0;
-        font-size: 16px;
-    }
-
-    .sede-district {
-        margin-top: 4px;
-        color: #78f2c5;
-        font-weight: 700;
-    }
+    background: #1a2032;
+    border-radius: 28px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.16);
 }
 
 .sede-image-box {
     position: relative;
     height: 230px;
-    border-radius: 18px;
     overflow: hidden;
 
     img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        display: block;
     }
 }
 
@@ -219,17 +207,53 @@
     position: absolute;
     top: 16px;
     left: 16px;
-    background: #2376c9;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 4px;
+
+    background: #78f2c5;
+    color: #05261E;
+
+    padding: 8px 14px;
+    border-radius: 8px;
+
     font-size: 12px;
     font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
 
-    &.premium {
-        background: #42e7aa;
-        color: #063024;
-    }
+    box-shadow: 0 8px 18px rgba(120, 242, 197, 0.22);
+}
+
+.sede-content {
+    padding: 22px 22px 24px;
+}
+
+.sede-card h3 {
+    color: #e8edf9;
+    margin: 0 0 10px 0;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.sede-description {
+    color: #cbd5e1;
+    margin: 0 0 16px 0;
+    font-size: 15px;
+    line-height: 1.55;
+    font-weight: 500;
+}
+
+.sede-address {
+    color: #aab4c9;
+    margin: 0 0 6px 0;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.sede-district {
+    margin: 0;
+    color: #78f2c5;
+    font-size: 14px;
+    font-weight: 800;
 }
 
 .testimonials-layout {

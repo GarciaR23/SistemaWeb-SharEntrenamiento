@@ -15,6 +15,7 @@ import { InstructorPerfilServicioDto } from '../../models/instructor-perfil-serv
   templateUrl: './perfil-instructor.component.html',
   styleUrls: ['./perfil-instructor.component.scss']
 })
+
 export class PerfilInstructorComponent implements OnInit {
   idInstructor!: number;
   resumen: InstructorPerfilResumenDto | null = null;
@@ -46,13 +47,42 @@ export class PerfilInstructorComponent implements OnInit {
   }
 
   volverCatalogo(): void { this.router.navigate(['/tutor/catalogo-instructor']); }
-  solicitarSesion(): void { this.router.navigate(['/tutor/reserva'], { queryParams: { idInstructor: this.idInstructor, idSede: this.sedes[0]?.idSede || null, tarifaHora: this.servicios[0]?.tarifaHora || null } }); }
+  solicitarSesion(): void {
+    this.router.navigate(['/tutor/reserva-sesion'], {
+      queryParams: {
+        idInstructor: this.idInstructor
+      }
+    });
+  }
   obtenerImagenPerfil(): string { return this.resumen?.urlImagenPerfil || 'https://via.placeholder.com/500x400?text=Instructor'; }
   obtenerDistrito(): string { return this.resumen?.distrito || 'Sin distrito'; }
 
   obtenerHorarioPrincipal(): string {
-    if (!this.servicios?.length) return 'Horario no registrado';
-    return this.servicios.map(s => `${s.diaSemana || 'Sin día'} ${s.horarioInicio?.substring(0, 5) || '--:--'} - ${s.horarioFinal?.substring(0, 5) || '--:--'}`).join(' | ');
+    if (!this.servicios.length) {
+      return 'Horario no registrado';
+    }
+
+    const horarios = this.servicios.flatMap(servicio => servicio.horarios || []);
+
+    if (horarios.length > 0) {
+      const horario = horarios[0];
+
+      const inicio = horario.horarioInicio?.substring(0, 5) || '--:--';
+      const fin = horario.horarioFinal?.substring(0, 5) || '--:--';
+
+      return `${horario.diaSemana || 'Sin día'} | ${inicio} - ${fin}`;
+    }
+
+    const servicio = this.servicios[0];
+
+    if (!servicio.diaDisponible && !servicio.horarioInicio && !servicio.horarioFinal) {
+      return 'Horario no registrado';
+    }
+
+    const inicio = servicio.horarioInicio?.substring(0, 5) || '--:--';
+    const fin = servicio.horarioFinal?.substring(0, 5) || '--:--';
+
+    return `${servicio.diaDisponible || 'Sin día'} | ${inicio} - ${fin}`;
   }
 
   obtenerTarifaBase(): string { const s = this.servicios[0]; return s?.tarifaHora != null ? `S/ ${Number(s.tarifaHora).toFixed(0)}` : 'S/ --'; }

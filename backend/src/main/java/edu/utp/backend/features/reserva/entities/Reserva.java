@@ -10,6 +10,7 @@ import org.hibernate.type.SqlTypes;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnTransformer;
 
 @Data
 @NoArgsConstructor
@@ -41,7 +42,8 @@ public class Reserva {
     @Column(name = "monto_total", nullable = false)
     private BigDecimal montoTotal;
 
-    @Column(name = "estado_reserva", nullable = false, length = 20)
+    @ColumnTransformer(write = "?::estado_reserva_enum")
+    @Column(name = "estado_reserva", nullable = false, columnDefinition = "estado_reserva_enum")
     private String estadoReserva;
 
     @Column(name = "fecha_creacion", nullable = false)
