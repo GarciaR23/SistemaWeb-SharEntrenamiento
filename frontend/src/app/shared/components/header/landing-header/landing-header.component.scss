@@ -66,37 +66,19 @@
 }
 
 .logo-icon {
-  font-size: 2rem;
-  display: flex;
-  align-items: center;
-  gap: -0.5rem;
-  position: relative;
-  width: 50px;
-  height: 50px;
-}
-
-.logo-circle {
-  position: absolute;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 35px;
-  height: 35px;
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
 }
 
-.blue-circle {
-  background: linear-gradient(135deg, #4a90e2 0%, #3b7fd9 100%);
-  top: 0;
-  left: 0;
-  box-shadow: 0 4px 10px rgba(74, 144, 226, 0.4);
-}
-
-.green-circle {
-  background: linear-gradient(135deg, #28c768 0%, #20a856 100%);
-  bottom: 0;
-  right: 0;
-  box-shadow: 0 4px 10px rgba(40, 199, 104, 0.4);
+.logo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .logo-text {

@@ -22,10 +22,10 @@
 
       <div class="link-group">
         <h4>Plataforma</h4>
-        <a href="#">Cómo funciona</a>
-        <a href="#">Instructores</a>
-        <a href="#">Seguridad</a>
-        <a href="#">Precios</a>
+        <a href="#" (click)="openInfoDialog('how-it-works'); $event.preventDefault()">Cómo funciona</a>
+        <a href="#" (click)="openInfoDialog('instructors'); $event.preventDefault()">Instructores</a>
+        <a href="#" (click)="openInfoDialog('security'); $event.preventDefault()">Seguridad</a>
+        <a href="#" (click)="openInfoDialog('pricing'); $event.preventDefault()">Precios</a>
       </div>
 
       <div class="link-group">
@@ -52,4 +52,10 @@
       <a href="#">x</a>
     </div>
   </div>
+
+  <app-footer-info-dialog
+    *ngIf="activeInfo"
+    [data]="activeInfo"
+    (closed)="closeDialog()"
+  ></app-footer-info-dialog>
 </footer>
