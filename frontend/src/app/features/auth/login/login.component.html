@@ -161,35 +161,35 @@
       <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off">
         <label class="form-label">
           <span>Correo electrónico</span>
-          <div class="input-wrapper">
-            <input type="email" formControlName="email" placeholder="ejemplo@entreno.com" autocomplete="email" />
+          <div class="input-wrapper" [class.invalid-field]="shouldShowEmailError()">
+            <input type="text" formControlName="email" placeholder="ejemplo@entreno.com" autocomplete="email"
+              autocapitalize="off" spellcheck="false"
+              (input)="sanitizeControlValue('email')"
+              (blur)="sanitizeControlValue('email')" />
             <span class="input-icon">
               <img src="assets/icons/Icon_email.png" alt="Icono de correo" />
             </span>
           </div>
-          @if (loginForm.controls.email.touched && loginForm.controls.email.invalid) {
+          @if (shouldShowEmailError()) {
             <div class="field-error">
-              @if (loginForm.controls.email.errors?.['required']) {
-                <small>El correo es obligatorio.</small>
-              }
-              @if (loginForm.controls.email.errors?.['email']) {
-                <small>Ingresa un correo válido.</small>
-              }
+              <small>{{ getEmailErrorMessage() }}</small>
             </div>
           }
         </label>
 
         <label class="form-label">
           <span>Contraseña</span>
-          <div class="input-wrapper">
+          <div class="input-wrapper" [class.invalid-field]="shouldShowPasswordError()">
             <input [type]="showPassword ? 'text': 'password'" formControlName="password" placeholder="********"
-              autocomplete="current-password" />
+              autocomplete="current-password"
+              (input)="sanitizeControlValue('password')"
+              (blur)="sanitizeControlValue('password')" />
               <button type="button" (click)="togglePassword()" class="icon-button"
-              aria-label="Mostrar contraseña">👁</button>
+              [class.active]="showPassword" aria-label="Mostrar contraseña" [attr.aria-pressed]="showPassword">👁</button>
             </div>
-            @if (loginForm.controls.password.touched && loginForm.controls.password.invalid) {
+            @if (shouldShowPasswordError()) {
               <div class="field-error">
-                <small>La contraseña es obligatoria.</small>
+                <small>{{ getPasswordErrorMessage() }}</small>
               </div>
             }
           </label>

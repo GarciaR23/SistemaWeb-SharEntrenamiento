@@ -20,6 +20,7 @@ export class Cuenta implements OnInit, OnDestroy {
   accountForm!: FormGroup;
   showPassword = false;
   profileImagePreview = '';
+  profileImagePreviewUrl = '';
 
   feedbackMessage = '';
   loading = false;
@@ -28,8 +29,15 @@ export class Cuenta implements OnInit, OnDestroy {
   modalTitle = '';
   modalMessage = '';
   missingFields: string[] = [];
+  passwordStrength = 0;
+  passwordStrengthLabel = 'Sin contraseña';
+  passwordStrengthClass = 'weak';
+  emailFeedbackMessage = '';
 
   private subscription?: Subscription;
+  private autoCloseTimer?: ReturnType<typeof setTimeout>;
+  private readonly emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+  private readonly passwordPattern = /^[A-Za-z0-9!@#$%^&*()_+\-=?.,:]+$/;
 
   constructor(
     public formState: FormStateService,
@@ -39,7 +47,7 @@ export class Cuenta implements OnInit, OnDestroy {
   ) {
     this.accountForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(10)]],
     });
   }
 
@@ -64,12 +72,78 @@ export class Cuenta implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
+    if (this.autoCloseTimer) {
+      clearTimeout(this.autoCloseTimer);
+      this.autoCloseTimer = undefined;
+    }
+    if (this.profileImagePreviewUrl) {
+      URL.revokeObjectURL(this.profileImagePreviewUrl);
+    }
   }
 
   get disponibilidadResumen(): string {
     const h = this.formState.state.profile.horarios;
     if (!h || h.length === 0) return 'No especificado';
     return h.map(d => `${d.dia} (${d.turno}) ${d.inicio} - ${d.fin}`).join(' | ');
+  }
+
+  get emailHasError(): boolean {
+    const control = this.accountForm.get('email');
+    return !!control && control.touched && control.invalid;
+  }
+
+  get passwordHasError(): boolean {
+    const control = this.accountForm.get('password');
+    return !!control && control.touched && control.invalid;
+  }
+
+  sanitizeEmailValue(value: string): string {
+    return value.replace(/[\s\t\r\n\u0000-\u001F\u007F]/g, '').trim();
+  }
+
+  sanitizePasswordValue(value: string): string {
+    return value.replace(/[\s\t\r\n\u0000-\u001F\u007F]/g, '').trim();
+  }
+
+  onEmailInput(value: string): void {
+    const sanitized = this.sanitizeEmailValue(value);
+    this.accountForm.get('email')?.setValue(sanitized, { emitEvent: false });
+    this.emailFeedbackMessage = !sanitized ? 'El correo es obligatorio.' : (this.emailPattern.test(sanitized) ? '' : 'Debe seguir el formato ejemplo@dominio.com');
+  }
+
+  onPasswordInput(value: string): void {
+    const sanitized = this.sanitizePasswordValue(value).slice(0, 10);
+    this.accountForm.get('password')?.setValue(sanitized, { emitEvent: false });
+    this.updatePasswordStrength();
+  }
+
+  updatePasswordStrength(): void {
+    const value = this.accountForm.get('password')?.value ?? '';
+    let score = 0;
+    if (value.length >= 8) score += 1;
+    if (value.length >= 10) score += 1;
+    if (/[A-Z]/.test(value)) score += 1;
+    if (/[a-z]/.test(value)) score += 1;
+    if (/\d/.test(value)) score += 1;
+    if (this.passwordPattern.test(value)) score += 1;
+
+    this.passwordStrength = Math.min(score, 6);
+    if (!value) {
+      this.passwordStrengthLabel = 'Sin contraseña';
+      this.passwordStrengthClass = 'weak';
+      return;
+    }
+
+    if (this.passwordStrength <= 2) {
+      this.passwordStrengthLabel = 'Débil';
+      this.passwordStrengthClass = 'weak';
+    } else if (this.passwordStrength <= 4) {
+      this.passwordStrengthLabel = 'Media';
+      this.passwordStrengthClass = 'medium';
+    } else {
+      this.passwordStrengthLabel = 'Fuerte';
+      this.passwordStrengthClass = 'strong';
+    }
   }
 
   togglePassword(): void {
@@ -79,8 +153,12 @@ export class Cuenta implements OnInit, OnDestroy {
   SeleccionarImagenPerfil(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
+    if (this.profileImagePreviewUrl) {
+      URL.revokeObjectURL(this.profileImagePreviewUrl);
+    }
     this.formState.state.profile.profileImageFile = file;
     this.profileImagePreview = file ? file.name : '';
+    this.profileImagePreviewUrl = file ? URL.createObjectURL(file) : '';
   }
 
   private normalizarTurno(turno: string): string {
@@ -94,18 +172,20 @@ export class Cuenta implements OnInit, OnDestroy {
 
   async finalizarRegistro(): Promise<void> {
     this.accountForm.markAllAsTouched();
+    this.emailFeedbackMessage = !this.accountForm.get('email')?.value ? 'El correo es obligatorio.' : (this.emailPattern.test(this.accountForm.get('email')?.value) ? '' : 'Debe seguir el formato ejemplo@dominio.com');
+    this.updatePasswordStrength();
 
-    this.missingFields = this.formState.getMissingRegistrationFields();
+    this.missingFields = this.formState.getMissingAccountFields();
+    if (this.accountForm.get('email')?.invalid) this.missingFields.push('Correo electrónico');
+    if (this.accountForm.get('password')?.invalid) this.missingFields.push('Contraseña');
+
     if (this.missingFields.length > 0) {
       this.modalType = 'error';
-      this.modalTitle = 'Faltan campos por completar';
-      this.modalMessage = 'Corrige los siguientes datos para continuar con tu registro:';
+      this.modalTitle = 'Completa el paso 3';
+      this.modalMessage = 'Corrige los siguientes datos del paso 3 para finalizar tu registro:';
       this.showModal = true;
       return;
     }
-
-    const ok = window.confirm('¿Confirmas que deseas enviar el formulario de registro?');
-    if (!ok) return;
 
     this.loading = true;
     this.feedbackMessage = '';
@@ -144,6 +224,8 @@ export class Cuenta implements OnInit, OnDestroy {
       this.formState.resetRegistration();
       this.accountForm.reset();
       this.profileImagePreview = '';
+      this.profileImagePreviewUrl = '';
+      this.startAutoClose();
     } catch (error: any) {
       this.modalType = 'error';
       this.modalTitle = 'Error de conexión o servidor';
@@ -159,7 +241,21 @@ export class Cuenta implements OnInit, OnDestroy {
     }
   }
 
+  private startAutoClose(): void {
+    if (this.autoCloseTimer) {
+      clearTimeout(this.autoCloseTimer);
+    }
+    this.autoCloseTimer = window.setTimeout(() => {
+      this.closeModal();
+    }, 3000);
+  }
+
   closeModal(): void {
+    if (this.autoCloseTimer) {
+      clearTimeout(this.autoCloseTimer);
+      this.autoCloseTimer = undefined;
+    }
+
     const goToLogin = this.modalType === 'success';
     this.showModal = false;
     this.modalType = null;

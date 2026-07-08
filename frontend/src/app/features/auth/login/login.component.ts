@@ -1,6 +1,6 @@
 
 import { Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 import { AuthApiService } from '../../../core/services/auth-api.service';
@@ -26,13 +26,50 @@ export class Login {
 
   private pendingRedirectUrl = '/';
 
+  private readonly emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+
+  private readonly emailValidator = (control: AbstractControl): ValidationErrors | null => {
+    const rawValue = (control.value ?? '').toString();
+    const trimmedValue = rawValue.trim();
+
+    if (trimmedValue.length === 0) {
+      return rawValue.length === 0 ? { required: true } : { whitespaceOnly: true };
+    }
+
+    if (/[^\S\r\n]/.test(rawValue) || /[\t\r\n\u0000-\u001F\u007F]/.test(rawValue)) {
+      return { invalidCharacters: true };
+    }
+
+    if (!this.emailPattern.test(trimmedValue)) {
+      return { invalidFormat: true };
+    }
+
+    return null;
+  };
+
+  private readonly passwordValidator = (control: AbstractControl): ValidationErrors | null => {
+    const rawValue = (control.value ?? '').toString();
+    const trimmedValue = rawValue.trim();
+
+    if (trimmedValue.length === 0) {
+      return rawValue.length === 0 ? { required: true } : { whitespaceOnly: true };
+    }
+
+    if (/\s/.test(rawValue) || /[\t\r\n\u0000-\u001F\u007F]/.test(rawValue)) {
+      return { invalidCharacters: true };
+    }
+
+    return null;
+  };
+
   loginForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
+    email: ['', [Validators.required, this.emailValidator]],
+    password: ['', [Validators.required, this.passwordValidator]],
   });
 
   showPassword = false;
   loading = false;
+  submitted = false;
   errorMessage = '';
   errorTitle = 'Error de autenticación';
   showErrorModal = false;
@@ -51,6 +88,78 @@ export class Login {
   enviandoCorreccion = false;
   errorCorreccion = '';
   successCorreccion = '';
+
+  shouldShowEmailError(): boolean {
+    const control = this.loginForm.get('email');
+    return !!(control?.touched || control?.dirty || this.submitted);
+  }
+
+  shouldShowPasswordError(): boolean {
+    const control = this.loginForm.get('password');
+    return !!(control?.touched || control?.dirty || this.submitted);
+  }
+
+  getEmailErrorMessage(): string {
+    const control = this.loginForm.get('email');
+    if (!this.shouldShowEmailError() || !control?.invalid) {
+      return '';
+    }
+
+    if (control.hasError('required') || control.hasError('whitespaceOnly')) {
+      return 'El correo electrónico es obligatorio.';
+    }
+
+    if (control.hasError('invalidCharacters')) {
+      return 'No se permiten tabulaciones, saltos de línea ni caracteres invisibles.';
+    }
+
+    return 'Ingresa un correo electrónico válido.';
+  }
+
+  getPasswordErrorMessage(): string {
+    const control = this.loginForm.get('password');
+    if (!this.shouldShowPasswordError() || !control?.invalid) {
+      return '';
+    }
+
+    if (control.hasError('required') || control.hasError('whitespaceOnly')) {
+      return 'La contraseña es obligatoria.';
+    }
+
+    return 'No se permiten espacios, tabulaciones ni saltos de línea.';
+  }
+
+  sanitizeControlValue(controlName: 'email' | 'password'): void {
+    const control = this.loginForm.get(controlName);
+    const rawValue = (control?.value ?? '').toString();
+    const sanitizedValue =
+      controlName === 'email' ? this.sanitizeEmailValue(rawValue) : this.sanitizePasswordValue(rawValue);
+
+    if (rawValue !== sanitizedValue) {
+      control?.setValue(sanitizedValue, { emitEvent: false });
+    }
+  }
+
+  private sanitizeEmailValue(value: string): string {
+    return value.replace(/[\s\t\r\n\u0000-\u001F\u007F]/g, '');
+  }
+
+  private sanitizePasswordValue(value: string): string {
+    return value.replace(/[\s\t\r\n\u0000-\u001F\u007F]/g, '');
+  }
+
+  private sanitizeFormValues(): void {
+    const email = this.sanitizeEmailValue(this.loginForm.value.email ?? '');
+    const password = this.sanitizePasswordValue(this.loginForm.value.password ?? '');
+
+    this.loginForm.patchValue(
+      {
+        email,
+        password,
+      },
+      { emitEvent: false },
+    );
+  }
 
   togglePassword() {
     this.showPassword = !this.showPassword;
@@ -234,6 +343,9 @@ export class Login {
   }
 
   onSubmit() {
+    this.submitted = true;
+    this.sanitizeFormValues();
+
     if (this.loginForm.invalid || this.loading) {
       this.loginForm.markAllAsTouched();
       return;

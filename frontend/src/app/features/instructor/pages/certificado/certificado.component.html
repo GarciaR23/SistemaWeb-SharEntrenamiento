@@ -94,6 +94,16 @@
               </div>
             </div>
             <div class="document-actions">
+              @if (getFileName(document.key)) {
+                <button type="button" class="btn-upload" [class.view-btn]="isDocumentViewed(document.key)" (click)="openFile(document.key)">
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  Ver
+                </button>
+              }
               <button type="button" class="btn-upload" (click)="triggerFileInput(document.key)">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
                   stroke-linecap="round" stroke-linejoin="round">
