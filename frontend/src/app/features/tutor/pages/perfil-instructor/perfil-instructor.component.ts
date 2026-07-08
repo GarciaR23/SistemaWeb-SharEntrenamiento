@@ -32,6 +32,43 @@ export class PerfilInstructorComponent implements OnInit {
     if (!id) { this.errorMessage = 'Instructor no válido.'; this.cargando = false; return; }
     this.idInstructor = id; this.cargarPerfil();
   }
+  private readonly diasPorCodigo: Record<string, string> = {
+    '1': 'Lunes',
+    '2': 'Martes',
+    '3': 'Miércoles',
+    '4': 'Jueves',
+    '5': 'Viernes',
+    '6': 'Sábado',
+    '7': 'Domingo',
+    'L': 'Lunes',
+    'M': 'Martes',
+    'MI': 'Miércoles',
+    'J': 'Jueves',
+    'V': 'Viernes',
+    'S': 'Sábado',
+    'D': 'Domingo'
+  };
+
+  normalizarDiaSemana(valor: string | null | undefined): string {
+    if (!valor) {
+      return 'Sin día';
+    }
+
+    const limpio = String(valor).trim();
+    const mayuscula = limpio.toUpperCase();
+
+    return this.diasPorCodigo[limpio] || this.diasPorCodigo[mayuscula] || limpio;
+  }
+
+  obtenerDiaServicio(servicio: any): string {
+    return this.normalizarDiaSemana(
+      servicio.diaSemana ||
+      servicio.diaDisponible ||
+      servicio.dia_semana ||
+      servicio.dia ||
+      servicio.day
+    );
+  }
 
   cargarPerfil(): void {
     this.cargando = true; this.errorMessage = '';
@@ -58,31 +95,21 @@ export class PerfilInstructorComponent implements OnInit {
   obtenerDistrito(): string { return this.resumen?.distrito || 'Sin distrito'; }
 
   obtenerHorarioPrincipal(): string {
-    if (!this.servicios.length) {
+    if (!this.servicios?.length) {
       return 'Horario no registrado';
     }
 
-    const horarios = this.servicios.flatMap(servicio => servicio.horarios || []);
+    const horarios = this.servicios
+      .filter((servicio: any) => servicio.horarioInicio && servicio.horarioFinal)
+      .map((servicio: any) => {
+        const dia = this.obtenerDiaServicio(servicio);
+        const inicio = servicio.horarioInicio?.substring(0, 5) || '--:--';
+        const fin = servicio.horarioFinal?.substring(0, 5) || '--:--';
 
-    if (horarios.length > 0) {
-      const horario = horarios[0];
+        return `${dia} | ${inicio} - ${fin}`;
+      });
 
-      const inicio = horario.horarioInicio?.substring(0, 5) || '--:--';
-      const fin = horario.horarioFinal?.substring(0, 5) || '--:--';
-
-      return `${horario.diaSemana || 'Sin día'} | ${inicio} - ${fin}`;
-    }
-
-    const servicio = this.servicios[0];
-
-    if (!servicio.diaDisponible && !servicio.horarioInicio && !servicio.horarioFinal) {
-      return 'Horario no registrado';
-    }
-
-    const inicio = servicio.horarioInicio?.substring(0, 5) || '--:--';
-    const fin = servicio.horarioFinal?.substring(0, 5) || '--:--';
-
-    return `${servicio.diaDisponible || 'Sin día'} | ${inicio} - ${fin}`;
+    return horarios.length > 0 ? horarios.join(' | ') : 'Horario no registrado';
   }
 
   obtenerTarifaBase(): string { const s = this.servicios[0]; return s?.tarifaHora != null ? `S/ ${Number(s.tarifaHora).toFixed(0)}` : 'S/ --'; }
