@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.*;
 
 import edu.utp.backend.features.reserva.dtos.ReservaDto;
 import edu.utp.backend.features.reserva.dtos.ReservaRequestDto;
+import edu.utp.backend.features.reserva.dtos.ReservaTutorSesionDto;
 import edu.utp.backend.features.reserva.services.ReservaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import edu.utp.backend.features.reserva.dtos.ReservaTutorSesionDto;
 
 @RestController
 @RequestMapping("/api/reservas")

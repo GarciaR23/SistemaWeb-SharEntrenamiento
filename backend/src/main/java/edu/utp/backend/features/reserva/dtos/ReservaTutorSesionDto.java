@@ -4,22 +4,22 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record ReservaTutorSesionDto(
-        Integer idReserva,
-        Integer idPaciente,
-        String pacienteNombre,
-        String pacienteImagen,
-        Integer idInstructor,
-        String instructorNombre,
-        String instructorImagen,
-        String especialidad,
-        Integer idSede,
-        String nombreSede,
-        String direccionSede,
-        LocalDateTime seleccionHorario,
-        Integer duracionMinutos,
-        BigDecimal montoTotal,
-        String estadoReserva,
-        String estadoSesion,
-        LocalDateTime fechaCreacion
-) {
+                Integer idReserva,
+                Integer idPaciente,
+                String pacienteNombre,
+                String pacienteImagen,
+                Integer idInstructor,
+                String instructorNombre,
+                String instructorImagen,
+                String especialidad,
+                Integer idSede,
+                String nombreSede,
+                String direccionSede,
+                LocalDateTime horaInicioEstimada,
+                LocalDateTime horaFinEstimada,
+                Integer duracionMinutos,
+                BigDecimal montoTotalAcumulado,
+                String estadoReserva,
+                String estadoSesion,
+                LocalDateTime fechaCreacion) {
 }

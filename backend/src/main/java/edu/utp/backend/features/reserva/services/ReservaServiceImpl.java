@@ -1,48 +1,45 @@
 package edu.utp.backend.features.reserva.services;
 
-import java.time.Duration;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.utp.backend.features.reserva.dtos.DetalleReservaDto;
 import edu.utp.backend.features.reserva.dtos.ReservaDto;
 import edu.utp.backend.features.reserva.dtos.ReservaRequestDto;
+import edu.utp.backend.features.reserva.dtos.ReservaTutorSesionDto;
+import edu.utp.backend.features.reserva.entities.DetalleReserva;
 import edu.utp.backend.features.reserva.entities.Reserva;
+import edu.utp.backend.features.reserva.projections.ReservaTutorSesionProjection;
+import edu.utp.backend.features.reserva.repositories.DetalleReservaRepository;
 import edu.utp.backend.features.reserva.repositories.ReservaRepository;
 import lombok.RequiredArgsConstructor;
-import edu.utp.backend.features.reserva.dtos.ReservaTutorSesionDto;
-import edu.utp.backend.features.reserva.projections.ReservaTutorSesionProjection;
 
 @Service
 @RequiredArgsConstructor
 public class ReservaServiceImpl implements ReservaService {
 
     private final ReservaRepository reservaRepository;
+    private final DetalleReservaRepository detalleReservaRepository;
 
     @Override
     public List<ReservaDto> findAll() {
-        return reservaRepository.findAll()
-                .stream()
-                .map(this::toDto)
-                .toList();
+        return reservaRepository.findAll().stream().map(this::toDto).toList();
     }
 
     @Override
     public List<ReservaDto> findByPaciente(Integer idPaciente) {
-        return reservaRepository.findByIdPacienteOrderBySeleccionHorarioDesc(idPaciente)
-                .stream()
-                .map(this::toDto)
-                .toList();
+        return reservaRepository.findByIdPacienteOrderByFechaCreacionDesc(idPaciente)
+                .stream().map(this::toDto).toList();
     }
 
     @Override
     public List<ReservaDto> findByInstructor(Integer idInstructor) {
-        return reservaRepository.findByIdInstructorOrderBySeleccionHorarioDesc(idInstructor)
-                .stream()
-                .map(this::toDto)
-                .toList();
+        return reservaRepository.findByIdInstructorOrderByFechaCreacionDesc(idInstructor)
+                .stream().map(this::toDto).toList();
     }
 
     @Override
@@ -57,28 +54,51 @@ public class ReservaServiceImpl implements ReservaService {
     public ReservaDto create(ReservaRequestDto request) {
         validarReserva(request);
 
-        LocalDateTime fechaInicio = request.seleccionHorario();
-        LocalDateTime fechaFin = fechaInicio.plusMinutes(request.duracionMinutos());
+        // Validar cruce para cada detalle
+        for (var detalle : request.detalles()) {
+            LocalDateTime horaInicio = detalle.horaInicioEstimada();
+            LocalDateTime horaFin = horaInicio.plusMinutes(detalle.duracionMinutos());
 
-        boolean existeCruce = reservaRepository.existeCruceInstructor(
-                request.idInstructor(),
-                fechaInicio,
-                fechaFin);
-
-        if (existeCruce) {
-            throw new IllegalArgumentException("El instructor ya tiene una reserva en ese horario.");
+            boolean existeCruce = detalleReservaRepository.existeCruceInstructor(
+                    request.idInstructor(), horaInicio, horaFin);
+            if (existeCruce) {
+                throw new IllegalArgumentException(
+                        "El instructor ya tiene una reserva en el horario: " + horaInicio);
+            }
         }
 
+        // Calcular totales
+        long totalMinutos = request.detalles().stream()
+                .mapToLong(d -> d.duracionMinutos()).sum();
+        BigDecimal montoTotal = request.detalles().stream()
+                .map(d -> d.montoSubtotal())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Crear reserva
         Reserva reserva = new Reserva();
         reserva.setIdPaciente(request.idPaciente());
         reserva.setIdInstructor(request.idInstructor());
         reserva.setIdSede(request.idSede());
-        reserva.setSeleccionHorario(request.seleccionHorario());
-        reserva.setDuracionEntrenamiento(Duration.ofMinutes(request.duracionMinutos()));
-        reserva.setMontoTotal(request.montoTotal());
+        reserva.setTotalHorasAcumuladas(totalMinutos / 60 + " hours " + totalMinutos % 60 + " minutes");
+        reserva.setMontoTotalAcumulado(montoTotal);
         reserva.setEstadoReserva("pendiente");
 
         Reserva reservaGuardada = reservaRepository.save(reserva);
+
+        // Crear detalles
+        for (var detalle : request.detalles()) {
+            LocalDateTime horaInicio = detalle.horaInicioEstimada();
+            LocalDateTime horaFin = horaInicio.plusMinutes(detalle.duracionMinutos());
+
+            DetalleReserva dr = new DetalleReserva();
+            dr.setIdReserva(reservaGuardada.getIdReserva());
+            dr.setHoraInicioEstimada(horaInicio);
+            dr.setHoraFinEstimada(horaFin);
+            dr.setDuracionEntrenamiento(detalle.duracionMinutos() / 60 + " hours "
+                    + detalle.duracionMinutos() % 60 + " minutes");
+            dr.setMontoSubtotal(detalle.montoSubtotal());
+            detalleReservaRepository.save(dr);
+        }
 
         return toDto(reservaGuardada);
     }
@@ -88,84 +108,57 @@ public class ReservaServiceImpl implements ReservaService {
     public void cancelar(Integer id) {
         Reserva reserva = reservaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada: " + id));
-
-        reserva.setEstadoReserva("rechazada");
+        reserva.setEstadoReserva("cancelada");
         reservaRepository.save(reserva);
     }
 
     private void validarReserva(ReservaRequestDto request) {
-        if (request.idPaciente() == null) {
+        if (request.idPaciente() == null)
             throw new IllegalArgumentException("El paciente es obligatorio.");
-        }
-
-        if (request.idInstructor() == null) {
+        if (request.idInstructor() == null)
             throw new IllegalArgumentException("El instructor es obligatorio.");
-        }
-
-        if (request.idSede() == null) {
+        if (request.idSede() == null)
             throw new IllegalArgumentException("La sede es obligatoria.");
-        }
+        if (request.detalles() == null || request.detalles().isEmpty())
+            throw new IllegalArgumentException("Debe incluir al menos un detalle de reserva.");
 
-        if (request.seleccionHorario() == null) {
-            throw new IllegalArgumentException("Debe seleccionar una fecha y hora.");
-        }
-
-        if (request.seleccionHorario().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("No se puede reservar en una fecha pasada.");
-        }
-
-        if (request.duracionMinutos() == null || request.duracionMinutos() < 30) {
-            throw new IllegalArgumentException("La duración mínima debe ser de 30 minutos.");
-        }
-
-        if (request.montoTotal() == null) {
-            throw new IllegalArgumentException("El monto total es obligatorio.");
+        for (var d : request.detalles()) {
+            if (d.horaInicioEstimada() == null)
+                throw new IllegalArgumentException("La hora de inicio es obligatoria.");
+            if (d.horaInicioEstimada().isBefore(LocalDateTime.now()))
+                throw new IllegalArgumentException("No se puede reservar en una fecha pasada.");
+            if (d.duracionMinutos() == null || d.duracionMinutos() < 30)
+                throw new IllegalArgumentException("La duración mínima debe ser de 30 minutos.");
+            if (d.montoSubtotal() == null)
+                throw new IllegalArgumentException("El monto subtotal es obligatorio.");
         }
     }
 
     @Override
     public List<ReservaTutorSesionDto> findSesionesByTutor(Integer idTutor) {
         return reservaRepository.findSesionesByTutor(idTutor)
-                .stream()
-                .map(this::toReservaTutorSesionDto)
-                .toList();
+                .stream().map(this::toReservaTutorSesionDto).toList();
     }
 
     private ReservaDto toDto(Reserva reserva) {
-        Integer duracionMinutos = reserva.getDuracionEntrenamiento() != null
-                ? (int) reserva.getDuracionEntrenamiento().toMinutes()
-                : null;
+        List<DetalleReservaDto> detalles = detalleReservaRepository.findByIdReserva(reserva.getIdReserva())
+                .stream()
+                .map(d -> new DetalleReservaDto(d.getIdDetalle(), d.getHoraInicioEstimada(),
+                        d.getHoraFinEstimada(), d.getDuracionEntrenamiento(), d.getMontoSubtotal()))
+                .toList();
 
         return new ReservaDto(
-                reserva.getIdReserva(),
-                reserva.getIdPaciente(),
-                reserva.getIdInstructor(),
-                reserva.getIdSede(),
-                reserva.getSeleccionHorario(),
-                duracionMinutos,
-                reserva.getMontoTotal(),
-                reserva.getEstadoReserva(),
-                reserva.getFechaCreacion());
+                reserva.getIdReserva(), reserva.getIdPaciente(), reserva.getIdInstructor(),
+                reserva.getIdSede(), reserva.getTotalHorasAcumuladas(), reserva.getMontoTotalAcumulado(),
+                reserva.getEstadoReserva(), reserva.getFechaCreacion(), reserva.getFechaRevision(), detalles);
     }
 
     private ReservaTutorSesionDto toReservaTutorSesionDto(ReservaTutorSesionProjection r) {
         return new ReservaTutorSesionDto(
-                r.getIdReserva(),
-                r.getIdPaciente(),
-                r.getPacienteNombre(),
-                r.getPacienteImagen(),
-                r.getIdInstructor(),
-                r.getInstructorNombre(),
-                r.getInstructorImagen(),
-                r.getEspecialidad(),
-                r.getIdSede(),
-                r.getNombreSede(),
-                r.getDireccionSede(),
-                r.getSeleccionHorario(),
-                r.getDuracionMinutos(),
-                r.getMontoTotal(),
-                r.getEstadoReserva(),
-                r.getEstadoSesion(),
-                r.getFechaCreacion());
+                r.getIdReserva(), r.getIdPaciente(), r.getPacienteNombre(), r.getPacienteImagen(),
+                r.getIdInstructor(), r.getInstructorNombre(), r.getInstructorImagen(), r.getEspecialidad(),
+                r.getIdSede(), r.getNombreSede(), r.getDireccionSede(),
+                r.getHoraInicioEstimada(), r.getHoraFinEstimada(), r.getDuracionMinutos(),
+                r.getMontoTotalAcumulado(), r.getEstadoReserva(), r.getEstadoSesion(), r.getFechaCreacion());
     }
 }

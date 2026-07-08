@@ -1,0 +1,35 @@
+package edu.utp.backend.features.reserva.entities;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@Entity
+@Table(name = "detalle_reserva")
+public class DetalleReserva {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_detalle")
+    private Integer idDetalle;
+
+    @Column(name = "id_reserva", nullable = false)
+    private Integer idReserva;
+
+    @Column(name = "hora_inicio_estimada", nullable = false)
+    private LocalDateTime horaInicioEstimada;
+
+    @Column(name = "hora_fin_estimada", nullable = false)
+    private LocalDateTime horaFinEstimada;
+
+    @Column(name = "duracion_entrenamiento", nullable = false, columnDefinition = "interval")
+    private String duracionEntrenamiento;
+
+    @Column(name = "monto_subtotal", nullable = false)
+    private BigDecimal montoSubtotal;
+}

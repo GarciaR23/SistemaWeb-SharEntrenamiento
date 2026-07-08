@@ -26,11 +26,13 @@ public interface ReservaTutorSesionProjection {
 
     String getDireccionSede();
 
-    LocalDateTime getSeleccionHorario();
+    LocalDateTime getHoraInicioEstimada();
+
+    LocalDateTime getHoraFinEstimada();
 
     Integer getDuracionMinutos();
 
-    BigDecimal getMontoTotal();
+    BigDecimal getMontoTotalAcumulado();
 
     String getEstadoReserva();
 
