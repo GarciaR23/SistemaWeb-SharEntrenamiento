@@ -3,6 +3,8 @@ package edu.utp.backend.features.reserva.entities;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.ColumnTransformer;
+
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +29,7 @@ public class DetalleReserva {
     @Column(name = "hora_fin_estimada", nullable = false)
     private LocalDateTime horaFinEstimada;
 
+    @ColumnTransformer(read = "duracion_entrenamiento::text", write = "?::interval")
     @Column(name = "duracion_entrenamiento", nullable = false, columnDefinition = "interval")
     private String duracionEntrenamiento;
 

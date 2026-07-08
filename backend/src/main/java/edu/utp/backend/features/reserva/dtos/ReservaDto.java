@@ -3,7 +3,6 @@ package edu.utp.backend.features.reserva.dtos;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import edu.utp.backend.features.reserva.entities.DetalleReserva;
 
 public record ReservaDto(
                 Integer idReserva,
@@ -15,5 +14,5 @@ public record ReservaDto(
                 String estadoReserva,
                 LocalDateTime fechaCreacion,
                 LocalDateTime fechaRevision,
-                List<DetalleReserva> detalles) {
+                List<DetalleReservaDto> detalles) {
 }

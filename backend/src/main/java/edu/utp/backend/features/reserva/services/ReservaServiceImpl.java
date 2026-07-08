@@ -79,7 +79,12 @@ public class ReservaServiceImpl implements ReservaService {
         reserva.setIdPaciente(request.idPaciente());
         reserva.setIdInstructor(request.idInstructor());
         reserva.setIdSede(request.idSede());
-        reserva.setTotalHorasAcumuladas(totalMinutos / 60 + " hours " + totalMinutos % 60 + " minutes");
+
+        // ✅ CORREGIDO: Formato correcto para PostgreSQL INTERVAL
+        long horas = totalMinutos / 60;
+        long minutos = totalMinutos % 60;
+        reserva.setTotalHorasAcumuladas(horas + " hours " + minutos + " minutes");
+
         reserva.setMontoTotalAcumulado(montoTotal);
         reserva.setEstadoReserva("pendiente");
 
@@ -94,8 +99,12 @@ public class ReservaServiceImpl implements ReservaService {
             dr.setIdReserva(reservaGuardada.getIdReserva());
             dr.setHoraInicioEstimada(horaInicio);
             dr.setHoraFinEstimada(horaFin);
-            dr.setDuracionEntrenamiento(detalle.duracionMinutos() / 60 + " hours "
-                    + detalle.duracionMinutos() % 60 + " minutes");
+
+            // ✅ CORREGIDO: Formato correcto para PostgreSQL INTERVAL
+            long detalleHoras = detalle.duracionMinutos() / 60;
+            long detalleMinutos = detalle.duracionMinutos() % 60;
+            dr.setDuracionEntrenamiento(detalleHoras + " hours " + detalleMinutos + " minutes");
+
             dr.setMontoSubtotal(detalle.montoSubtotal());
             detalleReservaRepository.save(dr);
         }

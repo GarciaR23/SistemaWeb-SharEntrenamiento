@@ -16,6 +16,8 @@ type TipoFiltro = 'distrito' | 'especialidad' | 'tarifa' | 'turno';
 })
 export class CatalogoInstructor implements OnInit {
   instructores: InstructorCatalogoDto[] = [];
+  instructoresOriginales: InstructorCatalogoDto[] = [];
+
   cargando = true;
   errorMessage = '';
 
@@ -38,16 +40,17 @@ export class CatalogoInstructor implements OnInit {
     tarifa: string;
     turno: string;
   } = {
-    distrito: '',
-    especialidad: '',
-    tarifa: '',
-    turno: ''
-  };
+      distrito: '',
+      especialidad: '',
+      tarifa: '',
+      turno: ''
+    };
 
   private readonly ordenDias: Record<string, number> = {
     'L': 1,
     'M': 2,
     'Mi': 3,
+    'MI': 3,
     'J': 4,
     'V': 5,
     'S': 6,
@@ -61,6 +64,84 @@ export class CatalogoInstructor implements OnInit {
     'Sábado': 6,
     'Sabado': 6,
     'Domingo': 7
+  };
+
+  private readonly distritosPorCodigo: Record<string, string> = {
+    '140101': 'Lima',
+    '140102': 'Ancón',
+    '140103': 'Ate',
+    '140104': 'Barranco',
+    '140105': 'Breña',
+    '140106': 'Carabayllo',
+    '140107': 'Chaclacayo',
+    '140108': 'Chorrillos',
+    '140109': 'Cieneguilla',
+    '140110': 'Comas',
+    '140111': 'El Agustino',
+    '140112': 'Independencia',
+    '140113': 'Jesús María',
+    '140114': 'La Molina',
+    '140115': 'La Victoria',
+    '140116': 'Lince',
+    '140117': 'Los Olivos',
+    '140118': 'Lurigancho',
+    '140119': 'Lurín',
+    '140120': 'Magdalena del Mar',
+    '140121': 'Miraflores',
+    '140122': 'Pachacámac',
+    '140123': 'Pucusana',
+    '140124': 'Pueblo Libre',
+    '140125': 'Puente Piedra',
+    '140126': 'Punta Hermosa',
+    '140127': 'Punta Negra',
+    '140128': 'Rímac',
+    '140129': 'San Bartolo',
+    '140130': 'San Borja',
+    '140131': 'San Isidro',
+    '140132': 'San Juan de Lurigancho',
+    '140133': 'San Juan de Miraflores',
+    '140134': 'San Luis',
+    '140135': 'San Martín de Porres',
+    '140136': 'San Miguel',
+    '140137': 'Santa Anita',
+    '140138': 'Santa María del Mar',
+    '140139': 'Santa Rosa',
+    '140140': 'Santiago de Surco',
+    '140141': 'Surquillo',
+    '140142': 'Villa El Salvador',
+    '140143': 'Villa María del Triunfo'
+  };
+
+  private readonly distritosAlias: Record<string, string> = {
+    'surco': 'Santiago de Surco',
+    'sjl': 'San Juan de Lurigancho',
+    'san juan de lurigancho': 'San Juan de Lurigancho',
+    'san juan de miraflores': 'San Juan de Miraflores',
+    'la molina': 'La Molina',
+    'los olivos': 'Los Olivos',
+    'san borja': 'San Borja',
+    'san isidro': 'San Isidro',
+    'san miguel': 'San Miguel',
+    'smp': 'San Martín de Porres',
+    'san martin de porres': 'San Martín de Porres',
+    'san martín de porres': 'San Martín de Porres'
+  };
+
+  private readonly diasPorCodigo: Record<string, string> = {
+    '1': 'Lunes',
+    '2': 'Martes',
+    '3': 'Miércoles',
+    '4': 'Jueves',
+    '5': 'Viernes',
+    '6': 'Sábado',
+    '7': 'Domingo',
+    'L': 'Lunes',
+    'M': 'Martes',
+    'MI': 'Miércoles',
+    'J': 'Jueves',
+    'V': 'Viernes',
+    'S': 'Sábado',
+    'D': 'Domingo'
   };
 
   constructor(
@@ -78,15 +159,16 @@ export class CatalogoInstructor implements OnInit {
 
     this.tutorApiService.buscarInstructoresCatalogo({
       texto: this.textoBusqueda,
-      distrito: this.distritoSeleccionado,
+      distrito: '',
       especialidad: this.especialidadSeleccionada,
       tarifaMin: this.obtenerTarifaMin(),
       tarifaMax: this.obtenerTarifaMax(),
       turno: this.turnoSeleccionado,
     }).subscribe({
       next: (response) => {
-        this.instructores = response || [];
-        this.cargarOpcionesFiltros(this.instructores);
+        this.instructoresOriginales = response || [];
+        this.cargarOpcionesFiltros(this.instructoresOriginales);
+        this.aplicarFiltroDistritoLocal();
         this.cargando = false;
       },
       error: (err) => {
@@ -161,7 +243,6 @@ export class CatalogoInstructor implements OnInit {
 
   limpiarFiltros(): void {
     this.textoBusqueda = '';
-
     this.distritoSeleccionado = '';
     this.especialidadSeleccionada = '';
     this.tarifaSeleccionada = '';
@@ -205,16 +286,36 @@ export class CatalogoInstructor implements OnInit {
   }
 
   cargarOpcionesFiltros(instructores: InstructorCatalogoDto[]): void {
-    const distritos = instructores
-      .map(instructor => instructor.distritoSede || instructor.distrito)
+    const distritosDesdeApi = instructores
+      .map(instructor => this.normalizarDistrito(instructor.distritoSede || instructor.distrito))
       .filter((valor): valor is string => !!valor);
+
+    const distritosBase = Object.values(this.distritosPorCodigo);
+
+    this.distritos = [...new Set([...distritosBase, ...distritosDesdeApi])].sort();
 
     const especialidades = instructores
       .map(instructor => instructor.especialidad)
       .filter((valor): valor is string => !!valor);
 
-    this.distritos = [...new Set(distritos)];
-    this.especialidades = [...new Set(especialidades)];
+    this.especialidades = [...new Set(especialidades)].sort();
+  }
+
+  aplicarFiltroDistritoLocal(): void {
+    if (!this.distritoSeleccionado) {
+      this.instructores = this.instructoresOriginales;
+      return;
+    }
+
+    const distritoFiltro = this.normalizarTexto(this.normalizarDistrito(this.distritoSeleccionado));
+
+    this.instructores = this.instructoresOriginales.filter(instructor => {
+      const distritoInstructor = this.normalizarTexto(
+        this.normalizarDistrito(instructor.distritoSede || instructor.distrito)
+      );
+
+      return distritoInstructor === distritoFiltro;
+    });
   }
 
   obtenerImagen(instructor: InstructorCatalogoDto): string {
@@ -222,7 +323,7 @@ export class CatalogoInstructor implements OnInit {
   }
 
   obtenerDistrito(instructor: InstructorCatalogoDto): string {
-    return instructor.distritoSede || instructor.distrito || 'Sin distrito';
+    return this.normalizarDistrito(instructor.distritoSede || instructor.distrito) || 'Sin distrito';
   }
 
   obtenerDireccion(instructor: InstructorCatalogoDto): string {
@@ -245,16 +346,17 @@ export class CatalogoInstructor implements OnInit {
     return instructor.horarios
       .slice()
       .sort((a, b) => {
-        const diaA = a.diaSemana?.split(', ')[0] || '';
-        const diaB = b.diaSemana?.split(', ')[0] || '';
+        const diaA = this.normalizarDiaSemana(a.diaSemana).split(', ')[0];
+        const diaB = this.normalizarDiaSemana(b.diaSemana).split(', ')[0];
 
         return (this.ordenDias[diaA] || 8) - (this.ordenDias[diaB] || 8);
       })
       .map(h => {
+        const dia = this.normalizarDiaSemana(h.diaSemana);
         const inicio = h.horarioInicio?.substring(0, 5) || '--:--';
         const fin = h.horarioFinal?.substring(0, 5) || '--:--';
 
-        return `${h.diaSemana || 'Sin día'} ${inicio} - ${fin}`;
+        return `${dia} ${inicio} - ${fin}`;
       })
       .join(' | ');
   }
@@ -343,5 +445,40 @@ export class CatalogoInstructor implements OnInit {
         idInstructor: instructor.idInstructor
       }
     });
+  }
+
+  normalizarDistrito(valor: string | null | undefined): string {
+    if (!valor) {
+      return '';
+    }
+
+    const limpio = String(valor).trim();
+
+    if (this.distritosPorCodigo[limpio]) {
+      return this.distritosPorCodigo[limpio];
+    }
+
+    const clave = this.normalizarTexto(limpio);
+
+    return this.distritosAlias[clave] || limpio;
+  }
+
+  normalizarDiaSemana(valor: string | null | undefined): string {
+    if (!valor) {
+      return 'Sin día';
+    }
+
+    const limpio = String(valor).trim();
+    const mayuscula = limpio.toUpperCase();
+
+    return this.diasPorCodigo[limpio] || this.diasPorCodigo[mayuscula] || limpio;
+  }
+
+  normalizarTexto(valor: string): string {
+    return valor
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
   }
 }

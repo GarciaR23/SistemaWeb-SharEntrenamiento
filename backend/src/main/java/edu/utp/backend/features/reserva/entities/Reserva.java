@@ -29,6 +29,7 @@ public class Reserva {
     @Column(name = "id_sede", nullable = false)
     private Integer idSede;
 
+    @ColumnTransformer(read = "total_horas_acumuladas::text", write = "?::interval")
     @Column(name = "total_horas_acumuladas", nullable = false, columnDefinition = "interval")
     private String totalHorasAcumuladas;
 
