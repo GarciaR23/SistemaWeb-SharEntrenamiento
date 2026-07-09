@@ -11,6 +11,7 @@ import { RouterModule } from '@angular/router';
 })
 export class SidebarComponent {
   @Input() modo: 'admin' | 'instructor' | 'tutor' = 'admin';
+  @Input() mobileOpen = false;
 
   menus = {
     admin: [

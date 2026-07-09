@@ -1,22 +1,51 @@
+@use 'variables' as var;
+
 .sidebar {
-    width: 260px;
+    width: 320px;
     height: 100vh;
     background-color: #0d1117;
-    /* Fondo oscuro continuo */
     border-right: 1px solid #1e293b;
-    /* Única línea divisora vertical con el resto del sistema */
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
+    transition: transform 0.28s ease, visibility 0.28s ease;
+}
+
+.sidebar.open {
+    transform: translateX(0);
+}
+
+@media (max-width: var.$breakpoint-md) {
+    .sidebar {
+        position: fixed;
+        inset: 0 auto auto 0;
+        width: min(280px, 90vw);
+        max-width: 280px;
+        height: 100vh;
+        transform: translateX(-100%);
+        z-index: 110;
+        border-right: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 4px 0 30px rgba(0, 0, 0, 0.35);
+        background-color: #0d1117;
+    }
+
+    .sidebar-brand-header {
+        padding-left: 16px;
+    }
+
+    .sidebar-nav a {
+        padding: 14px 18px;
+    }
 }
 
 .sidebar-brand-header {
     width: 100%;
-    height: 80px;
+    height: 100px;
     display: flex;
     align-items: center;
     padding-left: 24px;
     box-sizing: border-box;
+    position: relative;
 }
 
 .logo-link {
@@ -29,33 +58,27 @@
     display: flex;
     align-items: center;
     position: relative;
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
 }
 
-.logo-circle {
-    position: absolute;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-}
-
-.blue-circle {
-    background: linear-gradient(135deg, #4a90e2 0%, #3b7fd9 100%);
-    top: 0;
-    left: 0;
-}
-
+.logo-circle,
+.blue-circle,
 .green-circle {
-    background: linear-gradient(135deg, #28c768 0%, #20a856 100%);
-    bottom: 0;
-    right: 0;
+    display: none; 
 }
 
 .logo-text {
     color: #ffffff;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 1.25rem; 
+}
+
+.logo-image {
+    width: 40px;
+    height: 40px;
+    display: block;
+    object-fit: contain;
 }
 
 .logo-text-green {
@@ -76,10 +99,11 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 12px 24px;
+        padding: 14px 24px;
         color: #64748b;
         text-decoration: none;
-        font-size: 14px;
+        font-size: 16px;
+        line-height: 1.2;
 
         svg {
             width: 20px;

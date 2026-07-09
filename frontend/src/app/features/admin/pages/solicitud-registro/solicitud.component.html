@@ -1,7 +1,7 @@
 <div class="solicitudes-container">
 
   <header class="solicitudes-header">
-    <div>
+    <div class="header-copy">
       <h1>Solicitudes de Registro</h1>
       <p>
         Gestione las peticiones de nuevos profesionales que desean unirse a la plataforma Elite de
@@ -34,21 +34,22 @@
   }
 
   @if (!cargando) {
-    <section class="cards-grid">
-      @for (solicitud of listaSolicitudes; track solicitud) {
-        <div class="card-solicitud" [ngClass]="obtenerClaseCard(solicitud)">
-          <div class="card-header-info">
+    <section class="cards-section">
+      <section class="cards-grid">
+        @for (solicitud of listaSolicitudes; track solicitud) {
+          <div class="card-solicitud" [ngClass]="obtenerClaseCard(solicitud)">
+            <div class="card-header-info">
             <div class="avatar-container">
               <img [src]="solicitud.urlImagenPerfil" [alt]="solicitud.instructorNombre" class="avatar-img">
               <span class="status-dot-active"></span>
             </div>
+            <span class="status-badge" [ngClass]="obtenerClaseEstado(solicitud)">
+              {{ solicitud.estadoUsuario | uppercase }}
+            </span>
             <div class="meta-profile">
               <h3>{{ solicitud.instructorNombre }}</h3>
               <p class="specialty-text">{{ solicitud.especialidad }}</p>
             </div>
-            <span [ngClass]="obtenerClaseEstado(solicitud)">
-              {{ solicitud.estadoUsuario | uppercase }}
-            </span>
           </div>
           <div class="card-body-details">
             <div class="detail-row">
@@ -86,6 +87,7 @@
           </button>
         </div>
       }
+      </section>
     </section>
   }
 
