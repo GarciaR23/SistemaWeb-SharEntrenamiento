@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './pago.component.html',
   styleUrls: ['./pago.component.scss'],
 })
-export class PagoComponent {
+export class Pago {
   balanceTotal = 0;
   proximaLiquidacion = '';
 

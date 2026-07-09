@@ -1,0 +1,143 @@
+<div class="sesiones-page">
+
+  <header class="sesiones-header">
+    <div>
+      <h1>Sesiones Programadas</h1>
+      <p>Aquí podrás visualizar, dar seguimiento a todas las actividades y eventos del sistema en tiempo real.</p>
+    </div>
+  </header>
+
+  <section class="toolbar">
+    <span class="pending-pill">{{ totalPendientes }} Pendientes</span>
+
+    <div class="tabs">
+      <button type="button" [class.active]="filtroActivo === 'recientes'" (click)="cambiarFiltro('recientes')">
+        Más Recientes
+      </button>
+
+      <button type="button" [class.active]="filtroActivo === 'reprogramado'" (click)="cambiarFiltro('reprogramado')">
+        Reprogramado
+      </button>
+
+      <button type="button" [class.active]="filtroActivo === 'finalizado'" (click)="cambiarFiltro('finalizado')">
+        Finalizado
+      </button>
+    </div>
+  </section>
+
+  <section class="sessions-grid">
+    <article class="session-card" *ngFor="let sesion of sesionesFiltradas" [class.with-top]="mostrarHeaderTiempo(sesion)">
+
+      <div class="session-progress" *ngIf="mostrarHeaderTiempo(sesion)">
+        <div class="progress-info">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="13" r="8"></circle>
+            <path d="M12 9v5l3 2"></path>
+            <path d="M9 2h6"></path>
+          </svg>
+
+          <strong>{{ sesion.minutosRestantes }}:12 min restantes</strong>
+        </div>
+
+        <span class="card-state" [ngClass]="obtenerClaseEstado(sesion)">
+          {{ obtenerEstadoTexto(sesion) }}
+        </span>
+      </div>
+
+      <div class="card-body">
+        <div class="patient-row">
+          <div class="thumb-box">
+            <img [src]="sesion.miniatura" [alt]="sesion.paciente">
+            <span>{{ sesion.codigo }}</span>
+          </div>
+
+          <div class="patient-info">
+            <h2>{{ sesion.paciente }}</h2>
+            <p>{{ sesion.edad }} Años • {{ sesion.documento }}</p>
+
+            <div class="dots">
+              <span></span>
+              <span></span>
+              <span class="muted"></span>
+            </div>
+          </div>
+
+          <button class="more-btn" type="button" title="Más opciones">
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="5" r="1.5"></circle>
+              <circle cx="12" cy="12" r="1.5"></circle>
+              <circle cx="12" cy="19" r="1.5"></circle>
+            </svg>
+          </button>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+              <path d="M8 2v4"></path>
+              <path d="M16 2v4"></path>
+              <path d="M3 10h18"></path>
+            </svg>
+            <span>Fecha</span>
+            <strong>{{ sesion.fecha }}</strong>
+          </div>
+
+          <div class="info-item">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M21 10c0 7-9 12-9 12S3 17 3 10a9 9 0 1 1 18 0Z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>Distrito</span>
+            <strong>{{ sesion.distrito }}</strong>
+          </div>
+
+          <div class="info-item">
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M12 7v5l4 2"></path>
+            </svg>
+            <span>Duración</span>
+            <strong>{{ sesion.duracionMin }} min</strong>
+          </div>
+        </div>
+
+        <div class="card-actions" *ngIf="sesion.estado === 'pendiente'; else activeActions">
+          <button type="button" class="btn secondary" (click)="empezarSesion(sesion)">Empezar</button>
+          <button type="button" class="btn secondary" (click)="reprogramarSesion(sesion)">Reprogramar</button>
+        </div>
+
+        <ng-template #activeActions>
+          <div class="card-actions triple">
+            <button type="button" class="btn success" (click)="registrarAsistencia(sesion)">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M20 6 9 17l-5-5"></path>
+              </svg>
+              Asistencia
+            </button>
+
+            <button type="button" class="btn danger" (click)="registrarIncidencia(sesion)">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"></path>
+                <path d="M12 9v4"></path>
+                <path d="M12 17h.01"></path>
+              </svg>
+              Incidencia
+            </button>
+
+            <button type="button" class="btn report" (click)="crearReporte(sesion)">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"></path>
+                <path d="M14 2v6h6"></path>
+                <path d="M9 15h6"></path>
+              </svg>
+              Reporte
+            </button>
+          </div>
+        </ng-template>
+      </div>
+
+    </article>
+  </section>
+
+</div>
