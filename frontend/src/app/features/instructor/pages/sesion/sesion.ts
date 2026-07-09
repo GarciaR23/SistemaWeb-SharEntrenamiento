@@ -24,7 +24,7 @@ interface SesionProgramada{
   templateUrl: './sesion.html',
   styleUrl: './sesion.scss',
 })
-export class sesionComponent {
+export class SesionComponent {
   filtroActivo: 'recientes' | 'reprogramado' | 'finalizado' = 'recientes';
 
   // Se llenará desde el backend

@@ -462,9 +462,9 @@
 
 .btn-primary,
 .btn-primary.glow-btn {
-  @include btn-pill-primary;
   min-width: 180px;
   box-shadow: 0 16px 30px rgba($color-primary, 0.14);
+  @include btn-pill-primary;
 }
 
 .form-feedback {

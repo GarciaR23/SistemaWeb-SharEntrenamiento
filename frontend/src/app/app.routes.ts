@@ -32,16 +32,14 @@ import { Error404 } from './shared/errors/error-404/error-404';
 import { Error500 } from './shared/errors/error-500/error-500';
 import { ErrorConnection } from './shared/errors/error-connection/error-connection';
 import { PerfilInstructorComponent } from './features/tutor/pages/perfil-instructor/perfil-instructor.component';
-<<<<<<< HEAD
 import { PlanPaciente } from './features/tutor/pages/plan-paciente/plan-paciente';
 import { ActividadPaciente } from './features/tutor/pages/actividad-paciente/actividad-paciente';
 import { ReservaPaciente } from './features/tutor/pages/reserva-paciente/reserva-paciente.component';
 import { FormularioReserva } from './features/tutor/pages/formulario-reserva/formulario-reserva.component';
-=======
-import { hojaRutaComponent } from './features/instructor/pages/hoja-ruta/hoja-ruta';
-import { calendarioComponent } from './features/instructor/pages/calendario/calendario';
-import { sesionComponent } from './features/instructor/pages/sesion/sesion';
->>>>>>> 044ef7a5db93e8c708360a8242188ed2c418e291
+import { CalendarioComponent } from './features/instructor/pages/calendario/calendario';
+import { HojaRutaComponent } from './features/instructor/pages/hoja-ruta/hoja-ruta';
+import { SesionComponent} from './features/instructor/pages/sesion/sesion';
+
 
 export const routes: Routes = [
   { path: '', component: LandingComponent, title: 'Inicio | SharEntrenamiento' },
@@ -87,9 +85,9 @@ export const routes: Routes = [
           { path: 'sede', component: Sede, title: 'Gestión de Sedes | SharEntrenamiento' },
           { path: 'pago', component: Pago, title: 'Pagos | SharEntrenamiento' },
           { path: 'bitacora', component: BitacoraComponent, title: 'Bitácora de Sesiones | SharEntrenamiento' },
-          { path: 'hoja-ruta', component: hojaRutaComponent, title: 'Hoja de Ruta | SharEntrenamiento' },
-          { path: 'calendario', component: calendarioComponent, title: 'Calendario de Sesiones | SharEntrenamiento' },
-          { path: 'sesion', component: sesionComponent, title: 'Sesiones | SharEntrenamiento' }
+          { path: 'hoja-ruta', component: HojaRutaComponent, title: 'Hoja de Ruta | SharEntrenamiento' },
+          { path: 'calendario', component: CalendarioComponent, title: 'Calendario de Sesiones | SharEntrenamiento' },
+          { path: 'sesion', component: SesionComponent, title: 'Sesiones | SharEntrenamiento' }
         ]
       },
 
