@@ -5,11 +5,9 @@
     width: 100%;
     min-height: calc(100vh - 160px);
     box-sizing: border-box;
-    padding: 110px var.$spacing-xl var.$spacing-2xl var.$spacing-xl;
     margin-bottom: 80px;
 
     @media (max-width: var.$breakpoint-md) {
-        padding: 100px var.$spacing-md var.$spacing-xl var.$spacing-md;
         margin-bottom: 60px;
     }
 }

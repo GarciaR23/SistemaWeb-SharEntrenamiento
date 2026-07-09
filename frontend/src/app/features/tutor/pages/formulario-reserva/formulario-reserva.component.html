@@ -1,0 +1,138 @@
+<div class="alerta-backdrop" *ngIf="mostrarAlerta" (click)="cerrarAlerta()">
+    <div class="alerta-dialog" (click)="$event.stopPropagation()">
+        <div class="alerta-icono"><svg viewBox="0 0 24 24" fill="none" width="48" height="48">
+                <circle cx="12" cy="12" r="10" stroke="#ffb800" stroke-width="2"></circle>
+                <path d="M12 8v5" stroke="#ffb800" stroke-width="2" stroke-linecap="round"></path>
+                <circle cx="12" cy="17" r="1.5" fill="#ffb800"></circle>
+            </svg></div>
+        <h2 class="alerta-titulo">Horario no disponible</h2>
+        <p class="alerta-mensaje">{{ alertaMensaje }}</p>
+        <button class="alerta-boton" (click)="cerrarAlerta()">Entendido</button>
+    </div>
+</div>
+<div class="reserva-container">
+    <section class="reserva-card">
+        <header class="reserva-header">
+            <h1>Reserva de Sesión</h1>
+            <p>Ajuste los parámetros técnicos para su próxima sesión de alto rendimiento con nuestros instructores
+                certificados.</p>
+        </header>
+        <div *ngIf="cargando" class="loading-placeholder">Cargando información de reserva...</div>
+        <div *ngIf="!cargando && resumen" class="reserva-body">
+            <section class="reserva-section">
+                <div class="section-label"><span></span>01. Instructor y Tarifa</div>
+                <article class="instructor-summary">
+                    <div class="instructor-info">
+                        <div class="instructor-avatar"><img [src]="obtenerImagenInstructor()"
+                                [alt]="resumen.nombreCompleto"><span class="status-dot"></span></div>
+                        <div>
+                            <h2>{{ resumen.nombreCompleto }}</h2>
+                            <p>{{ resumen.especialidad || 'Instructor certificado' }}</p>
+                        </div>
+                    </div>
+                    <div class="instructor-metrics">
+                        <div class="total-box"><span>Tarifa por hora</span><strong>S/ {{ tarifaActual.toFixed(2)
+                                }}</strong></div>
+                    </div>
+                </article>
+            </section>
+            <section class="reserva-section">
+                <div class="section-label"><span></span>02. Ubicación del entrenamiento</div>
+                <div class="sedes-reserva-grid"><button class="sede-option" *ngFor="let sede of sedes"
+                        [class.active]="esSedeSeleccionada(sede)" (click)="seleccionarSede(sede)"><img
+                            [src]="obtenerImagenSede(sede)" [alt]="sede.nombreSede || 'Sede'">
+                        <div>
+                            <h3>{{ sede.nombreSede || 'Sede sin nombre' }}</h3>
+                            <p>{{ sede.direccionSede || 'Dirección no registrada' }}</p>
+                        </div><span class="check-dot" *ngIf="esSedeSeleccionada(sede)">✓</span>
+                    </button></div>
+            </section>
+            <section class="reserva-section">
+                <div class="mes-selector-header-row">
+                    <div class="section-label"><span></span>03. Bloques disponibles del mes</div>
+                    <div class="datepicker-wrapper"><input type="month" [(ngModel)]="mesSeleccionado"
+                            (change)="cambiarMes()"></div>
+                </div>
+                <div class="bloques-horarios-vertical-list"><button class="card-horario"
+                        *ngFor="let dia of diasPaginados" [class.active]="diaSeleccionado === dia"
+                        [class.agregado]="esDiaAgregado(dia)" (click)="seleccionarDia(dia)">
+                        <div class="dia-fecha-container"><span class="dia-numero">{{ dia.fechaNumero }}</span><span
+                                class="dia-name">{{ dia.diaSemana }}</span></div><span class="rango-horas">{{
+                            dia.horarioInicio }} - {{ dia.horarioFinal }}</span><span class="tag-preferencia">{{
+                            dia.horarioPreferencia }}</span><span class="badge-agregado" *ngIf="esDiaAgregado(dia)">✓
+                            Agregado</span>
+                    </button></div>
+                <div class="paginacion-container"><button class="btn-paginacion" [disabled]="paginaActual === 0"
+                        (click)="paginaActual = paginaActual - 1; actualizarPaginacion()">◀ Ant</button><button
+                        class="btn-paginacion" [disabled]="(paginaActual + 1) * pageSize >= diasDisponibles.length"
+                        (click)="paginaActual = paginaActual + 1; actualizarPaginacion()">Sig ▶</button></div>
+            </section>
+            <div class="reserva-grid-two">
+                <section class="reserva-section">
+                    <div class="section-label"><span></span>04. Hora de inicio</div>
+                    <div class="selector-hora-exacta"><label>Horas disponibles para {{ diaSeleccionado?.diaSemana }} {{
+                            diaSeleccionado?.fechaNumero }} de {{ diaSeleccionado?.mesNombre }}:</label>
+                        <div class="select-wrapper"><select class="select-custom" [(ngModel)]="horaInicioSeleccionada">
+                                <option value="">Selecciona hora</option>
+                                <option *ngFor="let h of horasDisponibles" [value]="h">{{ formatearHora(h) }}</option>
+                            </select></div>
+                    </div>
+                </section>
+                <section class="reserva-section">
+                    <div class="section-label"><span></span>05. Duración</div>
+                    <div class="duracion-cards-container"><button class="card-duracion" *ngFor="let d of duraciones"
+                            [class.active]="duracionSeleccionada === d && esDuracionValida(d)"
+                            [class.disabled]="!esDuracionValida(d)" [disabled]="!esDuracionValida(d)"
+                            (click)="duracionSeleccionada = d"><span class="numero-duracion">{{ d.toFixed(1)
+                                }}</span><span class="label-duracion">HORA{{ d > 1 ? 'S' : '' }}</span></button></div>
+                </section>
+            </div>
+            <div class="agregar-sesion-wrapper"><button class="btn-agregar-sesion" [disabled]="!puedeAgregarSesion()"
+                    (click)="validarYAgregarSesion()">{{ validando ? 'Validando...' : '+ Agregar esta sesión'
+                    }}</button></div>
+            <section class="warning-box">
+                <div class="warning-icon">!</div>
+                <div>
+                    <h3>Protocolo de seguridad de colapso</h3>
+                    <p>En cumplimiento con nuestro protocolo de seguridad, en caso de colapso del paciente, se realizará
+                        un cobro del <strong>20%</strong> por concepto de asistencia y tiempo invertido del instructor.
+                        La sesión será reprogramada automáticamente.</p>
+                </div>
+            </section>
+            <label class="terms-check"><input type="checkbox" [(ngModel)]="aceptaTerminos"><span>Acepto los
+                    <strong>términos de servicio</strong> y el protocolo de seguridad técnica.</span></label>
+            <div class="reserva-actions"><button class="btn-back" (click)="cancelar()">← Cancelar y
+                    volver</button><button class="btn-confirm" [disabled]="!puedeConfirmar() || guardando"
+                    (click)="confirmarReserva()">{{ guardando ? 'Guardando...' : 'Confirmar Reserva →' }}</button></div>
+        </div>
+    </section>
+    <div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal()">
+        <div class="modal-container" (click)="$event.stopPropagation()"><button class="modal-close-btn"
+                (click)="cerrarModal()">✕</button>
+            <div class="modal-body">
+                <h2 class="modal-title">Resumen de sesiones</h2>
+                <div class="modal-sesiones-list">
+                    <div class="modal-sesion-item" *ngFor="let sesion of sesionesAgregadas; let i = index">
+                        <div class="modal-sesion-left"><img [src]="sesion.sedeImagen" [alt]="sesion.sedeNombre"
+                                class="modal-sesion-img">
+                            <div class="modal-sesion-info"><span class="modal-sesion-dia">{{ sesion.diaSemana }} {{
+                                    sesion.fechaNumero }} de {{ sesion.mesNombre }}</span><span
+                                    class="modal-sesion-hora">{{ formatearHora(sesion.horaInicio) }} - {{
+                                    sesion.duracion.toFixed(1) }} hrs</span><span class="modal-sesion-sede">{{
+                                    sesion.sedeNombre }} - {{ sesion.sedeDireccion }}</span></div>
+                        </div>
+                        <div class="modal-sesion-right"><span class="modal-sesion-precio">S/ {{
+                                sesion.subtotal.toFixed(2) }}</span><button class="modal-sesion-eliminar"
+                                (click)="eliminarSesion(i); $event.stopPropagation()">✕</button></div>
+                    </div>
+                </div>
+                <div class="modal-totales">
+                    <div class="modal-total-row"><span>Horas totales</span><strong>{{ horasTotales.toFixed(1) }}
+                            hrs</strong></div>
+                    <div class="modal-total-row destacado"><span>Total a pagar</span><strong>S/ {{ montoTotal.toFixed(2)
+                            }}</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

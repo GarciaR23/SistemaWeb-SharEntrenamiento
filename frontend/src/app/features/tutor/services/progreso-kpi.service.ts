@@ -1,16 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ProgresoKpiResponse } from '../models/progreso-kpi-response.model';
 
-export interface ProgresoKpiResponse {
-    promedioCoordinacion: number;
-    promedioEquilibrio: number;
-    promedioResistencia: number;
-    totalReportesEvaluados: number;
-    tendenciaCoordinacion: number;
-    tendenciaEquilibrio: number;
-    tendenciaResistencia: number;
-}
 
 @Injectable({ providedIn: 'root' })
 export class ProgresoKpiService {
