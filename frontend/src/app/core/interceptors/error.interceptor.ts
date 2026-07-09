@@ -8,12 +8,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     const router = inject(Router);
     const authService = inject(AuthApiService);
 
-    const bypassHeader = req.headers.get('X-Skip-Error-Interceptor');
-    const shouldBypass = bypassHeader === 'true';
-
     return next(req).pipe(
         catchError((error) => {
-            if (shouldBypass) {
+            if (error.status === 400) {
                 return throwError(() => error);
             }
 
@@ -34,12 +31,12 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
                 case 404:
                     router.navigate(['/error/404']);
                     break;
+                case 500:
+                    break;
                 default:
-                    router.navigate(['/error/500']);
                     break;
             }
             return throwError(() => error);
         })
     );
 };
-

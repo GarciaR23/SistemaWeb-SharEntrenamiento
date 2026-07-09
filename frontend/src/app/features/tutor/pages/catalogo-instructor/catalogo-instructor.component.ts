@@ -440,7 +440,7 @@ export class CatalogoInstructor implements OnInit {
   }
 
   solicitarSesion(instructor: InstructorCatalogoDto): void {
-    this.router.navigate(['/tutor/reserva-sesion'], {
+    this.router.navigate(['/tutor/formulario-reserva'], {
       queryParams: {
         idInstructor: instructor.idInstructor
       }

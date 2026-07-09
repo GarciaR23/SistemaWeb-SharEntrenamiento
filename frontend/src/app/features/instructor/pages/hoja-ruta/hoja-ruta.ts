@@ -35,7 +35,7 @@ interface SesionHojaRuta {
   templateUrl: './hoja-ruta.html',
   styleUrl: './hoja-ruta.scss',
 })
-export class hojaRutaComponent {
+export class HojaRutaComponent {
   textoBusqueda = '';
   filtroActivo: EstadoHojaRuta | 'todos' = 'todos';
 

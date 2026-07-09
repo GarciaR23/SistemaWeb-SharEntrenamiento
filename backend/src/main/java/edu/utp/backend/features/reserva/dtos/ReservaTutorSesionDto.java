@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 public record ReservaTutorSesionDto(
         Integer idReserva,
+        Integer idDetalle, 
         Integer idPaciente,
         String pacienteNombre,
         String pacienteImagen,
@@ -15,11 +16,11 @@ public record ReservaTutorSesionDto(
         Integer idSede,
         String nombreSede,
         String direccionSede,
-        LocalDateTime seleccionHorario,
+        LocalDateTime horaInicioEstimada,
+        LocalDateTime horaFinEstimada,
         Integer duracionMinutos,
-        BigDecimal montoTotal,
+        BigDecimal montoSubtotal, 
         String estadoReserva,
         String estadoSesion,
-        LocalDateTime fechaCreacion
-) {
+        LocalDateTime fechaCreacion) {
 }

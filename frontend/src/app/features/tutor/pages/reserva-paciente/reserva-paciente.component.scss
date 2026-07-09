@@ -3,7 +3,6 @@
 .sesiones-container {
     width: 100%;
     min-height: calc(100vh - 160px);
-    padding: 110px var.$spacing-xl var.$spacing-2xl var.$spacing-xl;
     box-sizing: border-box;
     font-family: inherit;
 
@@ -23,8 +22,8 @@
     h1 {
         margin: 0 0 10px;
         color: #e8edf9;
-        font-size: 46px;
-        font-weight: 900;
+        font-size: 32px;
+        font-weight: 700;
     }
 
     p {
@@ -774,6 +773,286 @@
         opacity: 0.45;
         cursor: not-allowed;
         filter: grayscale(0.35);
+    }
+}
+
+// =============================================
+// ✅ ALERTA DE ERROR FLOTANTE
+// =============================================
+
+.alerta-error {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 0 20px 16px;
+    cursor: pointer;
+    animation: alertaSlideIn 0.3s ease;
+    transition: all 0.2s;
+
+    &:hover {
+        background: rgba(239, 68, 68, 0.18);
+    }
+}
+
+@keyframes alertaSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alerta-error-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.alerta-error-text {
+    flex: 1;
+    color: #fca5a5;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.alerta-error-close {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+
+    &:hover {
+        background: rgba(239, 68, 68, 0.4);
+        color: #fff;
+    }
+}
+
+// =============================================
+// PANEL DE SOLICITUDES - DISEÑO EXACTO
+// =============================================
+
+.solicitudes-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.solicitud-row {
+    background: #12192c;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.2s;
+
+    &:hover {
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+}
+
+// ✅ CANCELADO/RECHAZADO
+.solicitud-cancelada {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.row-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+
+    img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+}
+
+.info-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.name-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    h2 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #ffffff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin: 0;
+    }
+}
+
+// ✅ BADGES DE ESTADO
+.mini-badge {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+
+    &.badge-wait {
+        background: rgba(255, 184, 0, 0.1);
+        color: #ffb800;
+    }
+
+    &.badge-ready {
+        background: rgba(0, 255, 178, 0.1);
+        color: #00ffb2;
+    }
+
+    &.badge-declined {
+        background: rgba(255, 71, 87, 0.1);
+        color: #ff4757;
+    }
+}
+
+.date-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #8292b0;
+    font-size: 12px;
+
+    svg {
+        width: 13px;
+        height: 13px;
+        stroke: #8292b0;
+        stroke-width: 2;
+        fill: none;
+    }
+}
+
+// ✅ BOTONERA DERECHA
+.row-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    width: 185px;
+    flex-shrink: 0;
+    position: relative;
+
+    button {
+        background: #1a233a;
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+
+        &:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+    }
+
+    .btn-main {
+        flex: 1;
+    }
+
+    .btn-more {
+        width: 34px;
+        padding: 8px 0 !important;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px !important;
+    }
+
+    .btn-cancel {
+        color: #ff4757;
+        border-color: rgba(255, 71, 87, 0.15);
+
+        &:hover {
+            background: rgba(255, 71, 87, 0.05);
+            border-color: #ff4757;
+        }
+    }
+
+    .btn-disabled {
+        color: rgba(255, 255, 255, 0.35);
+        background: rgba(255, 255, 255, 0.02);
+        border-color: rgba(255, 255, 255, 0.05);
+        cursor: help;
+    }
+}
+
+// ✅ DROPDOWN
+.dropdown-menu {
+    position: absolute;
+    top: 38px;
+    right: 0;
+    background: #182237;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    width: 120px;
+    overflow: hidden;
+}
+
+.dropdown-item {
+    background: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 10px 12px !important;
+    font-size: 11px !important;
+    text-align: left !important;
+    width: 100%;
+    color: #ffffff !important;
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.05) !important;
+    }
+}
+
+.dropdown-danger {
+    color: #ff4757 !important;
+
+    &:hover {
+        background: rgba(255, 71, 87, 0.1) !important;
     }
 }
 

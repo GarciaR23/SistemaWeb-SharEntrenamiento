@@ -33,7 +33,7 @@ interface AvailableHour {
   templateUrl: './calendario.html',
   styleUrl: './calendario.scss',
 })
-export class calendarioComponent implements OnInit {
+export class CalendarioComponent implements OnInit {
   vistaActiva: 'mes' | 'semana' | 'dia' = 'mes';
 
   currentDate = new Date();

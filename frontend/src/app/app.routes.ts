@@ -25,8 +25,6 @@ import { Pago } from './features/instructor/pages/pago/pago.component';
 import { Instructor } from './features/instructor/instructor';
 import { Tutor } from './features/tutor/tutor';
 import { CatalogoInstructor } from './features/tutor/pages/catalogo-instructor/catalogo-instructor.component';
-import { ReservaSesion} from './features/tutor/pages/reserva-sesion/reserva-sesion.component';
-import { Sesion } from './features/tutor/pages/sesion-paciente/sesion-paciente.component';
 import { Progreso } from './features/tutor/pages/progreso-paciente/progreso-paciente.component';
 import { FormularioTutor } from './features/tutor/pages/formulario-tutor/formulario-tutor.component';
 import { Error403 } from './shared/errors/error-403/error-403';
@@ -34,9 +32,14 @@ import { Error404 } from './shared/errors/error-404/error-404';
 import { Error500 } from './shared/errors/error-500/error-500';
 import { ErrorConnection } from './shared/errors/error-connection/error-connection';
 import { PerfilInstructorComponent } from './features/tutor/pages/perfil-instructor/perfil-instructor.component';
-import { hojaRutaComponent } from './features/instructor/pages/hoja-ruta/hoja-ruta';
-import { calendarioComponent } from './features/instructor/pages/calendario/calendario';
-import { sesionComponent } from './features/instructor/pages/sesion/sesion';
+import { PlanPaciente } from './features/tutor/pages/plan-paciente/plan-paciente';
+import { ActividadPaciente } from './features/tutor/pages/actividad-paciente/actividad-paciente';
+import { ReservaPaciente } from './features/tutor/pages/reserva-paciente/reserva-paciente.component';
+import { FormularioReserva } from './features/tutor/pages/formulario-reserva/formulario-reserva.component';
+import { CalendarioComponent } from './features/instructor/pages/calendario/calendario';
+import { HojaRutaComponent } from './features/instructor/pages/hoja-ruta/hoja-ruta';
+import { SesionComponent} from './features/instructor/pages/sesion/sesion';
+
 
 export const routes: Routes = [
   { path: '', component: LandingComponent, title: 'Inicio | SharEntrenamiento' },
@@ -82,9 +85,9 @@ export const routes: Routes = [
           { path: 'sede', component: Sede, title: 'Gestión de Sedes | SharEntrenamiento' },
           { path: 'pago', component: Pago, title: 'Pagos | SharEntrenamiento' },
           { path: 'bitacora', component: BitacoraComponent, title: 'Bitácora de Sesiones | SharEntrenamiento' },
-          { path: 'hoja-ruta', component: hojaRutaComponent, title: 'Hoja de Ruta | SharEntrenamiento' },
-          { path: 'calendario', component: calendarioComponent, title: 'Calendario de Sesiones | SharEntrenamiento' },
-          { path: 'sesion', component: sesionComponent, title: 'Sesiones | SharEntrenamiento' }
+          { path: 'hoja-ruta', component: HojaRutaComponent, title: 'Hoja de Ruta | SharEntrenamiento' },
+          { path: 'calendario', component: CalendarioComponent, title: 'Calendario de Sesiones | SharEntrenamiento' },
+          { path: 'sesion', component: SesionComponent, title: 'Sesiones | SharEntrenamiento' }
         ]
       },
 
@@ -94,12 +97,46 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         children: [
           { path: '', redirectTo: 'inicio', pathMatch: 'full' },
-          { path: 'inicio', component: TutorInicio, title: 'Dashboard Tutor | SharEntrenamiento' },
-          { path: 'catalogo-instructor', component: CatalogoInstructor, title: 'Catálogo de Instructores | SharEntrenamiento' },
-          { path: 'perfil-instructor/:idInstructor', component: PerfilInstructorComponent },
-          { path: 'reserva-sesion', component: ReservaSesion, title: 'Reserva Sesión | SharEntrenamiento' },
-          { path: 'sesion', component: Sesion, title: 'Sesiones | SharEntrenamiento' },
-          { path: 'progreso', component: Progreso, title: 'Progreso del Paciente | SharEntrenamiento' }
+          {
+            path: 'inicio',
+            component: TutorInicio,
+            title: 'Dashboard Tutor | SharEntrenamiento'
+          },
+          {
+            path: 'catalogo-instructor',
+            component: CatalogoInstructor,
+            title: 'Catálogo de Instructores | SharEntrenamiento'
+          },
+          {
+            path: 'perfil-instructor/:idInstructor',
+            component: PerfilInstructorComponent,
+            title: 'Perfil del Instructor | SharEntrenamiento'
+          },
+          {
+            path: 'formulario-reserva',
+            component: FormularioReserva,
+            title: 'Formulario de Reserva | SharEntrenamiento'
+          },
+          {
+            path: 'reserva',
+            component: ReservaPaciente,
+            title: 'Reserva | SharEntrenamiento'
+          },
+          {
+            path: 'plan',
+            component: PlanPaciente,
+            title: 'Plan | SharEntrenamiento'
+          },
+          {
+            path: 'actividad',
+            component: ActividadPaciente,
+            title: 'Actividad | SharEntrenamiento'
+          },
+          {
+            path: 'progreso',
+            component: Progreso,
+            title: 'Progreso | SharEntrenamiento'
+          }
         ]
       },
 

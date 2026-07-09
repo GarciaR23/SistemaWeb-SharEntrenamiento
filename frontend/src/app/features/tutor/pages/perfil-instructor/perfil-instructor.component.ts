@@ -85,7 +85,7 @@ export class PerfilInstructorComponent implements OnInit {
 
   volverCatalogo(): void { this.router.navigate(['/tutor/catalogo-instructor']); }
   solicitarSesion(): void {
-    this.router.navigate(['/tutor/reserva-sesion'], {
+    this.router.navigate(['/tutor/formulario-reserva'], {
       queryParams: {
         idInstructor: this.idInstructor
       }
