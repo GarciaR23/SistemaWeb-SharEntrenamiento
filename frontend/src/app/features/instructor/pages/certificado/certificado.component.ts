@@ -17,6 +17,7 @@ export class Certificado {
   feedbackMessage = '';
   showValidationModal = false;
   missingDocuments: string[] = [];
+  viewedDocuments: Record<string, boolean> = {};
 
   readonly documents = [
     { key: 'dni', title: 'DNI / Documento de identidad' },
@@ -34,7 +35,6 @@ export class Certificado {
     return this.formState.getMissingDocumentFields().length > 0;
   }
 
-  // Activa el input file dinámico
   triggerFileInput(key: string): void {
     const fileInput = document.getElementById(`file-${key}`) as HTMLInputElement;
     if (fileInput) {
@@ -45,11 +45,8 @@ export class Certificado {
   getFile(key: DocumentKey, $event: Event): void {
     const input = $event.target as HTMLInputElement;
     const file = input.files?.[0] ?? null;
-
     this.formState.updateDocument(key, file);
     this.feedbackMessage = '';
-
-    console.log(`Archivo recibido para ${key}:`, this.formState.state.documents[key]);
   }
 
   getStatusLabel(key: DocumentKey): string {
@@ -58,6 +55,18 @@ export class Certificado {
 
   getFileName(key: DocumentKey): string {
     return this.formState.state.documents[key].fileName;
+  }
+
+  openFile(key: DocumentKey): void {
+    const file = this.formState.state.documents[key].file;
+    if (!file) return;
+    const fileUrl = URL.createObjectURL(file);
+    this.viewedDocuments[key] = true;
+    window.open(fileUrl, '_blank');
+  }
+
+  isDocumentViewed(key: DocumentKey): boolean {
+    return !!this.viewedDocuments[key];
   }
 
   goToCuenta(): void {
@@ -70,7 +79,6 @@ export class Certificado {
       return;
     }
 
-    console.log('Enviando certificados reactivos:', this.formState.state.documents);
     this.feedbackMessage = '';
     this.router.navigate(['/cuenta']);
   }

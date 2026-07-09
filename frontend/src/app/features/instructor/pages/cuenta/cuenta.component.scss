@@ -18,8 +18,7 @@
 .step {
   @include onboarding-step;
   min-width: 140px;
-  
-  // Ajuste para el estilo del stepper si es que usas span circular
+
   span {
     display: flex;
     align-items: center;
@@ -32,7 +31,7 @@
     font-size: 14px;
     font-weight: 600;
   }
-  
+
   &.active {
     span {
       background-color: #0ea5e9;
@@ -53,7 +52,7 @@
   position: relative;
   overflow: hidden;
   min-height: 100%;
-  background-color: #131927; // Fondo oscuro general de la tarjeta
+  background-color: #131927;
 
   &::after {
     content: '';
@@ -93,10 +92,16 @@
   gap: $spacing-lg;
 }
 
-// --- INPUTS: CORREO Y CONTRASEÑA ---
+.field-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+}
+
 .field-group {
   @include field-group;
-  
+
   .label-text {
     margin-bottom: 8px;
     color: #94a3b8;
@@ -110,14 +115,20 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    background: #222938; // Fondo oscuro sólido
-    border: none;
-    border-radius: 8px;
-    padding: 14px 16px;
-    transition: background 0.3s;
+    background: #1d2433;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 0 20px;
+    min-height: 64px;
+    transition: all 0.25s ease;
+    overflow: hidden;
+    box-sizing: border-box;
+    box-shadow: none;
 
     &:focus-within {
-      background: #2a3346;
+      background: #1d2433;
+      border-color: rgba(109, 255, 208, 0.45);
+      box-shadow: none;
     }
   }
 
@@ -125,22 +136,53 @@
     width: 100%;
     border: none;
     background: transparent;
-    color: $color-text-primary;
-    font-size: 0.95rem;
+    color: #dfe2f3;
+    font-size: 14px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
     outline: none;
-    padding: 0;
-    box-shadow: none;
+    padding: 18px 0;
+    box-shadow: none !important;
+    text-shadow: none;
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-text-fill-color: #dfe2f3;
+    caret-color: #6dffd0;
+
+    &:focus,
+    &:focus-visible {
+      outline: none;
+      box-shadow: none;
+      border: none;
+    }
 
     &::placeholder {
-      color: #64748b;
+      color: rgba(223, 226, 243, 0.35);
     }
+
+    &::selection {
+      background: rgba(109, 255, 208, 0.24);
+      color: #ffffff;
+    }
+  }
+
+  .input-wrapper input:-webkit-autofill,
+  .input-wrapper input:-webkit-autofill:hover,
+  .input-wrapper input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #1d2433 inset !important;
+    box-shadow: 0 0 0 1000px #1d2433 inset !important;
+    -webkit-text-fill-color: #dfe2f3 !important;
+    caret-color: #dfe2f3;
+    transition: background-color 5000s ease-in-out 0s;
   }
 
   .input-icon, .icon-button {
     color: #64748b;
     display: flex;
     align-items: center;
-    
+
     svg {
       width: 18px;
       height: 18px;
@@ -152,75 +194,180 @@
     background: transparent;
     cursor: pointer;
     padding: 0;
+    color: #8fa8d6;
+    transition: color 180ms ease, background-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+    border-radius: 999px;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 
     &:hover {
-      color: $color-text-primary;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    &.active {
+      color: #ffffff;
+      background: rgba(0, 229, 160, 0.16);
+      box-shadow: inset 0 0 0 1px rgba(0, 229, 160, 0.25);
+      transform: scale(1.04);
+    }
+
+    &.active svg {
+      stroke: #6dffd0;
+    }
+  }
+
+  &.invalid {
+    .input-wrapper {
+      border-color: rgba($color-error, 0.7);
     }
   }
 }
 
-// --- ZONA DE UPLOAD ---
+.field-help {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #94a3b8;
+
+  &.error {
+    color: $color-error;
+  }
+}
+
+.password-strength {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+
+  .strength-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 999px;
+    overflow: hidden;
+
+    span {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      transition: width 0.2s ease, background 0.2s ease;
+    }
+  }
+
+  small {
+    color: #94a3b8;
+    font-size: 0.82rem;
+  }
+
+  &.weak .strength-bar span {
+    width: 35%;
+    background: $color-error;
+  }
+
+  &.medium .strength-bar span {
+    width: 70%;
+    background: #f59e0b;
+  }
+
+  &.strong .strength-bar span {
+    width: 100%;
+    background: #10b981;
+  }
+}
+
 .upload-group {
   margin-top: 8px;
 }
 
-.dashed-box {
-  position: relative;
-  background: #1e2433;
-  border: 1px dashed rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  padding: 32px 20px;
-  text-align: center;
+.file-upload-modern {
+  margin-top: 8px;
+}
+
+.file-label-modern {
+  display: block;
+  width: 100%;
   cursor: pointer;
+  padding: 42px 20px;
+  border-radius: 16px;
+  border: 1px dashed rgba(223, 226, 243, 0.12);
+  background: #171d28;
+  text-align: center;
   transition: all 0.3s ease;
 
   &:hover {
-    border-color: rgba($color-primary, 0.5);
-    background: #232a3b;
-  }
-
-  input[type="file"] {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    cursor: pointer;
-    width: 100%;
+    background: #1a222f;
+    border-color: rgba(109, 255, 208, 0.3);
   }
 }
 
-.upload-placeholder {
+.upload-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-
-  .upload-icon {
-    width: 24px;
-    height: 24px;
-    color: #cbd5e1;
-    margin-bottom: 4px;
-  }
-
-  strong {
-    color: #f8fafc;
-    font-size: 13px;
-    font-weight: 500;
-  }
-
-  small {
-    color: #64748b;
-    font-size: 11px;
-  }
+  justify-content: center;
+  gap: 12px;
+  width: min(100%, 560px);
+  min-height: 240px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
-.file-name {
-  display: block;
-  margin-top: 8px;
-  color: #10b981;
-  font-size: 12px;
+.upload-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 208, 132, 0.1);
+  color: #00d084;
+  margin-bottom: 6px;
 }
 
-// --- TARJETA RESUMEN ---
+.upload-title {
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.upload-subtitle {
+  color: rgba(223, 226, 243, 0.45);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.preview-card {
+  width: 100%;
+  max-width: 360px;
+  padding: 12px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(109, 255, 208, 0.12), rgba(255, 255, 255, 0.04));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.preview-image {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+.preview-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 10px;
+}
+
 .resumen-card {
   background: #1e2433;
   border-radius: 12px;
@@ -242,7 +389,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
     svg {
       width: 16px;
       height: 16px;
@@ -313,28 +460,11 @@
   }
 }
 
+.btn-primary,
 .btn-primary.glow-btn {
-  background-color: #02599b;
-  color: #ffffff;
-  border: none;
-  padding: 14px 28px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  box-shadow: 0 4px 24px rgba(2, 89, 155, 0.7);
-  transition: transform 0.2s, box-shadow 0.2s;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 28px rgba(2, 89, 155, 0.9);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    box-shadow: none;
-  }
+  @include btn-pill-primary;
+  min-width: 180px;
+  box-shadow: 0 16px 30px rgba($color-primary, 0.14);
 }
 
 .form-feedback {

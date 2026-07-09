@@ -12,6 +12,7 @@ import { PanelHeaderComponent } from '../../shared/components/header/panel-heade
     styleUrls: ['./instructor.scss']
 })
 export class Instructor {
+    mobileOpen = false;
 
     constructor(
         private router: Router,
@@ -24,5 +25,9 @@ export class Instructor {
             this.authApiService.logout(sesion.rol);
         }
         this.router.navigate(['/']);
+    }
+
+    toggleSidebar(): void {
+        this.mobileOpen = !this.mobileOpen;
     }
 }

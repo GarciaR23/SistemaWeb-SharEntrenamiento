@@ -10,12 +10,20 @@
     <form [formGroup]="recoverForm" class="auth-form" (ngSubmit)="onSubmit()" autocomplete="off">
       <label class="form-label">
         <span>Correo electrónico</span>
-        <div class="input-wrapper">
-          <input type="email" formControlName="email" placeholder="tu@correo.com" autocomplete="email" />
+        <div class="input-wrapper" [class.invalid-field]="shouldShowEmailError()">
+          <input type="text" formControlName="email" placeholder="tu@correo.com" autocomplete="email"
+            autocapitalize="off" spellcheck="false"
+            (input)="sanitizeEmailValue()"
+            (blur)="sanitizeEmailValue()" />
           <span class="input-icon">
             <img src="assets/icons/Icon_email.png" alt="Mensaje" />
           </span>
         </div>
+        @if (shouldShowEmailError()) {
+          <div class="field-error">
+            <small>{{ getEmailErrorMessage() }}</small>
+          </div>
+        }
       </label>
 
       <button type="submit" [disabled]="recoverForm.invalid" class="btn-primary">Enviar</button>

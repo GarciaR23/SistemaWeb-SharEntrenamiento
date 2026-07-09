@@ -1,6 +1,18 @@
 <header class="panel-header-container">
   <nav class="panel-navbar">
 
+    <div class="panel-left">
+      <button class="icon-btn mobile-menu-btn" aria-label="Abrir menú" (click)="menuToggle.emit()">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none" />
+        </svg>
+      </button>
+      <div class="panel-brand">
+        <img src="assets/icons/logo.png" alt="Shar Entrenamiento" class="brand-logo">
+        <span class="brand-text">SharEntrenamiento</span>
+      </div>
+    </div>
+
     <div class="panel-actions">
 
       <button class="icon-btn" aria-label="Notificaciones">

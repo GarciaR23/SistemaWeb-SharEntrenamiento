@@ -149,6 +149,12 @@
 }
 
 // --- BUTTONS ---
+.document-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .btn-upload {
   display: flex;
   align-items: center;
@@ -172,6 +178,17 @@
   }
 }
 
+.view-btn {
+  background-color: #0f766e;
+}
+
+.btn-primary,
+.btn-primary.glow-btn {
+  @include btn-pill-primary;
+  min-width: 180px;
+  box-shadow: 0 16px 30px rgba($color-primary, 0.14);
+}
+
 .form-actions {
   display: flex;
   justify-content: space-between;
@@ -188,29 +205,6 @@
   cursor: pointer;
 }
 
-.btn-primary.glow-btn {
-  background-color: #02599b;
-  color: #ffffff;
-  border: none;
-  padding: 14px 28px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  box-shadow: 0 4px 24px rgba(2, 89, 155, 0.7);
-  transition: transform 0.2s, box-shadow 0.2s;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 28px rgba(2, 89, 155, 0.9);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    box-shadow: none;
-  }
-}
 
 // --- NOTE SECTION ---
 .certificado-note {
