@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 public interface ReservaTutorSesionProjection {
     Integer getIdReserva();
 
+    Integer getIdDetalle(); // ✅ NUEVO
+
     Integer getIdPaciente();
 
     String getPacienteNombre();
@@ -32,7 +34,7 @@ public interface ReservaTutorSesionProjection {
 
     Integer getDuracionMinutos();
 
-    BigDecimal getMontoTotalAcumulado();
+    BigDecimal getMontoSubtotal(); // ✅ CAMBIADO: monto del detalle, no de la reserva
 
     String getEstadoReserva();
 

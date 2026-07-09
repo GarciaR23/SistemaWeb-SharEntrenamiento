@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.utp.backend.core.exception.HorarioOcupadoException;
 import edu.utp.backend.features.reserva.dtos.DetalleReservaDto;
 import edu.utp.backend.features.reserva.dtos.ReservaDto;
 import edu.utp.backend.features.reserva.dtos.ReservaRequestDto;
@@ -49,6 +50,28 @@ public class ReservaServiceImpl implements ReservaService {
                 .orElseThrow(() -> new IllegalArgumentException("Reserva no encontrada: " + id));
     }
 
+    // Validar disponibilidad sin guardar
+    @Override
+    public void validarDisponibilidad(ReservaRequestDto request) {
+        validarReserva(request);
+
+        for (var detalle : request.detalles()) {
+            LocalDateTime horaInicio = detalle.horaInicioEstimada();
+            LocalDateTime horaFin = horaInicio.plusMinutes(detalle.duracionMinutos());
+
+            boolean existeCruce = detalleReservaRepository.existeCruceInstructor(
+                    request.idInstructor(), horaInicio, horaFin);
+            if (existeCruce) {
+                throw new HorarioOcupadoException(
+                        "El instructor ya tiene una reserva en el horario: " +
+                                horaInicio.toLocalDate() + " de " +
+                                horaInicio.toLocalTime() + " a " +
+                                horaFin.toLocalTime() +
+                                ". Por favor elige otro horario.");
+            }
+        }
+    }
+
     @Override
     @Transactional
     public ReservaDto create(ReservaRequestDto request) {
@@ -62,8 +85,12 @@ public class ReservaServiceImpl implements ReservaService {
             boolean existeCruce = detalleReservaRepository.existeCruceInstructor(
                     request.idInstructor(), horaInicio, horaFin);
             if (existeCruce) {
-                throw new IllegalArgumentException(
-                        "El instructor ya tiene una reserva en el horario: " + horaInicio);
+                throw new HorarioOcupadoException(
+                        "El instructor ya tiene una reserva en el horario: " +
+                                horaInicio.toLocalDate() + " de " +
+                                horaInicio.toLocalTime() + " a " +
+                                horaFin.toLocalTime() +
+                                ". Por favor elige otro horario.");
             }
         }
 
@@ -80,7 +107,6 @@ public class ReservaServiceImpl implements ReservaService {
         reserva.setIdInstructor(request.idInstructor());
         reserva.setIdSede(request.idSede());
 
-        // ✅ CORREGIDO: Formato correcto para PostgreSQL INTERVAL
         long horas = totalMinutos / 60;
         long minutos = totalMinutos % 60;
         reserva.setTotalHorasAcumuladas(horas + " hours " + minutos + " minutes");
@@ -100,7 +126,6 @@ public class ReservaServiceImpl implements ReservaService {
             dr.setHoraInicioEstimada(horaInicio);
             dr.setHoraFinEstimada(horaFin);
 
-            // ✅ CORREGIDO: Formato correcto para PostgreSQL INTERVAL
             long detalleHoras = detalle.duracionMinutos() / 60;
             long detalleMinutos = detalle.duracionMinutos() % 60;
             dr.setDuracionEntrenamiento(detalleHoras + " hours " + detalleMinutos + " minutes");
@@ -164,10 +189,24 @@ public class ReservaServiceImpl implements ReservaService {
 
     private ReservaTutorSesionDto toReservaTutorSesionDto(ReservaTutorSesionProjection r) {
         return new ReservaTutorSesionDto(
-                r.getIdReserva(), r.getIdPaciente(), r.getPacienteNombre(), r.getPacienteImagen(),
-                r.getIdInstructor(), r.getInstructorNombre(), r.getInstructorImagen(), r.getEspecialidad(),
-                r.getIdSede(), r.getNombreSede(), r.getDireccionSede(),
-                r.getHoraInicioEstimada(), r.getHoraFinEstimada(), r.getDuracionMinutos(),
-                r.getMontoTotalAcumulado(), r.getEstadoReserva(), r.getEstadoSesion(), r.getFechaCreacion());
+                r.getIdReserva(),
+                r.getIdDetalle(), // ✅ NUEVO
+                r.getIdPaciente(),
+                r.getPacienteNombre(),
+                r.getPacienteImagen(),
+                r.getIdInstructor(),
+                r.getInstructorNombre(),
+                r.getInstructorImagen(),
+                r.getEspecialidad(),
+                r.getIdSede(),
+                r.getNombreSede(),
+                r.getDireccionSede(),
+                r.getHoraInicioEstimada(),
+                r.getHoraFinEstimada(),
+                r.getDuracionMinutos(),
+                r.getMontoSubtotal(), // ✅ CAMBIADO
+                r.getEstadoReserva(),
+                r.getEstadoSesion(),
+                r.getFechaCreacion());
     }
 }

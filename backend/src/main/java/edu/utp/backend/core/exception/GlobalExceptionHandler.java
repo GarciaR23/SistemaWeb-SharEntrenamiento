@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({ DataAccessResourceFailureException.class, PersistenceException.class })
     public ResponseEntity<Map<String, Object>> handleDatabaseUnavailable(Exception ex) {
-        log.info("[CRÍTICO] Conexión a la base de datos interrumpida: ", ex);
+        log.error("[CRÍTICO] Conexión a la base de datos interrumpida: ", ex);
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
@@ -35,8 +35,24 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(response);
     }
 
+    // Manejar HorarioOcupadoException
+    @ExceptionHandler(HorarioOcupadoException.class)
+    public ResponseEntity<Map<String, Object>> handleHorarioOcupado(HorarioOcupadoException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", false);
+        response.put("message", ex.getMessage());
+
+        if (appDebug) {
+            response.put("detail", ex.toString());
+        }
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleBadRequest(IllegalArgumentException ex) {
+        log.warn("[VALIDACIÓN] Argumento inválido: {}", ex.getMessage());
+
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);
         response.put("message", ex.getMessage());
@@ -50,7 +66,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleAll(Exception ex) {
-        log.info("[ERROR INTERNO] Excepción no controlada detectada: ", ex);
+        log.error("[ERROR INTERNO] Excepción no controlada detectada: ", ex);
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", false);

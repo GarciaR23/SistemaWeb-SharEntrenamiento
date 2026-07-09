@@ -20,5 +20,7 @@ public interface ReservaService {
 
     ReservaDto create(ReservaRequestDto request);
 
+    void validarDisponibilidad(ReservaRequestDto request);
+
     void cancelar(Integer id);
 }
