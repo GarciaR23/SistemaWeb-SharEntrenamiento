@@ -23,7 +23,8 @@ export class Perfil implements OnInit, OnDestroy {
 
   showValidationModal = false;
   validationMissingFields: string[] = [];
-  errorHorario: string = '';
+  errorHorario = '';
+  readonly bioMaxLength = 500;
   private subscription?: Subscription;
 
   distritosFallback: string[] = [
@@ -34,12 +35,6 @@ export class Perfil implements OnInit, OnDestroy {
     'San Martín de Porres', 'San Miguel', 'Santa Anita',
     'Santiago de Surco', 'Surquillo', 'Villa El Salvador', 'Villa María del Triunfo'
   ];
-
-  private readonly fieldLabels: Record<string, string> = {
-    fullName: 'Nombre completo', specialty: 'Especialidad', district: 'Distrito',
-    address: 'Dirección', rate: 'Tarifa por hora', selectedShift: 'Horario disponible',
-    selectedDay: 'Días disponibles', bio: 'Biografía profesional'
-  };
 
   readonly availableDays = [
     { code: 'L', label: 'L' }, { code: 'M', label: 'M' }, { code: 'Mi', label: 'Mi' },
@@ -103,18 +98,61 @@ export class Perfil implements OnInit, OnDestroy {
   get selectedShift(): string[] { return this.profileForm.value.selectedShift ?? []; }
   get selectedDay(): string[] { return this.profileForm.value.selectedDay ?? []; }
   get horarios() { return this.formState.state.profile.horarios; }
+  get bioLength(): number { return this.profileForm.get('bio')?.value?.length ?? 0; }
 
   isShiftActive(shift: string): boolean { return this.selectedShift.includes(shift); }
   isDayActive(day: string): boolean { return this.selectedDay.includes(day); }
   isInvalid(field: string): boolean { const c = this.profileForm.get(field); return !!c && c.invalid && c.touched; }
-  fieldError(field: string): string | null {
-    const c = this.profileForm.get(field);
-    if (!c?.touched || !c?.invalid) return null;
-    if (c.hasError('required')) return `${this.fieldLabels[field] ?? field} es obligatorio.`;
-    return null;
-  }
+
   private arrayRequired(control: AbstractControl): Record<string, boolean> | null {
     const v = control.value; return Array.isArray(v) && v.length ? null : { required: true };
+  }
+
+  sanitizeNameValue(value: string): string {
+    return value
+      .replace(/[\t\r\n\u0000-\u001F\u007F]/g, '')
+      .replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ\s]/g, '')
+      .replace(/\s+/g, ' ')
+      .trimStart();
+  }
+
+  sanitizeAddressValue(value: string): string {
+    return value
+      .replace(/[\t\r\n\u0000-\u001F\u007F]/g, '')
+      .replace(/[^A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s.,#/-]/g, '')
+      .replace(/\s+/g, ' ')
+      .trimStart();
+  }
+
+  sanitizeRateValue(value: string): string {
+    return value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1').trimStart();
+  }
+
+  sanitizeBioValue(value: string): string {
+    return value
+      .replace(/[\t\r\n\u0000-\u001F\u007F]/g, '')
+      .replace(/\s+/g, ' ')
+      .trimStart();
+  }
+
+  onFullNameInput(value: string): void {
+    const sanitized = this.sanitizeNameValue(value);
+    this.profileForm.get('fullName')?.setValue(sanitized, { emitEvent: false });
+  }
+
+  onAddressInput(value: string): void {
+    const sanitized = this.sanitizeAddressValue(value);
+    this.profileForm.get('address')?.setValue(sanitized, { emitEvent: false });
+  }
+
+  onRateInput(value: string): void {
+    const sanitized = this.sanitizeRateValue(value);
+    this.profileForm.get('rate')?.setValue(sanitized, { emitEvent: false });
+  }
+
+  onBioInput(value: string): void {
+    const sanitized = this.sanitizeBioValue(value).slice(0, this.bioMaxLength);
+    this.profileForm.get('bio')?.setValue(sanitized, { emitEvent: false });
   }
 
   toggleShift(shift: string): void {
@@ -137,22 +175,27 @@ export class Perfil implements OnInit, OnDestroy {
 
   sincronizarHorariosConDias(): void {
     const dias = this.selectedDay;
-    for (let i = this.horarios.length - 1; i >= 0; i--) {
-      const diasHorario = this.horarios[i].dia.split(', ');
-      const todosFuera = diasHorario.every((d: string) => !dias.includes(d));
-      if (todosFuera) {
-        this.horarios.splice(i, 1);
-      } else {
-        const diasFiltrados = diasHorario.filter((d: string) => dias.includes(d));
-        this.horarios[i].dia = this.ordenarDias(diasFiltrados.join(', '));
-      }
-    }
+    const turnos = this.selectedShift;
+    const horariosActualizados = this.horarios.filter((h) => {
+      const diasHorario = h.dia.split(', ');
+      return diasHorario.some((d: string) => dias.includes(d)) && turnos.includes(h.turno);
+    }).map((h) => ({
+      ...h,
+      dia: this.ordenarDias(h.dia.split(', ').filter((d: string) => dias.includes(d)).join(', '))
+    }));
+
+    const existentes = new Set(horariosActualizados.map(h => `${h.dia}::${h.turno}`));
     for (const dia of dias) {
-      if (!this.horarios.some(h => h.dia.split(', ').includes(dia))) {
-        const turno = this.selectedShift[this.selectedShift.length - 1] || '';
-        this.horarios.push({ dia, turno, inicio: '', fin: '' });
+      for (const turno of turnos) {
+        const key = `${this.ordenarDias(dia)}::${turno}`;
+        if (!existentes.has(key)) {
+          horariosActualizados.push({ dia, turno, inicio: '', fin: '' });
+        }
       }
     }
+
+    this.formState.state.profile.horarios = horariosActualizados;
+    this.errorHorario = this.horarios.some(h => h.inicio && h.fin && h.inicio >= h.fin) ? 'La hora de salida debe ser mayor a la hora de entrada.' : '';
   }
 
   onHorarioChange(index: number): void {
@@ -177,13 +220,18 @@ export class Perfil implements OnInit, OnDestroy {
     }
   }
 
-  getHorasTurno(turno: string): string[] {
-    switch (turno) {
-      case 'Mañana': return this.shiftHours['Mañana'];
-      case 'Tarde': return this.shiftHours['Tarde'];
-      case 'Noche': return this.shiftHours['Noche'];
-      default: return [];
-    }
+  getHorasTurno(turno: string, inicio = ''): string[] {
+    const horas = (() => {
+      switch (turno) {
+        case 'Mañana': return this.shiftHours['Mañana'];
+        case 'Tarde': return this.shiftHours['Tarde'];
+        case 'Noche': return this.shiftHours['Noche'];
+        default: return [];
+      }
+    })();
+
+    if (!inicio) return horas;
+    return horas.filter(h => h > inicio);
   }
 
   formatHour(time: string): string {

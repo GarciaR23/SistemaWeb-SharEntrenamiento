@@ -95,14 +95,17 @@
 
     @if (!cargando && sedes.length === 0) {
       <section class="sede-empty">
+        <div class="empty-icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 10.5 12 3l9 7.5"></path>
+            <path d="M5 9.5V21h14V9.5"></path>
+            <path d="M9 21v-6h6v6"></path>
+          </svg>
+        </div>
         <h2>No tienes sedes registradas</h2>
         <p>
           Registra al menos tres sedes para poder aparecer en el catálogo de instructores.
         </p>
-        <button type="button" class="btn-add-sede" (click)="abrirModal()">
-          <span>+</span>
-          Agregar primera sede
-        </button>
       </section>
     }
   </section>
@@ -116,57 +119,71 @@
           <p>Ingresa los detalles para habilitar un nuevo centro de entrenamiento.</p>
         </header>
 
-        <form class="sede-form" (ngSubmit)="guardarSede()">
-          <label>
-            <span>Nombre de la Sede</span>
-            <input type="text" name="nombreSede" placeholder="Ej: Centro de Entrenamiento Lima Norte"
-              [(ngModel)]="nuevaSede.nombreSede" required />
-          </label>
-          <label>
-            <span>Zona de la Sede</span>
-            <select name="zonaSede" [(ngModel)]="nuevaSede.zonaSede" required>
-              <option value="">Selecciona una zona</option>
-              @for (zona of zonas; track zona) {
-                <option [value]="zona">
-                  {{ zona }}
-                </option>
-              }
-            </select>
-          </label>
-          <label>
-            <span>Distrito</span>
-            <select name="distritoSede" [(ngModel)]="nuevaSede.distritoSede" required>
-              <option value="">Selecciona un distrito</option>
-              @for (distrito of distritos; track distrito) {
-                <option [value]="distrito">
-                  {{ distrito | lowercase | titlecase }}
-                </option>
-              }
-            </select>
-          </label>
-          <label>
-            <span>Dirección Exacta</span>
-            <input type="text" name="direccionSede" placeholder="Ej: Av. Javier Prado Este 1234, Oficina 502"
-              [(ngModel)]="nuevaSede.direccionSede" required />
+        <form class="sede-form" [formGroup]="sedeFormGroup" (ngSubmit)="guardarSede()">
+          <div class="sede-form-grid">
+            <label class="sede-field sede-field-left">
+              <span>Nombre de la Sede</span>
+              <input type="text" formControlName="nombreSede" placeholder="Ej: Centro de Entrenamiento Lima Norte"
+                [class.input-invalid]="campoInvalido('nombreSede')"
+                required />
             </label>
-            <label>
-              <span>Descripción de la Sede</span>
-              <textarea name="descripcionSede"
-                placeholder="Describe las instalaciones, horarios de acceso y puntos de referencia..."
-              [(ngModel)]="nuevaSede.descripcionSede" required></textarea>
+            <label class="sede-field sede-field-right">
+              <span>Zona de la Sede</span>
+              <select formControlName="zonaSede"
+                [class.select-invalid]="campoInvalido('zonaSede')" required>
+                <option value="">Selecciona una zona</option>
+                @for (zona of zonas; track zona) {
+                  <option [value]="zona">
+                    {{ zona }}
+                  </option>
+                }
+              </select>
             </label>
-            <div>
-              <span>Galería de Imágenes</span>
+            <label class="sede-field sede-field-left">
+              <span>Distrito</span>
+              <select formControlName="distritoSede"
+                [class.select-invalid]="campoInvalido('distritoSede')" required>
+                <option value="">Selecciona un distrito</option>
+                @for (distrito of distritos; track distrito) {
+                  <option [value]="distrito">
+                    {{ distrito | lowercase | titlecase }}
+                  </option>
+                }
+              </select>
+            </label>
+            <label class="sede-field sede-field-right">
+              <span>Dirección Exacta</span>
+              <input type="text" formControlName="direccionSede" placeholder="Ej: Av. Javier Prado Este 1234, Oficina 502"
+                [class.input-invalid]="campoInvalido('direccionSede')"
+                required />
+            </label>
+          </div>
+
+          <label class="sede-field sede-field-full">
+            <span>Descripción de la Sede</span>
+            <textarea formControlName="descripcionSede"
+              placeholder="Describe las instalaciones, horarios de acceso y puntos de referencia..."
+              [class.textarea-invalid]="campoInvalido('descripcionSede')"
+              required></textarea>
+            <div class="description-meta">
+              <div class="description-counter" [class.description-counter-error]="campoInvalido('descripcionSede')">
+                {{ caracteresDescripcion }}/40 caracteres
+              </div>
+            </div>
+          </label>
+            <div class="upload-section">
+              <span class="upload-section-title">Galería de Imágenes</span>
               @if (archivosConPreview.length === 0) {
-                <div class="upload-box" (click)="fileInput.click()" style="cursor: pointer;">
-                  <div class="upload-icon"><img src="assets/icons/Icon_camara.png" alt="Camara"></div>
-                  <strong>Sube al menos 3 fotos de la sede</strong>
-                  <!-- Imágenes -->
-                  <div class="file-label-modern">
-                    <input #fileInput type="file" accept="image/*" multiple (change)="onImagenesSedeChange($event)" hidden />
-                    <span class="upload-title">
-                      Arrastra y suelta tus archivos aquí o haz clic para explorar. Aceptamos JPG, PNG y WEBP.
-                    </span>
+                <div class="upload-card" [class.upload-card-invalid]="campoInvalido('imagenes')" (click)="fileInput.click()" style="cursor: pointer;">
+                  <div class="upload-box">
+                    <div class="upload-icon"><img src="assets/icons/Icon_camara.png" alt="Camara"></div>
+                    <p class="upload-heading">Sube al menos 3 fotos de la sede</p>
+                    <div class="file-label-modern">
+                      <input #fileInput type="file" accept="image/*" multiple (change)="onImagenesSedeChange($event)" hidden />
+                      <span class="upload-title">
+                        Arrastra y suelta tus archivos aquí o haz clic para explorar. Aceptamos JPG, PNG y WEBP.
+                      </span>
+                    </div>
                   </div>
                 </div>
               }
@@ -194,14 +211,6 @@
                             <circle cx="12" cy="12" r="3" />
                           </svg>
                         </button>
-                        <button type="button" class="btn-action-neon btn-approve" [class.selected]="preview.estado === 'aceptado'"
-                          (click)="marcarEstadoImagen(i, 'aceptado')" title="Aceptar Imagen">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" class="icon-check">
-                            <circle cx="12" cy="12" r="10" />
-                            <path d="m9 12 2 2 4-4" />
-                          </svg>
-                        </button>
                         <button type="button" class="btn-action-neon btn-reject" [class.selected]="preview.estado === 'rechazado'"
                           (click)="marcarEstadoImagen(i, 'rechazado')" title="Rechazar/Eliminar">
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -215,26 +224,16 @@
                     }
 
                     @if (archivosConPreview.length < 3) {
-                      <div class="upload-box" (click)="fileInputAdd.click()" style="cursor: pointer; margin-top: 10px; padding: 15px;">
+                      <div class="upload-card upload-card-inline" (click)="fileInputAdd.click()" style="cursor: pointer; margin-top: 10px;">
                         <input #fileInputAdd type="file" accept="image/*" multiple (change)="onImagenesSedeChange($event)" hidden />
-                        <strong style="font-size: 14px;">Agregar más fotos ({{ archivosConPreview.length }}/3)</strong>
+                        <div class="upload-box upload-box-inline">
+                          <p class="upload-heading upload-heading-inline">Agregar más fotos ({{ archivosConPreview.length }}/3)</p>
+                        </div>
                       </div>
                     }
                 </div>
               }
             </div>
-            <div class="modal-note">
-              <svg class="note-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-              </svg>
-              <p class="modal-help">
-                Las fotos ayudan a los usuarios a reconocer el lugar y mejoran la tasa de reserva.
-              </p>
-            </div>
-
             @if (mensajeErrorModal) {
               <div class="sede-alert sede-alert-error" style="margin-bottom: 20px;">
                 {{ mensajeErrorModal }}
@@ -293,5 +292,24 @@
             </button>
           }
         </div>
+      </div>
+    }
+
+    @if (modalExitoAbierto) {
+      <div class="modal-backdrop">
+        <section class="sede-modal modal-success">
+          <div class="success-content">
+            <div class="success-icon">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <h2 class="success-title">¡Sede Registrada Exitosamente!</h2>
+            <p class="success-message">Tu nueva sede ha sido creada y agregada al sistema.</p>
+            <div class="success-timer">
+              <p>Cerrando en 3 segundos...</p>
+            </div>
+          </div>
+        </section>
       </div>
     }

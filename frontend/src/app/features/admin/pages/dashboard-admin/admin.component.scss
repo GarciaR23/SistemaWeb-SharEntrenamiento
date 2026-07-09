@@ -13,6 +13,8 @@
     margin: 0 auto;
     width: 100%;
     color: var.$color-text-primary;
+    font-size: 15px;
+    /* ligeramente menor que el sidebar para equilibrio */
     box-sizing: border-box;
     padding: var.$spacing-md var.$spacing-xl var.$spacing-2xl var.$spacing-xl;
 
@@ -53,7 +55,7 @@ h3 {
 
 .dashboard-header {
     h1 {
-        font-size: var.$font-size-3xl;
+        font-size: 60px;
         letter-spacing: -0.5px;
         margin-bottom: var.$spacing-sm;
         margin-top: 0;
@@ -61,8 +63,9 @@ h3 {
 
     p {
         color: var.$color-text-secondary;
-        font-size: 15px;
-        max-width: 800px;
+        font-size: 14px;
+        /* ligeramente menor para equilibrio */
+        max-width: 700px;
         line-height: 1.5;
         margin-bottom: var.$spacing-2xl;
     }
@@ -71,7 +74,7 @@ h3 {
 /* Grid de Tarjetas Superiores */
 .cards-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: var.$spacing-lg;
     margin-bottom: var.$spacing-xl;
 }
@@ -224,9 +227,14 @@ h3 {
 .toolbar-actions {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     gap: var.$spacing-md;
     margin-bottom: var.$spacing-lg;
-    align-items: center;
+    flex-wrap: wrap;
+}
+
+.toolbar-actions .btn-export {
+    margin-left: 12px;
 }
 
 .date-picker-mock {
@@ -237,24 +245,23 @@ h3 {
     background: var.$color-bg-card;
     border: 1px solid var.$color-border;
     border-radius: var.$border-radius-md;
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 360px;
+    width: auto;
 }
 
 .date-field {
     display: flex;
     align-items: center;
     gap: 6px;
-}
-
-.calendar-icon {
-    width: 15px;
-    height: 15px;
-    color: var.$color-text-secondary;
-    cursor: pointer;
+    flex: 0 1 auto;
     flex-shrink: 0;
 }
 
 .date-input {
-    width: 80px;
+    width: 100%;
+    max-width: 130px;
     background: transparent;
     border: none;
     outline: none;
@@ -268,6 +275,23 @@ h3 {
         inset: 0;
         cursor: pointer;
     }
+}
+
+.btn-export {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var.$color-primary;
+    color: #06131c;
+    border: none;
+    border-radius: var.$border-radius-full;
+    padding: 10px 16px;
+    min-width: 140px;
+    height: 42px;
+    font-size: 13px;
+    font-weight: var.$font-weight-semibold;
+    cursor: pointer;
+    transition: opacity var.$transition-fast;
 }
 
 .date-separator {
@@ -296,13 +320,45 @@ h3 {
 /* Grid Inferior de Métricas */
 .analytics-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: var.$spacing-lg;
 }
 
 @media (max-width: var.$breakpoint-lg) {
     .analytics-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: var.$breakpoint-md) {
+    .dashboard-header h1 {
+        font-size: 42px;
+    }
+
+    .dashboard-header p {
+        max-width: 100%;
+    }
+
+    .card {
+        padding: var.$spacing-lg;
+    }
+
+    .card h2 {
+        font-size: 18px;
+    }
+
+    .toolbar-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .date-picker-mock,
+    .btn-export {
+        width: 100%;
+    }
+
+    .date-field {
+        width: 100%;
     }
 }
 

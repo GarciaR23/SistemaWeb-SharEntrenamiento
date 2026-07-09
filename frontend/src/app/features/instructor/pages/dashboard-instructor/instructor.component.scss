@@ -17,13 +17,13 @@ $border-color: #30363d;
 .welcome-banner {
   background: linear-gradient(135deg, #162635 0%, #113636 100%);
   border-radius: 16px;
-  padding: 32px 40px;
+  padding: 60px 50px;
   margin-bottom: 24px;
   position: relative;
   overflow: hidden;
 
   h1 {
-    font-size: 28px;
+    font-size: 50px;
     font-weight: 700;
     margin: 0 0 8px 0;
     color: #fff;
@@ -34,7 +34,7 @@ $border-color: #30363d;
   }
 
   p {
-    font-size: 15px;
+    font-size: 18px;
     color: #a3b8cc;
     margin: 0;
   }

@@ -9,6 +9,14 @@
     background-color: #0c0f17;
 }
 
+.workspace-layout.mobile-sidebar-open {
+    overflow: hidden;
+}
+
+.sidebar-backdrop {
+    display: none;
+}
+
 .workspace-body {
     flex: 1;
     display: flex;
@@ -22,4 +30,35 @@
     overflow-y: auto;
     padding: 32px;
     box-sizing: border-box;
+}
+
+@media (max-width: $breakpoint-md) {
+    .workspace-layout {
+        display: block;
+        position: relative;
+        width: 100%;
+        min-height: 100vh;
+    }
+
+    .workspace-body {
+        width: 100%;
+        min-height: 100vh;
+    }
+
+    .admin-workspace {
+        padding: 20px 16px;
+    }
+
+    .sidebar-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 105;
+    }
+
+    .panel-header-container {
+        position: relative;
+        z-index: 110;
+    }
 }

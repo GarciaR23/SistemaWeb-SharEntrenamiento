@@ -4,14 +4,14 @@ import { SedeService } from '../../services/sede.service';
 import { AuthApiService } from '../../../../core/services/auth-api.service';
 import { Location as LocationService } from '../../../../shared/services/location.service';
 
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { FileService } from '../../../../core/services/file.service';
 import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-sede',
-  imports: [FormsModule, CommonModule],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule],
   templateUrl: './sede.component.html',
   styleUrls: ['./sede.component.scss'],
 })
@@ -20,8 +20,10 @@ export class Sede implements OnInit, OnDestroy {
   private authApiService = inject(AuthApiService);
   private locationService = inject(LocationService);
   private fileService = inject(FileService);
+  private fb = inject(FormBuilder);
 
   private carouselInterval: any;
+  sedeFormGroup!: FormGroup;
 
   sedes: SedeResponse[] = [];
   sedesOriginales: SedeResponse[] = [];
@@ -38,14 +40,17 @@ export class Sede implements OnInit, OnDestroy {
   cargando = false;
   guardando = false;
   modalAbierto = false;
+  modalExitoAbierto = false;
 
   mensajeInfo = '';
   mensajeError = '';
   mensajeErrorModal = '';
 
-  nuevaSede: SedeRequest = this.obtenerFormularioInicial();
+  intentoEnviar = false;
 
   ngOnInit(): void {
+    this.inicializarFormulario();
+    
     const user = this.authApiService.getSesionActiva()?.usuario;
     this.idInstructor = user?.idInstructor ?? null;
 
@@ -54,10 +59,42 @@ export class Sede implements OnInit, OnDestroy {
       return;
     }
 
-    this.nuevaSede = this.obtenerFormularioInicial();
     this.cargarSedes();
     this.cargarDistritos();
     this.iniciarCarrusel();
+  }
+
+  private inicializarFormulario(): void {
+    this.sedeFormGroup = this.fb.group({
+      zonaSede: ['', Validators.required],
+      nombreSede: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(100),
+          Validators.pattern(/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9 .,-]+$/)
+        ]
+      ],
+      distritoSede: ['', Validators.required],
+      direccionSede: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(5),
+          Validators.maxLength(150),
+          Validators.pattern(/^[A-Za-zÁÉÍÓÚáéíóúÑñ0-9#./,\-\s]+$/)
+        ]
+      ],
+      descripcionSede: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(40),
+          Validators.pattern(/^[\p{L}\p{N}\s.,;:()\-]+$/u)
+        ]
+      ]
+    });
   }
 
   ngOnDestroy(): void {
@@ -131,9 +168,10 @@ export class Sede implements OnInit, OnDestroy {
   }
 
   abrirModal(): void {
-    this.nuevaSede = this.obtenerFormularioInicial();
+    this.sedeFormGroup.reset();
     this.mensajeError = '';
     this.mensajeErrorModal = '';
+    this.intentoEnviar = false;
     this.nombresImagenes = '';
     this.archivosSeleccionados = [];
     this.archivosConPreview.forEach(a => URL.revokeObjectURL(a.url));
@@ -141,21 +179,25 @@ export class Sede implements OnInit, OnDestroy {
     this.modalAbierto = true;
   }
 
-  cerrarModal(): void { this.modalAbierto = false; }
+  cerrarModal(): void { this.modalAbierto = false; this.modalExitoAbierto = false; }
 
   async guardarSede(): Promise<void> {
-    if (!this.idInstructor) { this.mensajeErrorModal = 'No se encontró el instructor asociado a la sesión actual.'; return; }
-    if (!this.nuevaSede.zonaSede.trim() || !this.nuevaSede.nombreSede.trim() || !this.nuevaSede.distritoSede.trim() || !this.nuevaSede.direccionSede.trim() || !this.nuevaSede.descripcionSede.trim()) {
-      this.mensajeErrorModal = 'Completa todos los campos requeridos.'; return;
+    if (!this.idInstructor) { 
+      this.mensajeErrorModal = 'No se encontró el instructor asociado a la sesión actual.'; 
+      return; 
     }
 
-    const wordCount = this.nuevaSede.descripcionSede.trim().split(/\s+/).filter(w => w.length > 0).length;
-    if (wordCount < 40) {
-      this.mensajeErrorModal = 'La descripción de la sede debe tener al menos 40 palabras.';
+    this.intentoEnviar = true;
+
+    if (this.sedeFormGroup.invalid) {
+      this.mensajeErrorModal = 'Corrige los campos marcados en rojo.'; 
       return;
     }
 
-    if (this.archivosSeleccionados.length !== 3) { this.mensajeErrorModal = 'Debes tener exactamente 3 imágenes aprobadas.'; return; }
+    if (this.archivosSeleccionados.length !== 3) { 
+      this.mensajeErrorModal = 'Debes tener exactamente 3 imágenes aprobadas.'; 
+      return; 
+    }
 
     this.guardando = true;
     this.mensajeErrorModal = '';
@@ -167,13 +209,14 @@ export class Sede implements OnInit, OnDestroy {
         urls.push(response.url);
       }
 
+      const formValue = this.sedeFormGroup.value;
       const request: SedeRequest = {
         idInstructor: this.idInstructor,
-        zonaSede: this.nuevaSede.zonaSede,
-        nombreSede: this.nuevaSede.nombreSede,
-        distritoSede: this.nuevaSede.distritoSede,
-        direccionSede: this.nuevaSede.direccionSede,
-        descripcionSede: this.nuevaSede.descripcionSede,
+        zonaSede: formValue.zonaSede,
+        nombreSede: formValue.nombreSede,
+        distritoSede: formValue.distritoSede,
+        direccionSede: formValue.direccionSede,
+        descripcionSede: formValue.descripcionSede,
         estadoActivacion: true,
         urlImagenSede1: urls[0] ?? '',
         urlImagenSede2: urls[1] ?? '',
@@ -181,11 +224,17 @@ export class Sede implements OnInit, OnDestroy {
       };
 
       await firstValueFrom(this.sedeService.crearSede(request));
-      this.cerrarModal();
-      this.cargarSedes();
-    } catch (error) {
+      this.modalExitoAbierto = true;
+      setTimeout(() => {
+        this.modalExitoAbierto = false;
+        this.cerrarModal();
+        this.cargarSedes();
+      }, 3000);
+    } catch (error: any) {
       console.error(error);
-      this.mensajeError = 'No se pudo registrar la sede.';
+      const mensajeBackend = error?.error?.message || error?.message || 'No se pudo registrar la sede.';
+      this.mensajeErrorModal = mensajeBackend;
+      this.mensajeError = mensajeBackend;
     } finally {
       this.guardando = false;
     }
@@ -216,15 +265,62 @@ export class Sede implements OnInit, OnDestroy {
     });
   }
 
+  get nombreSede() {
+    return this.sedeFormGroup.get('nombreSede');
+  }
+
+  get direccionSede() {
+    return this.sedeFormGroup.get('direccionSede');
+  }
+
+  get descripcionSede() {
+    return this.sedeFormGroup.get('descripcionSede');
+  }
+
+  get zonaSede() {
+    return this.sedeFormGroup.get('zonaSede');
+  }
+
+  get distritoSede() {
+    return this.sedeFormGroup.get('distritoSede');
+  }
+
+  obtenerMensajeErrorNombre(): string {
+    const control = this.nombreSede;
+    if (!control || !control.errors) return '';
+    if (control.errors['required']) return 'El nombre de la sede es requerido';
+    if (control.errors['minlength']) return 'El nombre debe tener al menos 3 caracteres';
+    if (control.errors['maxlength']) return 'El nombre no puede exceder 100 caracteres';
+    if (control.errors['pattern']) return 'Permitidos: letras, números, espacios, puntos, comas y guiones';
+    return '';
+  }
+
+  obtenerMensajeErrorDireccion(): string {
+    const control = this.direccionSede;
+    if (!control || !control.errors) return '';
+    if (control.errors['required']) return 'La dirección es requerida';
+    if (control.errors['minlength']) return 'La dirección debe tener al menos 5 caracteres';
+    if (control.errors['maxlength']) return 'La dirección no puede exceder 150 caracteres';
+    if (control.errors['pattern']) return 'Caracteres permitidos: letras, números, espacios y #, ., ,, -, /';
+    return '';
+  }
+
+  obtenerMensajeErrorDescripcion(): string {
+    const control = this.descripcionSede;
+    if (!control || !control.errors) return '';
+    if (control.errors['required']) return 'La descripción es requerida';
+    if (control.errors['maxlength']) return 'La descripción no puede exceder 40 caracteres';
+    if (control.errors['pattern']) return 'La descripción contiene caracteres no permitidos';
+    return '';
+  }
+
   formularioValido(): boolean {
-    return Boolean(
-      this.nuevaSede.zonaSede.trim() &&
-      this.nuevaSede.nombreSede.trim() &&
-      this.nuevaSede.distritoSede.trim() &&
-      this.nuevaSede.direccionSede.trim() &&
-      this.nuevaSede.descripcionSede.trim() &&
-      this.archivosSeleccionados.length === 3,
-    );
+    return this.sedeFormGroup.valid && this.archivosSeleccionados.length === 3;
+  }
+
+  campoInvalido(campo: string): boolean {
+    const control = this.sedeFormGroup.get(campo);
+    return Boolean(control && control.invalid && (control.dirty || control.touched || this.intentoEnviar));
   }
 
   indicesImagenes: Record<number, number> = {};
@@ -246,13 +342,9 @@ export class Sede implements OnInit, OnDestroy {
     return this.indicesImagenes[sede.idSede] || 0;
   }
 
-  private obtenerFormularioInicial(): SedeRequest {
-    return {
-      idInstructor: this.idInstructor ?? 0,
-      zonaSede: '', nombreSede: '',
-      urlImagenSede1: '', urlImagenSede2: '', urlImagenSede3: '',
-      descripcionSede: '', direccionSede: '', distritoSede: '', estadoActivacion: true,
-    };
+  get caracteresDescripcion(): number {
+    const valor = this.descripcionSede?.value ?? '';
+    return valor.trim().length;
   }
 
   private actualizarMensajeInicial(): void {
@@ -288,7 +380,7 @@ export class Sede implements OnInit, OnDestroy {
       if (this.archivosConPreview.length < 3) {
         if (!this.archivosConPreview.some(f => f.file.name === file.name)) {
           const url = URL.createObjectURL(file);
-          this.archivosConPreview.push({ file, url, estado: 'pendiente' });
+          this.archivosConPreview.push({ file, url, estado: 'aceptado' });
         }
       } else {
         this.mensajeErrorModal = 'Solo puedes subir máximo 3 imágenes.';
@@ -310,7 +402,6 @@ export class Sede implements OnInit, OnDestroy {
       this.actualizarArchivosSeleccionados();
   }
 
-  // ====== Mini-panel / modal de previsualización de imágenes ======
   previewImagenAbierto = false;
   previewImagenIndex = 0;
 

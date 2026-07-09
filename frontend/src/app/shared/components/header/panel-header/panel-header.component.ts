@@ -16,6 +16,7 @@ export class PanelHeaderComponent implements OnInit {
 
     showDropdown = false;
     fotoPerfil: string = 'assets/icons/default-avatar.png';
+    @Output() menuToggle = new EventEmitter<void>();
 
     constructor(
         private elementRef: ElementRef,

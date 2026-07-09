@@ -48,7 +48,7 @@
   display: grid;
   gap: 10px;
   font-size: 0.85rem;
-  color: #00e2b5;
+  color: #94A3B8;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-weight: 600;
@@ -89,6 +89,33 @@
 
 .input-wrapper input::placeholder {
   color: #3b4554;
+}
+
+.field-error {
+  color: #ff7a7a;
+  font-size: 0.82rem;
+  margin-top: 6px;
+  padding-left: 4px;
+  min-height: 20px;
+  font-weight: 500;
+  animation: fadeInUp 180ms ease;
+}
+
+.input-wrapper:has(input.ng-invalid.ng-touched) {
+  border: 1px solid #ff6a6a;
+  box-shadow: 0 0 0 3px rgba(255, 106, 106, 0.1);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modal-overlay {
