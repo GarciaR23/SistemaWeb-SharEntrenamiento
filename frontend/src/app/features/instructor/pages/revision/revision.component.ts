@@ -2,20 +2,17 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-bitacora',
+  selector: 'app-revision',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './bitacora.component.html',
-  styleUrls: ['./bitacora.component.scss'],
+  templateUrl: './revision.component.html',
+  styleUrls: ['./revision.component.scss'],
 })
-export class BitacoraComponent {
+export class RevisionComponent {
    alertas = [
     {
-      texto: '3 solicitudes llevan más de 48 horas pendientes de revisión.'
+      texto: '3 cruces de horario detectados.'
     },
-    {
-      texto: 'Se detectó documentación incompleta en una solicitud.'
-    }
   ];
 
   ultimaActualizacion = '08/07/2026 - 10:45 AM';

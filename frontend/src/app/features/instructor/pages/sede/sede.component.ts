@@ -41,16 +41,18 @@ export class Sede implements OnInit, OnDestroy {
   guardando = false;
   modalAbierto = false;
   modalExitoAbierto = false;
+  modalAdvertenciaAbierto = false;
 
   mensajeInfo = '';
   mensajeError = '';
   mensajeErrorModal = '';
+  mensajeAdvertencia = '';
 
   intentoEnviar = false;
 
   ngOnInit(): void {
     this.inicializarFormulario();
-    
+
     const user = this.authApiService.getSesionActiva()?.usuario;
     this.idInstructor = user?.idInstructor ?? null;
 
@@ -127,9 +129,9 @@ export class Sede implements OnInit, OnDestroy {
   ];
 
   private toTitleCase(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/\b\w/g, c => c.toUpperCase());
+    return text
+      .toLowerCase()
+      .replace(/\b\w/g, c => c.toUpperCase());
   }
 
   cargarDistritos(): void {
@@ -152,12 +154,16 @@ export class Sede implements OnInit, OnDestroy {
     this.mensajeError = '';
     this.sedeService.listarPorInstructor(this.idInstructor).subscribe({
       next: (sedes) => {
-        this.sedesOriginales = sedes;
-        this.sedes = sedes;
+        const ordenadas = [...sedes].sort((a, b) => {
+          if (a.estadoActivacion === b.estadoActivacion) return 0;
+          return a.estadoActivacion ? -1 : 1;
+        });
+        this.sedesOriginales = ordenadas;
+        this.sedes = ordenadas;
         this.actualizarMensajeInicial();
         this.cargando = false;
         if (this.busqueda || this.distritoFiltro) {
-           this.filtrar();
+          this.filtrar();
         }
       },
       error: () => {
@@ -167,7 +173,17 @@ export class Sede implements OnInit, OnDestroy {
     });
   }
 
+  private contarSedesActivas(): number {
+    return this.sedesOriginales.filter(s => s.estadoActivacion).length;
+  }
+
   abrirModal(): void {
+    if (this.contarSedesActivas() >= 3) {
+      this.mensajeAdvertencia = 'Ya tienes 3 sedes activas. Debes desactivar una antes de añadir una nueva.';
+      this.modalAdvertenciaAbierto = true;
+      return;
+    }
+
     this.sedeFormGroup.reset();
     this.mensajeError = '';
     this.mensajeErrorModal = '';
@@ -179,24 +195,32 @@ export class Sede implements OnInit, OnDestroy {
     this.modalAbierto = true;
   }
 
-  cerrarModal(): void { this.modalAbierto = false; this.modalExitoAbierto = false; }
+  cerrarModal(): void {
+    this.modalAbierto = false;
+    this.modalExitoAbierto = false;
+  }
+
+  cerrarModalAdvertencia(): void {
+    this.modalAdvertenciaAbierto = false;
+    this.mensajeAdvertencia = '';
+  }
 
   async guardarSede(): Promise<void> {
-    if (!this.idInstructor) { 
-      this.mensajeErrorModal = 'No se encontró el instructor asociado a la sesión actual.'; 
-      return; 
+    if (!this.idInstructor) {
+      this.mensajeErrorModal = 'No se encontró el instructor asociado a la sesión actual.';
+      return;
     }
 
     this.intentoEnviar = true;
 
     if (this.sedeFormGroup.invalid) {
-      this.mensajeErrorModal = 'Corrige los campos marcados en rojo.'; 
+      this.mensajeErrorModal = 'Corrige los campos marcados en rojo.';
       return;
     }
 
-    if (this.archivosSeleccionados.length !== 3) { 
-      this.mensajeErrorModal = 'Debes tener exactamente 3 imágenes aprobadas.'; 
-      return; 
+    if (this.archivosSeleccionados.length !== 3) {
+      this.mensajeErrorModal = 'Debes tener exactamente 3 imágenes aprobadas.';
+      return;
     }
 
     this.guardando = true;
@@ -241,10 +265,28 @@ export class Sede implements OnInit, OnDestroy {
   }
 
   cambiarEstado(sede: SedeResponse): void {
+    // Si está intentando ACTIVAR una sede inactiva y ya hay 3 activas
+    if (!sede.estadoActivacion && this.contarSedesActivas() >= 3) {
+      this.mensajeAdvertencia = 'Ya tienes 3 sedes activas. Debes desactivar una antes de activar otra.';
+      this.modalAdvertenciaAbierto = true;
+      return;
+    }
+
     const nuevoEstado = !sede.estadoActivacion;
     this.sedeService.actualizarEstado(sede.idSede, nuevoEstado).subscribe({
-      next: (sedeActualizada) => { sede.estadoActivacion = sedeActualizada.estadoActivacion; },
-      error: () => { this.mensajeError = 'No se pudo actualizar el estado de la sede.'; },
+      next: (sedeActualizada) => {
+        sede.estadoActivacion = sedeActualizada.estadoActivacion;
+        // Reordenar después de cambiar estado
+        const ordenadas = [...this.sedesOriginales].sort((a, b) => {
+          if (a.estadoActivacion === b.estadoActivacion) return 0;
+          return a.estadoActivacion ? -1 : 1;
+        });
+        this.sedesOriginales = ordenadas;
+        this.filtrar();
+      },
+      error: () => {
+        this.mensajeError = 'No se pudo actualizar el estado de la sede.';
+      },
     });
   }
 
@@ -256,8 +298,8 @@ export class Sede implements OnInit, OnDestroy {
 
     this.sedes = this.sedesOriginales.filter(sede => {
       const matchTexto = texto.length === 0 ||
-                         (sede.nombreCard && sede.nombreCard.toLowerCase().includes(texto)) ||
-                         (sede.direccionSede && sede.direccionSede.toLowerCase().includes(texto));
+        (sede.nombreCard && sede.nombreCard.toLowerCase().includes(texto)) ||
+        (sede.direccionSede && sede.direccionSede.toLowerCase().includes(texto));
 
       const matchDistrito = !distrito || sede.distritoSede === distrito;
 
@@ -393,13 +435,13 @@ export class Sede implements OnInit, OnDestroy {
   }
 
   marcarEstadoImagen(index: number, estado: 'aceptado' | 'rechazado') {
-      if (estado === 'rechazado') {
-          URL.revokeObjectURL(this.archivosConPreview[index].url);
-          this.archivosConPreview.splice(index, 1);
-      } else {
-          this.archivosConPreview[index].estado = estado;
-      }
-      this.actualizarArchivosSeleccionados();
+    if (estado === 'rechazado') {
+      URL.revokeObjectURL(this.archivosConPreview[index].url);
+      this.archivosConPreview.splice(index, 1);
+    } else {
+      this.archivosConPreview[index].estado = estado;
+    }
+    this.actualizarArchivosSeleccionados();
   }
 
   previewImagenAbierto = false;
@@ -462,7 +504,7 @@ export class Sede implements OnInit, OnDestroy {
   }
 
   actualizarArchivosSeleccionados() {
-      this.archivosSeleccionados = this.archivosConPreview.filter(a => a.estado === 'aceptado').map(a => a.file);
-      this.nombresImagenes = this.archivosSeleccionados.map((file) => file.name).join(', ');
+    this.archivosSeleccionados = this.archivosConPreview.filter(a => a.estado === 'aceptado').map(a => a.file);
+    this.nombresImagenes = this.archivosSeleccionados.map((file) => file.name).join(', ');
   }
 }

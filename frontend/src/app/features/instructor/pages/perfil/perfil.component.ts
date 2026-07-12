@@ -23,9 +23,10 @@ export class Perfil implements OnInit, OnDestroy {
 
   showValidationModal = false;
   validationMissingFields: string[] = [];
-  errorHorario = '';
-  readonly bioMaxLength = 500;
+  errorHorario: string = '';
   private subscription?: Subscription;
+
+  readonly bioMaxLength = 500;
 
   distritosFallback: string[] = [
     'Ate', 'Barranco', 'Breña', 'Callao', 'Chorrillos', 'Comas',
@@ -35,6 +36,12 @@ export class Perfil implements OnInit, OnDestroy {
     'San Martín de Porres', 'San Miguel', 'Santa Anita',
     'Santiago de Surco', 'Surquillo', 'Villa El Salvador', 'Villa María del Triunfo'
   ];
+
+  private readonly fieldLabels: Record<string, string> = {
+    fullName: 'Nombre completo', specialty: 'Especialidad', district: 'Distrito',
+    address: 'Dirección', rate: 'Tarifa por hora', selectedShift: 'Horario disponible',
+    selectedDay: 'Días disponibles', bio: 'Biografía profesional'
+  };
 
   readonly availableDays = [
     { code: 'L', label: 'L' }, { code: 'M', label: 'M' }, { code: 'Mi', label: 'Mi' },
@@ -103,6 +110,13 @@ export class Perfil implements OnInit, OnDestroy {
   isShiftActive(shift: string): boolean { return this.selectedShift.includes(shift); }
   isDayActive(day: string): boolean { return this.selectedDay.includes(day); }
   isInvalid(field: string): boolean { const c = this.profileForm.get(field); return !!c && c.invalid && c.touched; }
+
+  fieldError(field: string): string | null {
+    const c = this.profileForm.get(field);
+    if (!c?.touched || !c?.invalid) return null;
+    if (c.hasError('required')) return `${this.fieldLabels[field] ?? field} es obligatorio.`;
+    return null;
+  }
 
   private arrayRequired(control: AbstractControl): Record<string, boolean> | null {
     const v = control.value; return Array.isArray(v) && v.length ? null : { required: true };
@@ -175,27 +189,22 @@ export class Perfil implements OnInit, OnDestroy {
 
   sincronizarHorariosConDias(): void {
     const dias = this.selectedDay;
-    const turnos = this.selectedShift;
-    const horariosActualizados = this.horarios.filter((h) => {
-      const diasHorario = h.dia.split(', ');
-      return diasHorario.some((d: string) => dias.includes(d)) && turnos.includes(h.turno);
-    }).map((h) => ({
-      ...h,
-      dia: this.ordenarDias(h.dia.split(', ').filter((d: string) => dias.includes(d)).join(', '))
-    }));
-
-    const existentes = new Set(horariosActualizados.map(h => `${h.dia}::${h.turno}`));
-    for (const dia of dias) {
-      for (const turno of turnos) {
-        const key = `${this.ordenarDias(dia)}::${turno}`;
-        if (!existentes.has(key)) {
-          horariosActualizados.push({ dia, turno, inicio: '', fin: '' });
-        }
+    for (let i = this.horarios.length - 1; i >= 0; i--) {
+      const diasHorario = this.horarios[i].dia.split(', ');
+      const todosFuera = diasHorario.every((d: string) => !dias.includes(d));
+      if (todosFuera) {
+        this.horarios.splice(i, 1);
+      } else {
+        const diasFiltrados = diasHorario.filter((d: string) => dias.includes(d));
+        this.horarios[i].dia = this.ordenarDias(diasFiltrados.join(', '));
       }
     }
-
-    this.formState.state.profile.horarios = horariosActualizados;
-    this.errorHorario = this.horarios.some(h => h.inicio && h.fin && h.inicio >= h.fin) ? 'La hora de salida debe ser mayor a la hora de entrada.' : '';
+    for (const dia of dias) {
+      if (!this.horarios.some(h => h.dia.split(', ').includes(dia))) {
+        const turno = this.selectedShift[this.selectedShift.length - 1] || '';
+        this.horarios.push({ dia, turno, inicio: '', fin: '' });
+      }
+    }
   }
 
   onHorarioChange(index: number): void {
@@ -220,7 +229,7 @@ export class Perfil implements OnInit, OnDestroy {
     }
   }
 
-  getHorasTurno(turno: string, inicio = ''): string[] {
+  getHorasTurno(turno: string, inicio: string = ''): string[] {
     const horas = (() => {
       switch (turno) {
         case 'Mañana': return this.shiftHours['Mañana'];
