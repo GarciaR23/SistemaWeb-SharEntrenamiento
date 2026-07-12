@@ -20,7 +20,6 @@ import { Inicio as TutorInicio } from './features/tutor/pages/dashboard-tutor/tu
 import { Solicitud } from './features/admin/pages/solicitud-registro/solicitud.component';
 import { Admin } from './features/admin/admin';
 import { Sede } from './features/instructor/pages/sede/sede.component';
-import { BitacoraComponent } from './features/instructor/pages/bitacora/bitacora.component';
 import { Pago } from './features/instructor/pages/pago/pago.component';
 import { Instructor } from './features/instructor/instructor';
 import { Tutor } from './features/tutor/tutor';
@@ -39,6 +38,8 @@ import { FormularioReserva } from './features/tutor/pages/formulario-reserva/for
 import { CalendarioComponent } from './features/instructor/pages/calendario/calendario';
 import { HojaRutaComponent } from './features/instructor/pages/hoja-ruta/hoja-ruta';
 import { SesionComponent} from './features/instructor/pages/sesion/sesion';
+import { RevisionComponent } from './features/instructor/pages/revision/revision.component';
+import { ObservacionReclamo } from './features/admin/pages/observacion-reclamo/observacion-reclamo';
 
 
 export const routes: Routes = [
@@ -71,7 +72,8 @@ export const routes: Routes = [
           { path: 'inicio', component: AdminInicio, title: 'Dashboard Admin | SharEntrenamiento' },
           { path: 'solicitud-instructor', component: Solicitud, title: 'Solicitudes de Instructores | SharEntrenamiento' },
           { path: 'reporte-instructor', component: ReporteInstructor, title: 'Reportes de Instructores | SharEntrenamiento' },
-          { path: 'reporte-paciente', component: ReportePaciente, title: 'Reportes de Pacientes | SharEntrenamiento' }
+          { path: 'reporte-paciente', component: ReportePaciente, title: 'Reportes de Pacientes | SharEntrenamiento' },
+          {path: 'observacion-reclamo', component: ObservacionReclamo, title: 'Observaciones | SharEntrenamiento'}
         ]
       },
 
@@ -84,7 +86,7 @@ export const routes: Routes = [
           { path: 'inicio', component: InstructorInicio, title: 'Dashboard Instructor | SharEntrenamiento' },
           { path: 'sede', component: Sede, title: 'Gestión de Sedes | SharEntrenamiento' },
           { path: 'pago', component: Pago, title: 'Pagos | SharEntrenamiento' },
-          { path: 'bitacora', component: BitacoraComponent, title: 'Bitácora de Sesiones | SharEntrenamiento' },
+          { path: 'revision', component: RevisionComponent, title: 'Revision de Sesiones | SharEntrenamiento' },
           { path: 'hoja-ruta', component: HojaRutaComponent, title: 'Hoja de Ruta | SharEntrenamiento' },
           { path: 'calendario', component: CalendarioComponent, title: 'Calendario de Sesiones | SharEntrenamiento' },
           { path: 'sesion', component: SesionComponent, title: 'Sesiones | SharEntrenamiento' }

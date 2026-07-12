@@ -18,6 +18,8 @@ public class SedeServiceImpl implements SedeService {
 
     private final SedeRepository sedeRepository;
 
+    private static final int MAX_SEDES_ACTIVAS = 3;
+
     @Override
     public List<SedeResponse> findAll() {
         return sedeRepository.findAll().stream().map(this::toDto).toList();
@@ -33,6 +35,17 @@ public class SedeServiceImpl implements SedeService {
     @Override
     @Transactional
     public SedeResponse create(SedeRequest request) {
+        boolean estado = request.estadoActivacion() == null ? true : request.estadoActivacion();
+
+        if (estado) {
+            long activas = sedeRepository.countActivasByInstructor(request.idInstructor());
+            if (activas >= MAX_SEDES_ACTIVAS) {
+                throw new IllegalStateException(
+                        "Ya tienes " + MAX_SEDES_ACTIVAS
+                                + " sedes activas. Debes desactivar una antes de añadir una nueva.");
+            }
+        }
+
         Sede sede = new Sede();
         apply(sede, request);
         return toDto(sedeRepository.save(sede));
@@ -86,8 +99,19 @@ public class SedeServiceImpl implements SedeService {
         Sede sede = sedeRepository.findById(idSede)
                 .orElseThrow(() -> new IllegalArgumentException("Sede no encontrada: " + idSede));
 
-        sede.setEstadoActivacion(estadoActivacion == null ? false : estadoActivacion);
+        boolean nuevoEstado = estadoActivacion == null ? false : estadoActivacion;
 
+        // Solo validar cuando se intenta ACTIVAR una sede que estaba inactiva
+        if (nuevoEstado && !Boolean.TRUE.equals(sede.getEstadoActivacion())) {
+            long activas = sedeRepository.countActivasByInstructor(sede.getIdInstructor());
+            if (activas >= MAX_SEDES_ACTIVAS) {
+                throw new IllegalStateException(
+                        "Ya tienes " + MAX_SEDES_ACTIVAS
+                                + " sedes activas. Debes desactivar una antes de activar otra.");
+            }
+        }
+
+        sede.setEstadoActivacion(nuevoEstado);
         return toDto(sedeRepository.save(sede));
     }
 

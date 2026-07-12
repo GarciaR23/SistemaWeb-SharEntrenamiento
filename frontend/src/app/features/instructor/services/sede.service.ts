@@ -10,7 +10,7 @@ import { SedeRequest, SedeResponse } from '../models/sede.model';
 export class SedeService {
   private readonly baseUrl = 'http://localhost:8080/api/sedes';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   listarPorInstructor(idInstructor: number): Observable<SedeResponse[]> {
     return this.http.get<SedeResponse[]>(`${this.baseUrl}/instructor/${idInstructor}`);
