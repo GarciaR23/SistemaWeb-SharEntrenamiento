@@ -49,15 +49,10 @@ public interface InstructorRepository extends JpaRepository<Instructor, Integer>
             (
                 SELECT COALESCE(ROUND(AVG(cs.puntaje_estrellas), 1), 0)
                 FROM calificacion_servicio cs
-                INNER JOIN reserva r
-                    ON r.id_reserva = cs.id_reserva
+                INNER JOIN sesion s
+                    ON s.id_sesion = cs.id_sesion
                 WHERE cs.id_instructor = i.id_instructor
-                  AND EXISTS (
-                      SELECT 1
-                      FROM sesion s
-                      WHERE s.id_reserva = r.id_reserva
-                        AND CAST(s.estado_sesion AS text) = 'finalizado'
-                  )
+                  AND CAST(s.estado_sesion AS text) = 'finalizado'
             ) AS promedioCalificacion,
 
                             (
@@ -106,7 +101,7 @@ public interface InstructorRepository extends JpaRepository<Instructor, Integer>
                                 FROM sede sx
                                 WHERE sx.id_instructor = i.id_instructor
                                   AND COALESCE(sx.estado_activacion, true) = true
-                              ) >= 3
+                              ) = 3
 
                           AND (
                                 :texto IS NULL
@@ -192,6 +187,7 @@ public interface InstructorRepository extends JpaRepository<Instructor, Integer>
                 s.estado_activacion AS estadoActivacion
             FROM sede s
             WHERE s.id_instructor = :idInstructor
+              AND COALESCE(s.estado_activacion, true) = true
             ORDER BY s.id_sede ASC
             """, nativeQuery = true)
     List<InstructorPerfilSedeProjection> obtenerPerfilSedes(
@@ -235,15 +231,10 @@ public interface InstructorRepository extends JpaRepository<Instructor, Integer>
             FROM calificacion_servicio cs
             INNER JOIN paciente p
                 ON p.id_paciente = cs.id_paciente
-            INNER JOIN reserva r
-                ON r.id_reserva = cs.id_reserva
+            INNER JOIN sesion s
+                ON s.id_sesion = cs.id_sesion
             WHERE cs.id_instructor = :idInstructor
-              AND EXISTS (
-                  SELECT 1
-                  FROM sesion s
-                  WHERE s.id_reserva = r.id_reserva
-                    AND CAST(s.estado_sesion AS text) = 'finalizado'
-              )
+              AND CAST(s.estado_sesion AS text) = 'finalizado'
             ORDER BY cs.fecha_calificacion DESC
             LIMIT 3
             """, nativeQuery = true)
