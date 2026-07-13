@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,6 +12,24 @@ import { RouterModule } from '@angular/router';
 export class SidebarComponent {
   @Input() modo: 'admin' | 'instructor' | 'tutor' = 'admin';
   @Input() mobileOpen = false;
+
+  constructor(private router: Router) {}
+
+  getHomeRoute(): string {
+    switch (this.modo) {
+      case 'admin':
+        return '/admin/inicio';
+      case 'instructor':
+        return '/instructor/inicio';
+      case 'tutor':
+      default:
+        return '/tutor/inicio';
+    }
+  }
+
+  irInicio(): void {
+    this.router.navigate([this.getHomeRoute()]);
+  }
 
   menus = {
     admin: [
