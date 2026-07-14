@@ -93,4 +93,5 @@ public class InstructorController {
             @PathVariable Integer idInstructor) {
         return ResponseEntity.ok(instructorService.obtenerPerfilCalificaciones(idInstructor));
     }
+
 }

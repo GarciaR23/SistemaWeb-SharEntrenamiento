@@ -53,23 +53,35 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/instructores", "/api/tutores", "/api/pacientes",
                                 "/api/documentos")
                         .permitAll()
+
+                        // ADMIN
                         .requestMatchers("/api/admin/**").hasAuthority("admin")
 
+                        // ANALÍTICA / CONTADORES (admin e instructor)
+                        .requestMatchers(HttpMethod.GET, "/api/instructores/analitica/**")
+                        .hasAnyAuthority("admin", "instructor")
+
+                        // BÚSQUEDA DE INSTRUCTORES
                         .requestMatchers(HttpMethod.GET, "/api/instructores/busqueda")
                         .hasAnyAuthority("tutor", "admin")
 
+                        // PERFIL DE INSTRUCTOR
                         .requestMatchers(HttpMethod.GET, "/api/instructores/*/perfil/**")
                         .hasAnyAuthority("tutor", "admin")
 
+                        // LISTAR INSTRUCTORES
                         .requestMatchers(HttpMethod.GET, "/api/instructores")
                         .hasAnyAuthority("tutor", "admin", "instructor")
 
+                        // INSTRUCTORES (resto)
                         .requestMatchers("/api/instructores/**")
                         .hasAnyAuthority("instructor", "admin")
 
+                        // TUTORES
                         .requestMatchers("/api/tutores/**")
                         .hasAnyAuthority("tutor", "admin")
 
+                        // SEDES
                         .requestMatchers("/api/sedes/**")
                         .hasAnyAuthority("instructor", "admin")
 

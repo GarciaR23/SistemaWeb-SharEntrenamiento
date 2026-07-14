@@ -1,50 +1,54 @@
-// package edu.utp.backend.features.rendimiento.rutina.entities;
+package edu.utp.backend.features.rendimiento.rutina.entities;
 
-// import java.time.Duration;
+import java.time.Duration;
 
-// import edu.utp.backend.features.rendimiento.hoja_ruta.entities.HojaRuta;
-// import edu.utp.backend.features.rendimiento.rutina.enums.TipoCategoriaEjercicio;
-// import jakarta.persistence.Column;
-// import jakarta.persistence.Entity;
-// import jakarta.persistence.EnumType;
-// import jakarta.persistence.Enumerated;
-// import jakarta.persistence.GeneratedValue;
-// import jakarta.persistence.GenerationType;
-// import jakarta.persistence.Id;
-// import jakarta.persistence.JoinColumn;
-// import jakarta.persistence.ManyToOne;
-// import jakarta.persistence.Table;
-// import lombok.Data;
-// import lombok.NoArgsConstructor;
-// import org.hibernate.annotations.JdbcTypeCode;
-// import org.hibernate.type.SqlTypes;
+import edu.utp.backend.features.rendimiento.hoja_ruta.entities.HojaRuta;
+import edu.utp.backend.features.rendimiento.rutina.enums.TipoCategoriaEjercicio;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
-// @Data
-// @NoArgsConstructor
-// @Entity
-// @Table(name = "detalle_rutina")
-//DEBE DE ACTUALIZAR ESTA CLASE
-// public class DetalleRutina {
-//     @Id
-//     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//     @Column(name = "id_detalle")
-//     private Integer idDetalle;
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity
+@Table(name = "detalle_rutina")
+public class DetalleRutina {
 
-//     @ManyToOne
-//     @JoinColumn(name = "id_ruta", nullable = false)
-//     private HojaRuta hojaRuta;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_detalle")
+    private Integer idDetalle;
 
-//     @Column(name = "nombre_ejercicio", nullable = false)
-//     private String nombreEjercicio;
+    @ManyToOne
+    @JoinColumn(name = "id_ruta", nullable = false)
+    private HojaRuta hojaRuta;
 
-//     @Column(name = "descripcion_ejercicio", columnDefinition = "TEXT")
-//     private String descripcionEjercicio;
+    @Column(name = "nombre_ejercicio", nullable = false, length = 100)
+    private String nombreEjercicio;
 
-//     @JdbcTypeCode(SqlTypes.INTERVAL_SECOND)
-//     @Column(name = "duracion_estimada")
-//     private Duration duracionEstimada;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_ejercicio", nullable = false)
+    private TipoCategoriaEjercicio tipoEjercicio;
 
-//     @Enumerated(EnumType.STRING)
-//     @Column(name = "tipo_ejercicio", nullable = false)
-//     private TipoCategoriaEjercicio tipoEjercicio;
-// }
+    @Column(name = "descripcion_ejercicio", columnDefinition = "TEXT")
+    private String descripcionEjercicio;
+
+    @JdbcTypeCode(SqlTypes.INTERVAL_SECOND)
+    @Column(name = "duracion_estimada", nullable = false)
+    private Duration duracionEstimada;
+}
