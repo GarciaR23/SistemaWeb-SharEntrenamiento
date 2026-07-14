@@ -8,7 +8,9 @@
 
     <section class="cards-grid">
 
-        <div class="card active-card">
+        <div class="card"
+             [class.active-card]="selectedCard === 'solicitudes'"
+             (click)="selectCard('solicitudes')">
             <div class="card-bg-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
                     stroke-linejoin="round" class="lucide lucide-clipboard-list">
@@ -35,7 +37,9 @@
             <a routerLink="/admin/solicitud-instructor" class="btn-primary">VER SOLICITUDES</a>
         </div>
 
-        <div class="card">
+        <div class="card"
+             [class.active-card]="selectedCard === 'instructores'"
+             (click)="selectCard('instructores')">
             <div class="card-bg-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
                     stroke-linejoin="round" class="lucide lucide-users">
@@ -62,7 +66,9 @@
             <a routerLink="/admin/reporte-instructor" class="btn-secondary">IR A INSTRUCTORES</a>
         </div>
 
-        <div class="card">
+        <div class="card"
+             [class.active-card]="selectedCard === 'pacientes'"
+             (click)="selectCard('pacientes')">
             <div class="card-bg-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
                     stroke-linejoin="round" class="lucide lucide-trending-up">

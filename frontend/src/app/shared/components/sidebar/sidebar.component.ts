@@ -46,16 +46,19 @@ export class SidebarComponent {
         path: '/admin/solicitud-instructor',
         icon: 'M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z',
         label: 'Solicitudes',
+        countKey: 'solicitudes',
       },
       {
         path: '/admin/reporte-instructor',
         icon: 'M12 2c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm8 7h-4.1c-.5 0-1 .2-1.3.6L12 13l-2.6-3.4c-.3-.4-.8-.6-1.3-.6H4v2h3.5l3 4v5h3v-5l3-4H20V9z',
         label: 'Instructores',
+        countKey: 'instructores',
       },
       {
         path: '/admin/reporte-paciente',
         icon: 'M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z',
         label: 'Pacientes',
+        countKey: 'pacientes',
       },
       {
         path: '/admin/observacion-reclamo',

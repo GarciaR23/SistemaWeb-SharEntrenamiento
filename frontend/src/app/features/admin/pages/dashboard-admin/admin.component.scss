@@ -90,6 +90,15 @@ h3 {
     position: relative;
     overflow: hidden;
     box-sizing: border-box;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+    border-color: rgba(120, 242, 197, 0.35);
+    background: linear-gradient(145deg, rgba(14, 63, 96, 0.95), rgba(8, 23, 46, 0.95));
 }
 
 /* Icono de marca de agua en el fondo */
@@ -111,11 +120,13 @@ h3 {
 
 /* Tarjeta Destacada (Estilo neón activo) */
 .active-card {
-    border-color: rgba(var.$color-primary, 0.3);
+    border-color: rgba(var.$color-primary, 0.55);
+    box-shadow: 0 20px 50px rgba(56, 247, 181, 0.15);
+    background: linear-gradient(145deg, rgba(15, 60, 90, 0.98), rgba(10, 18, 35, 0.98));
+}
 
-    .card-bg-icon {
-        color: rgba(var.$color-primary, 0.03);
-    }
+.active-card .card-bg-icon {
+    color: rgba(var.$color-primary, 0.2);
 }
 
 .card-icon-wrapper {
@@ -228,13 +239,13 @@ h3 {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: var.$spacing-md;
+    gap: 12px;
     margin-bottom: var.$spacing-lg;
     flex-wrap: wrap;
 }
 
 .toolbar-actions .btn-export {
-    margin-left: 12px;
+    margin-left: 0;
 }
 
 .date-picker-mock {
@@ -244,30 +255,44 @@ h3 {
     padding: 8px 12px;
     background: var.$color-bg-card;
     border: 1px solid var.$color-border;
-    border-radius: var.$border-radius-md;
-    flex: 0 1 auto;
-    min-width: 0;
-    max-width: 360px;
-    width: auto;
+    border-radius: var.$border-radius-xl;
+    flex: 0 0 240px;
+    min-width: 240px;
+    max-width: 240px;
+    width: 240px;
+    min-height: 42px;
+    box-sizing: border-box;
 }
 
 .date-field {
     display: flex;
     align-items: center;
     gap: 6px;
-    flex: 0 1 auto;
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0 2px;
+}
+
+.calendar-icon {
     flex-shrink: 0;
+    color: var.$color-text-tertiary;
+    width: 14px;
+    height: 14px;
 }
 
 .date-input {
     width: 100%;
-    max-width: 130px;
+    min-width: 0;
+    max-width: 100%;
     background: transparent;
     border: none;
     outline: none;
-    color: var.$color-text-secondary;
+    color: var.$color-text-primary;
     font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
+    padding: 0;
+    line-height: 1.2;
 
     &::-webkit-calendar-picker-indicator {
         opacity: 0;
@@ -285,18 +310,21 @@ h3 {
     color: #06131c;
     border: none;
     border-radius: var.$border-radius-full;
-    padding: 10px 16px;
-    min-width: 140px;
+    padding: 10px 14px;
+    min-width: 132px;
     height: 42px;
     font-size: 13px;
     font-weight: var.$font-weight-semibold;
     cursor: pointer;
     transition: opacity var.$transition-fast;
+    flex-shrink: 0;
 }
 
 .date-separator {
     color: #64748b;
     font-weight: 600;
+    flex-shrink: 0;
+    font-size: 12px;
 }
 
 .btn-export {
@@ -350,15 +378,32 @@ h3 {
     .toolbar-actions {
         flex-direction: column;
         align-items: stretch;
+        gap: var.$spacing-sm;
     }
 
     .date-picker-mock,
     .btn-export {
         width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .date-picker-mock {
+        padding: 10px 12px;
+        flex: 1 1 auto;
+        min-height: 40px;
     }
 
     .date-field {
         width: 100%;
+    }
+
+    .date-separator {
+        display: none;
+    }
+
+    .btn-export {
+        justify-content: center;
     }
 }
 
@@ -387,73 +432,150 @@ h3 {
 }
 
 /* Contenedores de Gráficos */
-.chart-placeholder {
-    width: 100%;
-    height: 260px;
+.chart-card-content {
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.mock-line-chart {
-    width: 100%;
-    height: 180px;
-    background: linear-gradient(rgba(var.$color-primary, 0.08), transparent);
-    border-top: 3px solid var.$color-primary;
-    border-radius: var.$border-radius-sm;
+.empty-state.compact {
+    padding: 0;
+    align-items: flex-start;
+    text-align: left;
+    justify-content: flex-start;
+    min-height: auto;
+
+    h4 {
+        margin-bottom: 4px;
+    }
+
+    p {
+        max-width: 100%;
+        margin: 0;
+    }
 }
 
-.donut-chart-wrapper {
+.chart-preview {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var.$border-radius-lg;
+    background: rgba(255, 255, 255, 0.025);
+    padding: 12px;
+}
+
+.chart-area-preview {
+    padding: 10px 8px 6px;
+
+    svg {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+}
+
+.chart-grid-line {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 1;
+}
+
+.chart-area-fill {
+    fill: url(#splineAreaGradient);
+}
+
+.chart-area-stroke {
+    fill: none;
+    stroke: var.$color-primary;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.donut-preview {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    gap: 14px;
     align-items: center;
-    margin: var.$spacing-xl 0;
 }
 
-.mock-donut {
-    width: 160px;
-    height: 160px;
-    border-radius: var.$border-radius-full;
-    background: conic-gradient(var.$color-primary 0% 70%, var.$color-info 70% 90%, var.$color-error 90% 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.donut-chart {
+    position: relative;
+    width: min(180px, 100%);
+    aspect-ratio: 1;
+}
+
+.donut-chart svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.donut-track {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.12);
+    stroke-width: 16;
+}
+
+.donut-segment {
+    fill: none;
+    stroke-width: 16;
+    stroke-linecap: round;
+}
+
+.donut-segment.approved {
+    stroke: var.$color-primary;
+}
+
+.donut-segment.pending {
+    stroke: var.$color-info;
+}
+
+.donut-segment.rejected {
+    stroke: var.$color-error;
 }
 
 .donut-center {
-    width: 124px;
-    height: 124px;
-    background-color: var.$color-bg-card;
-    border-radius: var.$border-radius-full;
+    position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+
+    strong {
+        font-size: 24px;
+        color: var.$color-text-primary;
+        line-height: 1;
+    }
+
+    span {
+        font-size: 11px;
+        color: var.$color-text-tertiary;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-top: 4px;
+    }
 }
 
-.donut-number {
-    font-size: var.$font-size-xl;
-    font-weight: var.$font-weight-bold;
-    margin: 0;
-}
-
-.donut-label {
-    font-size: 11px;
-    color: var.$color-text-tertiary;
-    letter-spacing: 1px;
-}
-
-/* Leyenda */
 .chart-legend {
     list-style: none;
     padding: 0;
     margin: 0;
+    width: 100%;
 
     li {
         display: flex;
         align-items: center;
         font-size: 14px;
         color: var.$color-text-secondary;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
+    }
+}
+
+.compact-legend {
+    li:last-child {
+        margin-bottom: 0;
     }
 }
 
@@ -462,6 +584,7 @@ h3 {
     height: 8px;
     border-radius: var.$border-radius-full;
     margin-right: 12px;
+    flex-shrink: 0;
 
     &.approved {
         background-color: var.$color-primary;
@@ -479,4 +602,18 @@ h3 {
 .legend-val {
     margin-left: auto;
     color: var.$color-text-primary;
+}
+
+@media (max-width: var.$breakpoint-md) {
+    .chart-preview {
+        padding: 10px;
+    }
+
+    .donut-preview {
+        gap: 10px;
+    }
+
+    .chart-legend li {
+        font-size: 13px;
+    }
 }

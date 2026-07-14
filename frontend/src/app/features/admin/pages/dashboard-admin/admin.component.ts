@@ -16,6 +16,7 @@ export class Inicio implements OnInit {
   totalActivos: number = 0;
   fechaInicio: string = '';
   fechaFin: string = '';
+  selectedCard: 'solicitudes' | 'instructores' | 'pacientes' = 'solicitudes';
 
   constructor(
     private solicitudesService: SolicitudesService,
@@ -36,6 +37,10 @@ export class Inicio implements OnInit {
       },
       error: (err) => console.error('Error al cargar activos:', err),
     });
+  }
+
+  selectCard(card: 'solicitudes' | 'instructores' | 'pacientes'): void {
+    this.selectedCard = card;
   }
 
   filtrarPorRango(): void {
