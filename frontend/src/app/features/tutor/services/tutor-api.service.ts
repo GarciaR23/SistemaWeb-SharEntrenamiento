@@ -41,7 +41,6 @@ export class TutorApiService {
         return this.http.get<PacienteDto[]>(`${this.pacientesUrl}/tutor/${idTutor}`, { headers: this.getAuthHeaders() });
     }
 
-    /*ENDPOINT DONDE MUESTRAS LAS CARDS DE RESERVA DEL TUTOR*/
     getSesionesTutor(idTutor: number): Observable<ReservaTutorSesionDto[]> {
         return this.http.get<ReservaTutorSesionDto[]>(`${this.apiUrl}/reservas/tutor/${idTutor}`, { headers: this.getAuthHeaders() });
     }
@@ -82,5 +81,9 @@ export class TutorApiService {
 
     validarReserva(request: ReservaRequestDto): Observable<any> {
         return this.http.post<any>(`${this.apiUrl}/reservas/validar`, request, { headers: this.getAuthHeaders() });
+    }
+
+    cancelarDetalle(idDetalle: number): Observable<any> {
+        return this.http.patch<any>(`${this.apiUrl}/reservas/detalle/${idDetalle}/cancelar`, {}, { headers: this.getAuthHeaders() });
     }
 }

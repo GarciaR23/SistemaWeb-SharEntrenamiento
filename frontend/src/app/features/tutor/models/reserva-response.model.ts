@@ -7,8 +7,6 @@ export interface ReservaResponseDto {
     idSede: number;
     totalHorasAcumuladas: string;
     montoTotalAcumulado: number;
-    estadoReserva: string;
     fechaCreacion: string;
-    fechaRevision: string | null;
     detalles: DetalleReservaResponse[];
 }

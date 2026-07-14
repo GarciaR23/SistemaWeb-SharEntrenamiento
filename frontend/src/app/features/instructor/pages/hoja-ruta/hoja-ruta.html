@@ -1,10 +1,8 @@
 <section class="route-page">
   <header class="route-hero">
     <h1>Hoja de Ruta <span>Estratégica</span></h1>
-    <p>
-      Supervisión de sesiones personalizadas. Revise el feedback de los tutores y ajuste
-      los objetivos de entrenamiento en tiempo real.
-    </p>
+    <p>Supervisión de sesiones personalizadas. Revise el feedback de los tutores y ajuste los objetivos de entrenamiento
+      en tiempo real.</p>
   </header>
 
   <section class="route-toolbar">
@@ -15,134 +13,94 @@
       </svg>
       <input type="text" placeholder="Buscar paciente por nombre o ID..." [(ngModel)]="textoBusqueda" />
     </label>
-
     <div class="filter-group">
       <button class="filter-pill" [class.active]="filtroActivo === 'por_configurar'"
-        (click)="filtroActivo = 'por_configurar'">
-        Por Configurar <span>{{ totalPorConfigurar }}</span>
-      </button>
-
-      <button class="filter-pill danger" [class.active]="filtroActivo === 'observado'"
-        (click)="filtroActivo = 'observado'">
-        Con Observaciones <span>{{ totalObservadas }}</span>
-      </button>
-
+        (click)="filtroActivo = 'por_configurar'">Por Configurar <span>{{ contador.porConfigurar }}</span></button>
+      <button class="filter-pill danger" [class.active]="filtroActivo === 'con_observacion'"
+        (click)="filtroActivo = 'con_observacion'">Con Observaciones <span>{{ contador.conObservacion }}</span></button>
       <button class="filter-pill success" [class.active]="filtroActivo === 'completado'"
-        (click)="filtroActivo = 'completado'">
-        Completado <span>{{ totalCompletadas }}</span>
-      </button>
+        (click)="filtroActivo = 'completado'">Completado <span>{{ contador.completado }}</span></button>
     </div>
   </section>
 
-  <section class="route-grid">
+  @if (cargando) { <div class="loading-state">Cargando hojas de ruta...</div> }
+  @if (errorMessage) { <div class="error-message">{{ errorMessage }}</div> }
+  @if (exitoMessage) { <div class="success-message">{{ exitoMessage }}</div> }
+
+  <section class="route-grid" *ngIf="!cargando && sesionesFiltradas.length > 0">
     <article class="session-card" *ngFor="let sesion of sesionesFiltradas">
-      <button class="card-menu" aria-label="Opciones">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-
+      <button class="card-menu" aria-label="Opciones"><span></span><span></span><span></span></button>
       <div class="patient-side">
-        <img class="patient-avatar" [src]="sesion.avatarUrl" [alt]="sesion.pacienteNombre" />
-
-        <h2>{{ sesion.pacienteNombre }}</h2>
+        <img class="patient-avatar" [src]="sesion.imagenPaciente || 'https://via.placeholder.com/150'"
+          [alt]="sesion.nombrePaciente" />
+        <h2>{{ sesion.nombrePaciente }}</h2>
         <p class="condition">{{ sesion.condicion }}</p>
-
         <ul class="session-meta">
-          <li>
-            <svg viewBox="0 0 24 24">
+          <li><svg viewBox="0 0 24 24">
               <rect x="3" y="4" width="18" height="18" rx="2"></rect>
               <line x1="16" y1="2" x2="16" y2="6"></line>
               <line x1="8" y1="2" x2="8" y2="6"></line>
               <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-            {{ sesion.fechaLabel }}
-          </li>
-
-          <li>
-            <svg viewBox="0 0 24 24">
+            </svg>{{ sesion.fechaCreacion | date:'dd/MM/yyyy' }}, {{ obtenerHoraInicio(sesion) }}</li>
+          <li><svg viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="9"></circle>
               <polyline points="12 7 12 12 15 14"></polyline>
-            </svg>
-            {{ sesion.horaLabel }} • {{ sesion.duracionMin }} min
-          </li>
-
-          <li>
-            <svg viewBox="0 0 24 24">
+            </svg>{{ obtenerDuracionMinutos(sesion) }} min</li>
+          <li><svg viewBox="0 0 24 24">
               <path d="M21 10c0 7-9 12-9 12S3 17 3 10a9 9 0 1 1 18 0z"></path>
               <circle cx="12" cy="10" r="3"></circle>
-            </svg>
-            {{ sesion.ubicacion }}
-          </li>
+            </svg>{{ sesion.nombreSede }}</li>
         </ul>
       </div>
-
-      <div class="status-side" [ngClass]="sesion.estado">
+      <div class="status-side" [ngClass]="sesion.clasificacion">
         <div class="status-icon">
-          <svg *ngIf="sesion.estado !== 'observado'" viewBox="0 0 24 24">
+          <svg *ngIf="sesion.clasificacion !== 'con_observacion'" viewBox="0 0 24 24">
             <circle cx="12" cy="5" r="2"></circle>
             <path d="M12 7v14"></path>
             <path d="M7 21l5-14 5 14"></path>
             <path d="M8 12h8"></path>
           </svg>
-
-          <svg *ngIf="sesion.estado === 'observado'" viewBox="0 0 24 24">
+          <svg *ngIf="sesion.clasificacion === 'con_observacion'" viewBox="0 0 24 24">
             <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
             <line x1="12" y1="9" x2="12" y2="13"></line>
             <line x1="12" y1="17" x2="12.01" y2="17"></line>
           </svg>
         </div>
-
         <h3>{{ obtenerTituloEstado(sesion) }}</h3>
         <p>{{ obtenerDescripcionEstado(sesion) }}</p>
 
-        <button *ngIf="sesion.estado === 'por_configurar'" class="primary-action" (click)="abrirModal(sesion)">
-          <svg viewBox="0 0 24 24">
+        @if (sesion.clasificacion === 'por_configurar') {
+        <button class="primary-action" (click)="abrirModal(sesion)"><svg viewBox="0 0 24 24">
             <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"></path>
-          </svg>
-          Diseñar hoja
-        </button>
-
-        <button *ngIf="sesion.estado === 'observado'" class="primary-action" (click)="abrirModal(sesion)">
-          <svg viewBox="0 0 24 24">
+          </svg>Diseñar hoja</button>
+        }
+        @if (sesion.clasificacion === 'con_observacion') {
+        <button class="primary-action" (click)="abrirModal(sesion)"><svg viewBox="0 0 24 24">
             <path d="M12 20h9"></path>
             <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-          </svg>
-          Corregir Hoja
-        </button>
-
-        <button *ngIf="sesion.estado === 'observado'" class="secondary-action" (click)="verDetalles(sesion)">
-          <svg viewBox="0 0 24 24">
+          </svg>Corregir Hoja</button>
+        <button class="secondary-action"><svg viewBox="0 0 24 24">
             <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z"></path>
             <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-          Ver Detalles
-        </button>
-
-        <button *ngIf="sesion.estado === 'por_revision'" class="secondary-action"
-          (click)="simularFeedbackTutor(sesion)">
-          Simular feedback
-        </button>
-
-        <button *ngIf="sesion.estado === 'completado'" class="primary-action completed" routerLink="/instructor/sesion">
-          <svg viewBox="0 0 24 24">
-            <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"></path>
-          </svg>
-          Iniciar Sesión
-        </button>
+          </svg>Ver Detalles</button>
+        }
+        @if (sesion.clasificacion === 'completado') {
+        <button class="primary-action completed" disabled><svg viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>Completado</button>
+        }
       </div>
     </article>
   </section>
 
-  <div class="empty-list" *ngIf="sesionesFiltradas.length === 0">
-    <div class="empty-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+  <div class="empty-list" *ngIf="!cargando && sesionesFiltradas.length === 0">
+    <div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+        stroke-linejoin="round">
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         <line x1="9" y1="9" x2="13" y2="13"></line>
         <line x1="13" y1="9" x2="9" y2="13"></line>
-      </svg>
-    </div>
+      </svg></div>
     <h3>No se encontraron sesiones con esos criterios.</h3>
     <p>Intenta ajustar los filtros superiores o intenta buscar un paciente diferente.</p>
   </div>
@@ -152,124 +110,100 @@
   <article class="route-modal">
     <header class="modal-header">
       <div>
-        <p><strong>KINETIC INSTRUCTOR</strong> • CONFIGURACIÓN DE HOJA DE RUTA</p>
-        <h2>{{ sesionSeleccionada?.pacienteNombre }}</h2>
-
+        <p><strong>{{ nombreInstructor }}</strong> • CONFIGURACIÓN DE HOJA DE RUTA</p>
+        <h2>{{ sesionSeleccionada?.nombrePaciente }}</h2>
         <div class="modal-session-meta">
-          <span>
-            <svg viewBox="0 0 24 24">
+          <span><svg viewBox="0 0 24 24">
               <path d="M21 10c0 7-9 12-9 12S3 17 3 10a9 9 0 1 1 18 0z"></path>
               <circle cx="12" cy="10" r="3"></circle>
-            </svg>
-            San Juan
-          </span>
-
-          <span>
-            <svg viewBox="0 0 24 24">
+            </svg>{{ sedeSeleccionada }}</span>
+          <span><svg viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="9"></circle>
               <polyline points="12 7 12 12 15 14"></polyline>
-            </svg>
-            Sesión de {{ sesionSeleccionada?.duracionMin }} min
-          </span>
+            </svg>Sesión de {{ duracionMinutosModal }} min</span>
         </div>
       </div>
-
-      <img [src]="sesionSeleccionada?.instructorUrl" alt="Instructor" />
+      <img [src]="sesionSeleccionada?.imagenPaciente || 'https://via.placeholder.com/150'" alt="Paciente" />
     </header>
 
     <main class="modal-content">
       <section class="modal-block">
-        <div class="block-title">
-          <span class="block-icon">
-            <svg viewBox="0 0 24 24">
+        <div class="block-title"><span class="block-icon"><svg viewBox="0 0 24 24">
               <path d="M3 21h18"></path>
               <path d="M5 21V7l8-4v18"></path>
               <path d="M19 21V11l-6-4"></path>
-            </svg>
-          </span>
+            </svg></span>
           <h3>Ubicación del Entrenamiento</h3>
         </div>
-
         <div class="location-layout">
           <div>
-            <select [(ngModel)]="formulario.sede">
-              <option *ngFor="let sede of sedesMock" [value]="sede">
-                {{ sede }}
-              </option>
+            <select [(ngModel)]="sedeSeleccionada" disabled>
+              <option [value]="sedeSeleccionada">{{ sedeSeleccionada }}</option>
             </select>
-
-            <p class="muted">
-              Lugar pre-confirmado para esta sesión técnica. Las imágenes a la derecha sirven
-              como evidencia visual del entorno para el tutor.
-            </p>
+            <p class="muted">Lugar pre-confirmado para esta sesión técnica.</p>
           </div>
-
-          <div class="venue-gallery">
-            <img *ngFor="let imagen of imagenesSede" [src]="imagen" alt="Sede" />
+          <div class="venue-gallery"><img *ngFor="let imagen of obtenerImagenesSede()" [src]="imagen" alt="Sede" />
           </div>
         </div>
       </section>
 
       <section class="modal-block routine-block">
         <div class="block-title row-between">
-          <div class="title-left">
-            <span class="block-icon">
-              <svg viewBox="0 0 24 24">
+          <div class="title-left"><span class="block-icon"><svg viewBox="0 0 24 24">
                 <path d="M6 3v18"></path>
                 <path d="M18 3v18"></path>
                 <path d="M3 8h6"></path>
                 <path d="M15 8h6"></path>
                 <path d="M3 16h6"></path>
                 <path d="M15 16h6"></path>
-              </svg>
-            </span>
+              </svg></span>
             <h3>Constructor de Rutina</h3>
           </div>
-
-          <span class="limit-pill">
-            LÍMITE {{ sesionSeleccionada?.duracionMin }} min
-          </span>
+          <span class="limit-pill">LÍMITE {{ duracionMinutosModal }} min</span>
         </div>
 
         <div class="time-load" [class.error]="excedeLimite">
           <span>CARGA DE TIEMPO ACTUAL</span>
-
-          <div class="time-row">
-            <strong>{{ cargaTiempoActual }}</strong>
-            <em>/ {{ sesionSeleccionada?.duracionMin }}</em>
-
-            <small *ngIf="excedeLimite">
-              EXCEDIDO +{{ minutosExcedidos }} MIN
-            </small>
-          </div>
-
+          <div class="time-row"><strong>{{ cargaTiempoActual }}</strong><em>/ {{ duracionMinutosModal }}</em><small
+              *ngIf="excedeLimite">EXCEDIDO +{{ minutosExcedidos }} MIN</small></div>
           <div class="progress-track">
-            <div class="progress-fill" [style.width.%]="
-                porcentajeCarga
-              "></div>
+            <div class="progress-fill" [style.width.%]="porcentajeCarga"></div>
           </div>
         </div>
 
         <div class="activity-list">
-          <div class="activity-row" *ngFor="let actividad of formulario.actividades; let i = index"
+          <div class="activity-row" *ngFor="let actividad of actividades; let i = index"
             [class.invalid]="!actividad.nombre.trim() || actividad.duracionMin <= 0"
-            [class.warn]="excedeLimite && i === formulario.actividades.length - 1">
-            <input type="text" placeholder="Nombre de la actividad" [(ngModel)]="actividad.nombre" />
-
-            <div class="duration-field">
-              <input type="number" min="1" [(ngModel)]="actividad.duracionMin" />
-              <span>MIN</span>
-            </div>
-
-            <button class="icon-btn" type="button">
-              <svg viewBox="0 0 24 24">
+            [class.warn]="excedeLimite && i === actividades.length - 1">
+            <input type="text" placeholder="Nombre del ejercicio" [(ngModel)]="actividad.nombre" />
+            <select [(ngModel)]="actividad.tipoEjercicio" class="tipo-select tipo-ejercicio">
+              <option value="CARDIO">Cardio</option>
+              <option value="FUERZA">Fuerza</option>
+              <option value="FLEXIBILIDAD">Regulación Sensorial</option>
+              <option value="MOVILIDAD">Calentamiento</option>
+              <option value="RESISTENCIA">Relajación</option>
+            </select>
+            <select [(ngModel)]="actividad.duracionMin" class="tipo-select duracion-select">
+              <option [value]="10">10 MIN</option>
+              <option [value]="20">20 MIN</option>
+              <option [value]="30">30 MIN</option>
+              <option [value]="40">40 MIN</option>
+              <option [value]="50">50 MIN</option>
+              <option [value]="60">60 MIN</option>
+            </select>
+            <textarea class="descripcion-field" placeholder="Descripción del ejercicio..."
+              [(ngModel)]="actividad.descripcion" rows="1"></textarea>
+            <button class="icon-btn edit" type="button" title="Editar ejercicio">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 20h9"></path>
                 <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
               </svg>
             </button>
-
-            <button class="icon-btn danger" type="button" (click)="eliminarActividad(actividad.id)">
-              <svg viewBox="0 0 24 24">
+            <button class="icon-btn danger" type="button" (click)="eliminarActividad(actividad.id)"
+              title="Eliminar ejercicio">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="3 6 5 6 21 6"></polyline>
                 <path d="M19 6 18 20a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
                 <path d="M10 11v6"></path>
@@ -279,30 +213,18 @@
           </div>
         </div>
 
-        <button class="add-activity" type="button" (click)="agregarActividad()">
-          <span>+</span>
-          Agregar Actividad
-        </button>
-
-        <p class="form-warning" *ngIf="actividadesInvalidas">
-          Completa el nombre y duración de todas las actividades.
-        </p>
-
-        <p class="form-warning" *ngIf="excedeLimite">
-          La carga actual supera el límite de la sesión. Ajusta los minutos antes de guardar.
-        </p>
+        <button class="add-activity" type="button" (click)="agregarActividad()"><span>+</span> Agregar
+          Actividad</button>
+        <p class="form-warning" *ngIf="actividadesInvalidas">Completa el nombre y duración de todas las actividades.</p>
+        <p class="form-warning" *ngIf="excedeLimite">La carga actual supera el límite de la sesión. Ajusta los minutos
+          antes de guardar.</p>
       </section>
     </main>
 
     <footer class="modal-actions">
-      <button class="cancel-btn" type="button" (click)="cerrarModal()">
-        Cancelar
-      </button>
-
-      <button class="save-btn" type="button" [disabled]="actividadesInvalidas || excedeLimite"
-        (click)="guardarHojaRuta()">
-        Guardar Hoja de Ruta
-      </button>
+      <button class="cancel-btn" type="button" (click)="cerrarModal()">Cancelar</button>
+      <button class="save-btn" type="button" [disabled]="actividadesInvalidas || excedeLimite || guardando"
+        (click)="guardarHojaRuta()">{{ guardando ? 'Guardando...' : 'Guardar Hoja de Ruta' }}</button>
     </footer>
   </article>
 </section>
