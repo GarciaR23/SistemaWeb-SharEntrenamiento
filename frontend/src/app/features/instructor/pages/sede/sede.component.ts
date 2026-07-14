@@ -92,7 +92,7 @@ export class Sede implements OnInit, OnDestroy {
         '',
         [
           Validators.required,
-          Validators.maxLength(40),
+          Validators.maxLength(150),
           Validators.pattern(/^[\p{L}\p{N}\s.,;:()\-]+$/u)
         ]
       ]
@@ -351,7 +351,7 @@ export class Sede implements OnInit, OnDestroy {
     const control = this.descripcionSede;
     if (!control || !control.errors) return '';
     if (control.errors['required']) return 'La descripción es requerida';
-    if (control.errors['maxlength']) return 'La descripción no puede exceder 40 caracteres';
+    if (control.errors['maxlength']) return 'La descripción no puede exceder 150 caracteres';
     if (control.errors['pattern']) return 'La descripción contiene caracteres no permitidos';
     return '';
   }

@@ -8,16 +8,17 @@ $alert-red-text: #f87171;
 $border-color: #30363d;
 
 .bitacora-page {
-  padding: 32px;
+  padding: 24px 20px 40px;
   color: $text-primary;
   background-color: $bg-color;
   font-family: 'Inter', sans-serif;
   min-height: 100vh;
+  box-sizing: border-box;
 }
 
 /* Cabecera */
 .bitacora-header {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 
   h1 {
     font-size: 32px;
@@ -41,31 +42,44 @@ $border-color: #30363d;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: $alert-red;
-  border: 1px solid rgba(248, 113, 113, 0.2);
-  border-radius: 8px;
-  padding: 16px 24px;
+  gap: 16px;
+  background-color: rgba(67, 20, 30, 0.4);
+  border: 1px solid rgba(226, 54, 54, 0.2);
+  border-radius: 12px;
+  padding: 16px 20px;
+  min-height: 56px;
+  flex-wrap: nowrap;
 
   .alert-content {
     display: flex;
     align-items: center;
     gap: 12px;
+    flex: 1 1 auto;
+    min-width: 0;
 
     span {
-      color: #ffdcd7;
-      font-weight: 500;
+      color: #FCA5A5;
+      font-weight: 600;
       font-size: 14px;
+      line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 
   .btn-detalles {
+    flex-shrink: 0;
     background: transparent;
     border: none;
-    color: #ffdcd7;
+    color: #FCA5A5;
     font-weight: 700;
     font-size: 12px;
     letter-spacing: 0.5px;
     cursor: pointer;
+    padding: 0 6px;
+    min-width: 110px;
+    text-align: right;
 
     &:hover {
       text-decoration: underline;
@@ -78,49 +92,58 @@ $border-color: #30363d;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
   margin-bottom: 24px;
+  flex-wrap: wrap;
 }
 
 .filter-status {
   display: flex;
   align-items: center;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+  background-color: #1C212D;
+  border-radius: 999px;
+  padding: 10px 24px;
 
   .badge-pendientes {
-    background-color: rgba(0, 229, 155, 0.1);
     color: $accent-green;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 13px;
-    padding: 6px 16px;
-    border-radius: 20px;
+    padding-right: 16px;
+    margin-right: 16px;
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
   }
 
   .text-update {
     font-size: 13px;
-    color: $text-secondary;
+    color: #BACBBF;
+    font-weight: 400;
   }
 }
 
 .filter-actions {
   display: flex;
-  background-color: $card-bg;
-  border-radius: 8px;
-  padding: 4px;
+  flex-wrap: wrap;
+  gap: 8px;
+  background-color: #1C212D;
+  border-radius: 999px;
+  padding: 6px;
 
   .btn-filter {
     background: transparent;
     border: none;
-    color: $text-secondary;
-    padding: 8px 16px;
-    border-radius: 6px;
+    color: #94A3B8;
+    padding: 8px 20px;
+    border-radius: 999px;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
 
     &.active {
-      background-color: $accent-green;
-      color: #061016;
+      background-color: #00E59B;
+      color: #022C22;
     }
 
     &:hover:not(.active) {
@@ -129,39 +152,45 @@ $border-color: #30363d;
   }
 }
 
-/* Grid de Solicitudes */
 .solicitudes-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
 }
 
 .solicitud-card {
-  background-color: $card-bg;
-  border: 1px solid $border-color;
+  width: 100%;
+  min-height: 180px;
+  box-sizing: border-box;
+  background: #1B1E28;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 12px;
   padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  justify-content: space-between;
+  gap: 18px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0, 229, 155, 0.15);
+  }
 }
 
 .card-user {
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  position: relative;
+  width: 100%;
 
   .avatar-box {
-    width: 48px;
-    height: 48px;
+    width: 64px;
+    height: 64px;
     border-radius: 8px;
     background-color: #273140;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
     flex-shrink: 0;
+    overflow: hidden;
 
     img {
       width: 100%;
@@ -171,137 +200,171 @@ $border-color: #30363d;
   }
 
   .user-details {
+    flex: 1;
+    min-width: 0;
+
+    .user-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
     h3 {
-      margin: 0 0 8px 0;
-      font-size: 18px;
-      font-weight: 600;
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.3px;
+    }
+
+    /* Badge de Edad idéntico a la imagen */
+    .badge-age {
+      background: #282D42;
+      /* Azul violáceo oscuro */
+      color: #A0B1EE;
+      /* Texto celeste/lila */
+      padding: 6px 14px;
+      border-radius: 20px;
+      /* Forma de píldora */
+      font-size: 13px;
+      font-weight: 500;
     }
 
     .info-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 10px 14px;
+      align-items: center;
 
       .info-item {
         display: flex;
         align-items: center;
         gap: 6px;
+        color: #E2E8F0;
         font-size: 12px;
-        color: $text-secondary;
+        font-weight: 400;
 
         svg {
-          color: $accent-green;
+          width: 14px;
+          height: 14px;
+          color: #00E59B;
+          stroke: #00E59B;
+          stroke-width: 1.8;
         }
       }
     }
   }
+}
 
-  .badge-age {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background-color: rgba(255, 255, 255, 0.05);
-    color: $text-secondary;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: 12px;
-  }
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.card-bottom {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-width: 0;
 }
 
 .card-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 20px;
-  border-top: 1px solid $border-color;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
 
-  .btn-ficha {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: transparent;
-    border: 1px solid $border-color;
-    color: $text-primary;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.05);
-    }
-  }
-
-  .action-group {
-    display: flex;
-    gap: 12px;
-
-    .btn-rechazar {
-      background-color: transparent;
-      border: 1px solid rgba(248, 113, 113, 0.5);
-      color: #f87171;
-      padding: 8px 24px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background-color 0.2s;
-
-      &:hover {
-        background-color: rgba(248, 113, 113, 0.1);
-      }
-    }
-
-    .btn-aceptar {
-      background-color: $accent-green;
-      border: none;
-      color: #061016;
-      padding: 8px 24px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background-color 0.2s;
-
-      &:hover {
-        background-color: #00c484;
-      }
-    }
+@media (max-width: 1100px) {
+  .solicitudes-grid {
+    grid-template-columns: 1fr;
   }
 }
 
-/* Empty State */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 64px 20px;
-  text-align: center;
-
-  .empty-icon {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    background-color: $card-bg;
-    display: flex;
+@media (max-width: 640px) {
+  .alert-box {
+    flex-direction: row;
     align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+
+  .alert-box .alert-content {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .alert-box .alert-content span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .alert-box .btn-detalles {
+    width: auto;
+    min-width: 112px;
+    flex-shrink: 0;
+    text-align: center;
+  }
+
+  .filter-status {
+    border-radius: 18px;
+    padding: 12px 16px;
+  }
+
+  .filter-actions {
+    width: 100%;
+    border-radius: 18px;
+  }
+
+  .alert-box {
+    flex-wrap: wrap;
+  }
+
+  .alert-box .btn-detalles {
+    width: 100%;
+    text-align: left;
+    min-width: 0;
+  }
+
+  .btn-filter {
+    flex: 1 1 calc(50% - 4px);
     justify-content: center;
-    margin-bottom: 24px;
   }
 
-  h2 {
-    font-size: 24px;
-    margin: 0 0 12px 0;
+  .card-actions {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  p {
-    color: $text-secondary;
-    font-size: 15px;
-    max-width: 400px;
+  .btn-ficha,
+  .action-group,
+  .action-group button {
+    width: 100%;
+  }
+
+  .action-group {
+    flex-direction: column;
   }
 }
 
@@ -311,24 +374,161 @@ $border-color: #30363d;
   }
 }
 
+.btn-ficha {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  border: 1px solid #303645;
+  color: #FFFFFF;
+  padding: 0 16px;
+  min-height: 44px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    stroke: #00E59B;
+    stroke-width: 2;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+}
+
+.action-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.action-group button {
+  min-width: 118px;
+  min-height: 44px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.5px;
+  padding: 0 18px;
+}
+
+.btn-rechazar {
+  background: #362A32;
+  border: 1px solid #483138;
+  color: #FCA5A5;
+  padding: 0 20px;
+
+  &:hover {
+    background: #422f37;
+    border-color: rgba(244, 63, 94, 0.3);
+    transform: translateY(-2px);
+  }
+}
+
+.btn-aceptar {
+  background: #00E59B;
+  border: 1px solid #3BFFAC;
+  color: #022C22;
+  padding: 0 24px;
+  box-shadow: 0 4px 14px rgba(0, 229, 155, 0.15);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    background: #00FFAC;
+    border-color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 229, 155, 0.4);
+  }
+
+  &:active {
+    transform: translateY(1px) scale(0.96);
+    box-shadow: 0 2px 8px rgba(0, 229, 155, 0.1);
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 20px;
+  text-align: center;
+}
+
+.empty-state .empty-icon {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background-color: $card-bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.empty-state h2 {
+  font-size: 24px;
+  margin: 0 0 12px 0;
+}
+
+.empty-state p {
+  color: $text-secondary;
+  font-size: 15px;
+  max-width: 400px;
+}
+
+@media (max-width: 1024px) {
+  .solicitudes-grid {
+    flex-direction: column;
+  }
+}
+
 @media (max-width: 768px) {
   .filter-bar {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 16px;
+  }
+
+  .filter-status,
+  .filter-actions {
+    min-height: 54px;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .filter-actions {
+    padding: 8px;
   }
 
   .card-actions {
     flex-direction: column;
-    gap: 16px;
+    align-items: stretch;
+  }
 
-    .btn-ficha,
-    .action-group {
-      width: 100%;
-    }
+  .btn-ficha,
+  .action-group {
+    width: 100%;
+  }
 
-    .action-group button {
-      flex: 1;
-    }
+  .action-group {
+    justify-content: space-between;
+  }
+
+  .action-group button {
+    flex: 1;
   }
 }

@@ -36,10 +36,13 @@
   </div>
 
   <!-- Grid de Solicitudes -->
+  <!-- Grid de Solicitudes -->
   <div class="solicitudes-grid" *ngIf="solicitudes.length > 0">
     <article class="solicitud-card" *ngFor="let sol of solicitudes">
+
       <!-- Usuario Info -->
       <div class="card-user">
+        <!-- Avatar -->
         <div class="avatar-box">
           <img *ngIf="sol.img" [src]="sol.img" alt="Avatar">
           <svg *ngIf="!sol.img" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"
@@ -48,8 +51,17 @@
             <circle cx="12" cy="7" r="4"></circle>
           </svg>
         </div>
+
+        <!-- Detalles -->
         <div class="user-details">
-          <h3>{{ sol.nombre }}</h3>
+
+          <!-- CAMBIO CLAVE: Agrupamos Nombre y Edad para que nunca se separen bruscamente -->
+          <div class="user-top">
+            <h3>{{ sol.nombre }}</h3>
+            <span class="badge-age">{{ sol.edad }} años</span>
+          </div>
+
+          <!-- Información (Fecha, Hora, Sede) -->
           <div class="info-row">
             <span class="info-item">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -87,7 +99,6 @@
             </span>
           </div>
         </div>
-        <span class="badge-age">{{ sol.edad }} años</span>
       </div>
 
       <!-- Acciones -->
@@ -108,9 +119,9 @@
           <button class="btn-aceptar" routerLink="/instructor/sesion">ACEPTAR</button>
         </div>
       </div>
+
     </article>
   </div>
-
   <!-- Empty State -->
   <div class="empty-state" *ngIf="solicitudes.length === 0">
     <div class="empty-icon">

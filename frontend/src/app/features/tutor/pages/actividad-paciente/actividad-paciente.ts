@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrl: './actividad-paciente.scss',
 })
 export class ActividadPaciente {
-
+  actividades: unknown[] = [];
 }

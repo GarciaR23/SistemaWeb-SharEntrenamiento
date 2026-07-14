@@ -18,7 +18,7 @@
     </label>
 
     <label class="sede-select">
-      <span class="sede-icon"><img src="assets/icons/Icon_filt_dist.png" alt="Filtro"></span>
+      <span class="sede-icon"><img src="assets/icons/Icon_filt_dist.png" alt="Filtro Distrito"></span>
       <select [(ngModel)]="distritoFiltro" (change)="filtrar()">
         <option value="">Filtrar por Distrito</option>
         @for (distrito of distritos; track distrito) {
@@ -153,7 +153,7 @@
         <label class="sede-field sede-field-right">
           <span>Zona de la Sede</span>
           <select formControlName="zonaSede" [class.select-invalid]="campoInvalido('zonaSede')" required>
-            <option value="">Selecciona una zona</option>
+            <option value="" disabled selected hidden class="select-placeholder">Selecciona una zona</option>
             @for (zona of zonas; track zona) {
             <option [value]="zona">
               {{ zona }}
@@ -164,7 +164,7 @@
         <label class="sede-field sede-field-left">
           <span>Distrito</span>
           <select formControlName="distritoSede" [class.select-invalid]="campoInvalido('distritoSede')" required>
-            <option value="">Selecciona un distrito</option>
+            <option value="" disabled selected hidden class="select-placeholder">Selecciona un distrito</option>
             @for (distrito of distritos; track distrito) {
             <option [value]="distrito">
               {{ distrito | lowercase | titlecase }}
@@ -186,7 +186,7 @@
           [class.textarea-invalid]="campoInvalido('descripcionSede')" required></textarea>
         <div class="description-meta">
           <div class="description-counter" [class.description-counter-error]="campoInvalido('descripcionSede')">
-            {{ caracteresDescripcion }}/40 caracteres
+            {{ caracteresDescripcion }}/150 caracteres
           </div>
         </div>
       </label>

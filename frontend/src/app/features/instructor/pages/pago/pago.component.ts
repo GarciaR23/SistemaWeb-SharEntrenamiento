@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './pago.component.html',
   styleUrls: ['./pago.component.scss'],
 })
-export class Pago {
+export class Pago implements OnInit {
   balanceTotal = 0;
   proximaLiquidacion = '';
 

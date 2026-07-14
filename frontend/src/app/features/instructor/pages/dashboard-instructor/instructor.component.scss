@@ -15,28 +15,37 @@ $border-color: #30363d;
 
 /* Bienvenida */
 .welcome-banner {
-  background: linear-gradient(135deg, #162635 0%, #113636 100%);
-  border-radius: 16px;
+  background-color: #171B28;
+  background: linear-gradient(90deg,
+      rgba(2, 102, 184, 0.11) 0%,
+      #171B28 60%,
+      #171B28 75%,
+      rgba(110, 255, 192, 0.20) 100%);
+  border-radius: 20px;
   padding: 60px 50px;
   margin-bottom: 24px;
   position: relative;
   overflow: hidden;
 
-  h1 {
-    font-size: 50px;
-    font-weight: 700;
-    margin: 0 0 8px 0;
-    color: #fff;
+  .welcome-content {
+    h1 {
+      font-size: 36px;
+      font-weight: 700;
+      margin: 0 0 10px 0;
+      color: #FFFFFF;
+      letter-spacing: -0.5px;
 
-    span {
-      color: $accent-green;
+      span {
+        color: #6EFFC0;
+      }
     }
-  }
 
-  p {
-    font-size: 18px;
-    color: #a3b8cc;
-    margin: 0;
+    p {
+      font-size: 15px;
+      color: #BACBBF;
+      margin: 0;
+      font-weight: 400;
+    }
   }
 }
 
@@ -49,30 +58,45 @@ $border-color: #30363d;
 }
 
 .stat-card {
-  background-color: $card-bg;
+  background-color: #171B24;
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  border: none;
 
   .stat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 
     span {
+      display: block;
       font-size: 12px;
-      font-weight: 600;
-      color: $text-secondary;
-      letter-spacing: 0.5px;
+      font-weight: 500;
+      color: #BACBBF;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Icono grande de la esquina */
+    svg {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 56px;
+      height: 56px;
+      z-index: 1;
+      stroke-width: 1.5;
     }
   }
 
   h2 {
     font-size: 32px;
     font-weight: 700;
-    margin: 0 0 12px 0;
-    color: #fff;
+    margin: 0 0 16px 0;
+    color: #FFFFFF;
+    position: relative;
+    z-index: 2;
   }
 
   .stat-trend {
@@ -80,14 +104,22 @@ $border-color: #30363d;
     align-items: center;
     gap: 6px;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
+    position: relative;
+    z-index: 2;
+
+    svg {
+      width: 14px;
+      height: 14px;
+      stroke-width: 2.5;
+    }
 
     &.trend-up {
-      color: $accent-green;
+      color: #6EFFC0;
     }
 
     &.trend-neutral {
-      color: #3b82f6;
+      color: #93C5FD;
     }
   }
 
@@ -95,7 +127,9 @@ $border-color: #30363d;
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 2;
 
     h2 {
       margin: 0;
@@ -104,13 +138,32 @@ $border-color: #30363d;
     .stars {
       display: flex;
       gap: 4px;
+
+      svg {
+        width: 16px;
+        height: 16px;
+      }
     }
   }
 
   .stat-text {
     font-size: 13px;
-    color: $text-secondary;
+    color: #8b949e;
     margin: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  &:nth-child(1) .stat-header svg {
+    stroke: rgba(110, 255, 192, 0.2);
+  }
+
+  &:nth-child(2) .stat-header svg {
+    stroke: rgba(147, 197, 253, 0.2);
+  }
+
+  &:nth-child(3) .stat-header svg {
+    stroke: rgba(139, 148, 158, 0.25);
   }
 }
 
@@ -192,53 +245,87 @@ $border-color: #30363d;
 }
 
 .promo-card {
-  background: linear-gradient(145deg, #163a35 0%, #0d2825 100%);
+  background-color: #132A29;
+  background: radial-gradient(circle at top right, #177154 0%, #132A29 90%);
   border-radius: 16px;
-  padding: 32px 24px;
+  padding: 40px 32px;
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  min-height: 350px;
+
+  /* Icono gigante de fondo (Marca de agua) */
+  &::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -40px;
+    width: 280px;
+    /* Icono más grande para abarcar la nueva altura */
+    height: 280px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z'%3E%3C/path%3E%3Ccircle cx='12' cy='10' r='3'%3E%3C/circle%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.08;
+    z-index: 0;
+  }
 
   .promo-content {
     position: relative;
-    z-index: 2;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 
     h3 {
-      font-size: 22px;
-      line-height: 1.2;
-      margin: 0 0 16px 0;
-      color: #fff;
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.25;
+      margin: 0 0 20px 0;
+      color: #ffffff;
     }
 
     p {
       font-size: 14px;
-      color: #cbd5e1;
-      line-height: 1.5;
-      margin: 0 0 24px 0;
+      color: #BACBBF;
+      line-height: 1.6;
+      margin: 0 0 32px 0;
+      padding-right: 15px;
 
       .highlight {
-        color: $accent-green;
+        color: #00E59B;
         font-weight: 600;
       }
     }
-  }
 
-  .btn-promo {
-    background-color: $accent-green;
-    color: #022c22;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-    align-self: flex-start;
-    transition: background-color 0.2s;
+    /* Estilos del botón corregidos */
+    .btn-promo {
+      display: block;
+      width: 100%;
+      margin-top: auto;
 
-    &:hover {
-      background-color: #00c484;
+      background-color: #00E59B;
+      color: #022C22;
+      border: none;
+      padding: 16px 24px;
+      border-radius: 10px;
+
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      text-align: center;
+      cursor: pointer;
+
+      transition: background-color 0.2s, transform 0.2s;
+
+      &:hover {
+        background-color: #00C484;
+        transform: translateY(-2px);
+      }
     }
   }
 }

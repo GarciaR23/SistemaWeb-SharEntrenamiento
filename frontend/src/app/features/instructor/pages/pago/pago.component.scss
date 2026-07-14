@@ -1,19 +1,23 @@
-$bg-color: #0d1117;
-$card-bg: #161b22;
-$text-primary: #f0f6fc;
-$text-secondary: #8b949e;
-$accent-green: #00e59b;
-$border-color: #30363d;
+$bg-color: #131822;
+$card-bg: #1C212D;
+$text-primary: #F8FAFC;
+$text-secondary: #94A3B8;
+$text-muted: #64748B;
+$accent-green: #00E59B;
+$border-color: rgba(255, 255, 255, 0.03);
 
 .pago-page {
-  padding: 32px;
+  padding: 24px 20px 40px;
   color: $text-primary;
-  background-color: $bg-color;
   font-family: 'Inter', sans-serif;
   min-height: 100vh;
+  box-sizing: border-box;
+
+  @media (max-width: 1024px) {
+    padding: 32px 24px;
+  }
 }
 
-/* Cabecera */
 .pago-header {
   margin-bottom: 32px;
 
@@ -21,31 +25,32 @@ $border-color: #30363d;
     font-size: 32px;
     font-weight: 700;
     margin: 0 0 8px 0;
+    letter-spacing: -0.5px;
   }
 
   p {
     font-size: 15px;
     color: $text-secondary;
     margin: 0;
-    max-width: 800px;
+    max-width: 980px;
+    line-height: 1.5;
   }
 }
 
-/* Balance Card */
 .balance-section {
-  margin-bottom: 32px;
+  margin-bottom: 48px;
 }
 
 .balance-card {
-  background: linear-gradient(135deg, #00e59b 0%, #00b377 100%);
+  background: linear-gradient(135deg, #3BFFAC 0%, #00E59B 100%);
   border-radius: 16px;
-  padding: 40px;
+  padding: 48px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 229, 155, 0.2);
+  box-shadow: 0 20px 40px rgba(0, 229, 155, 0.15);
 
   .balance-content {
     position: relative;
@@ -53,29 +58,32 @@ $border-color: #30363d;
 
     span {
       display: block;
-      color: #022c22;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
+      color: #022C22;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
       margin-bottom: 8px;
+      opacity: 0.85;
     }
 
     h2 {
       color: #061016;
-      font-size: 48px;
-      font-weight: 800;
-      margin: 0 0 16px 0;
-      letter-spacing: -1px;
+      font-size: 56px;
+      font-weight: 900;
+      margin: 0 0 24px 0;
+      letter-spacing: -1.5px;
     }
 
     p {
       margin: 0;
-      color: #022c22;
+      color: #022C22;
       font-size: 13px;
       line-height: 1.5;
+      opacity: 0.9;
 
       strong {
-        font-weight: 700;
+        font-weight: 800;
         font-size: 15px;
       }
     }
@@ -83,63 +91,82 @@ $border-color: #30363d;
 
   .balance-icon {
     position: absolute;
-    right: 40px;
-    opacity: 0.2;
-    transform: scale(1.5);
+    right: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.15;
+    pointer-events: none;
+
+    svg {
+      width: 280px;
+      height: 280px;
+      stroke: #022C22;
+    }
   }
 }
 
-/* Indicadores de Estado */
 .indicadores-section {
-  margin-bottom: 48px;
+  margin-bottom: 56px;
 
   h3 {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 700;
-    color: $text-secondary;
-    letter-spacing: 1px;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
     margin: 0 0 16px 0;
   }
 }
 
 .indicadores-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
 }
 
 .indicador-card {
   background-color: $card-bg;
   border-radius: 12px;
-  padding: 20px;
+  padding: 24px;
   display: flex;
   align-items: center;
   gap: 16px;
-  border-left: 4px solid transparent;
+  border: 1px solid $border-color;
+  position: relative;
+  overflow: hidden;
 
-  &.success {
-    border-left-color: $accent-green;
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
   }
 
-  &.process {
-    border-left-color: #3b82f6;
+  &.success::before {
+    background-color: $accent-green;
   }
 
-  &.danger {
-    border-left-color: #ef4444;
+  &.process::before {
+    background-color: #3B82F6;
+  }
+
+  &.danger::before {
+    background-color: #F43F5E;
   }
 
   .indicador-icon {
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
 
     svg {
-      width: 16px;
-      height: 16px;
+      width: 20px;
+      height: 20px;
     }
   }
 
@@ -150,49 +177,58 @@ $border-color: #30363d;
 
   &.process .indicador-icon {
     background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
+    color: #3B82F6;
   }
 
   &.danger .indicador-icon {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
+    background: rgba(244, 63, 94, 0.1);
+    color: #F43F5E;
   }
 
   .indicador-content {
     span {
       display: block;
-      font-size: 11px;
-      font-weight: 600;
+      font-size: 10px;
+      font-weight: 700;
       color: $text-secondary;
-      letter-spacing: 0.5px;
-      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
     }
 
     h4 {
       margin: 0;
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 700;
       color: #fff;
     }
   }
 }
 
-/* Transacciones Recientes */
 .transacciones-section {
   .section-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
+    gap: 16px;
     margin-bottom: 24px;
+    flex-wrap: wrap;
+
+    > div {
+      flex: 1 1 auto;
+      min-width: 0;
+      text-align: left;
+    }
 
     h3 {
-      font-size: 22px;
-      font-weight: 600;
+      font-size: 20px;
+      font-weight: 700;
       margin: 0 0 6px 0;
+      color: $text-primary;
     }
 
     p {
-      font-size: 14px;
+      font-size: 13px;
       color: $text-secondary;
       margin: 0;
     }
@@ -201,12 +237,15 @@ $border-color: #30363d;
       background: transparent;
       border: none;
       color: $accent-green;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 13px;
+      font-weight: 700;
       cursor: pointer;
+      padding: 0;
+      transition: filter 0.2s;
+      white-space: nowrap;
 
       &:hover {
-        text-decoration: underline;
+        filter: brightness(1.2);
       }
     }
   }
@@ -215,7 +254,7 @@ $border-color: #30363d;
 .transacciones-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .transaccion-row {
@@ -223,43 +262,44 @@ $border-color: #30363d;
   border-radius: 12px;
   padding: 16px 24px;
   display: grid;
-  grid-template-columns: 2fr 1.5fr 1fr 2fr 1fr;
+  grid-template-columns: minmax(0, 2fr) minmax(180px, 1.5fr) minmax(140px, 1fr) minmax(0, 2fr) auto;
   align-items: center;
   gap: 20px;
-  border: 1px solid transparent;
-  transition: border-color 0.2s;
+  border: 1px solid $border-color;
+  transition: background-color 0.2s;
 
   &:hover {
-    border-color: $border-color;
+    background-color: #1F2533;
   }
 
   span {
     display: block;
-    font-size: 10px;
-    font-weight: 600;
-    color: $text-secondary;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
   }
 
   p {
     margin: 0;
     font-size: 13px;
     font-weight: 500;
-    color: #fff;
+    color: #BACBBF;
   }
 }
 
 .cell-user {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 
   .avatar-box {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    background-color: #273140;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background-color: #131822;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -278,7 +318,7 @@ $border-color: #30363d;
       margin: 0 0 4px 0;
       font-size: 14px;
       font-weight: 600;
-      color: #fff;
+      color: $text-primary;
     }
 
     .stars {
@@ -292,23 +332,23 @@ $border-color: #30363d;
   .text-green {
     color: $accent-green;
     font-weight: 700;
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .text-red {
-    color: #f87171;
+    color: #F43F5E;
     font-weight: 700;
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .badge-penalty {
     display: inline-block;
-    background: rgba(239, 68, 68, 0.2);
-    color: #f87171;
+    background: rgba(244, 63, 94, 0.1);
+    color: #F43F5E;
     font-size: 10px;
     padding: 2px 6px;
     border-radius: 4px;
-    margin-left: 6px;
+    margin-left: 8px;
   }
 }
 
@@ -327,49 +367,51 @@ $border-color: #30363d;
   button {
     padding: 8px 16px;
     border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: 700;
     cursor: pointer;
     border: none;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 6px;
-    transition: all 0.2s;
+    transition: 0.2s;
   }
 
   .btn-chequear {
-    background-color: #273140;
-    color: #fff;
+    background-color: #272B35;
+    color: #E2E8F0;
 
     &:hover {
-      background-color: #303b4d;
+      background-color: #333845;
     }
   }
 
   .btn-incidencia {
-    background-color: rgba(239, 68, 68, 0.2);
-    color: #f87171;
+    background-color: #FCA5A5;
+    color: #7F1D1D;
 
     &:hover {
-      background-color: rgba(239, 68, 68, 0.3);
+      filter: brightness(0.9);
     }
   }
 }
 
-/* Empty State */
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 64px 20px;
+  padding: 80px 24px;
   text-align: center;
+  background-color: $card-bg;
+  border-radius: 16px;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
 
   .empty-icon {
-    width: 96px;
-    height: 96px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    background-color: $card-bg;
+    background-color: rgba(255, 255, 255, 0.02);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -377,18 +419,24 @@ $border-color: #30363d;
   }
 
   h2 {
-    font-size: 24px;
+    font-size: 20px;
+    font-weight: 600;
     margin: 0 0 12px 0;
   }
 
   p {
     color: $text-secondary;
-    font-size: 15px;
+    font-size: 14px;
     max-width: 400px;
+    line-height: 1.5;
   }
 }
 
 @media (max-width: 1024px) {
+  .indicadores-grid {
+    grid-template-columns: 1fr;
+  }
+
   .transaccion-row {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto;
@@ -407,8 +455,42 @@ $border-color: #30363d;
   }
 
   .section-header {
+    width: 100%;
     flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
+    gap: 12px;
+  }
+
+  .section-header > div {
+    width: 100%;
+  }
+
+  .section-header .btn-historial {
+    align-self: flex-start;
+  }
+
+  .balance-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 32px;
+  }
+
+  .transaccion-row {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(5, auto);
+  }
+
+  .cell-comment p {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+
+  .cell-action {
+    grid-column: span 1;
+    justify-content: flex-start;
+    margin-top: 12px;
   }
 }
+

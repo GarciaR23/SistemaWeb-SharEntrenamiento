@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./revision.component.scss'],
 })
 export class RevisionComponent {
-   alertas = [
+  alertas = [
     {
       texto: '3 cruces de horario detectados.'
     },
