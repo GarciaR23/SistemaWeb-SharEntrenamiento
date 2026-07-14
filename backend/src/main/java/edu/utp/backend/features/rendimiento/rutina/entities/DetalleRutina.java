@@ -2,6 +2,8 @@ package edu.utp.backend.features.rendimiento.rutina.entities;
 
 import java.time.Duration;
 
+import org.hibernate.annotations.ColumnTransformer;
+
 import edu.utp.backend.features.rendimiento.hoja_ruta.entities.HojaRuta;
 import edu.utp.backend.features.rendimiento.rutina.enums.TipoCategoriaEjercicio;
 import jakarta.persistence.Column;
@@ -42,7 +44,8 @@ public class DetalleRutina {
     private String nombreEjercicio;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_ejercicio", nullable = false)
+    @ColumnTransformer(write = "?::tipo_ejercicio")
+    @Column(name = "tipo_ejercicio", nullable = false, columnDefinition = "tipo_ejercicio")
     private TipoCategoriaEjercicio tipoEjercicio;
 
     @Column(name = "descripcion_ejercicio", columnDefinition = "TEXT")

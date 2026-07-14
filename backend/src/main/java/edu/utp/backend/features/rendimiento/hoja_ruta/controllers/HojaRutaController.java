@@ -36,10 +36,9 @@ public class HojaRutaController {
         return ResponseEntity.ok(hojaRutaService.create(request));
     }
 
-    @GetMapping("/formulario/{idReserva}")
-    public ResponseEntity<FormularioHojaRutaDTO> obtenerFormulario(
-            @PathVariable Integer idReserva) {
-        return ResponseEntity.ok(hojaRutaService.obtenerFormulario(idReserva));
+    @GetMapping("/formulario/{idDetalle}")
+    public ResponseEntity<FormularioHojaRutaDTO> obtenerFormulario(@PathVariable Integer idDetalle) {
+        return ResponseEntity.ok(hojaRutaService.obtenerFormulario(idDetalle));
     }
 
     @GetMapping("/contador-hojas/{idInstructor}")

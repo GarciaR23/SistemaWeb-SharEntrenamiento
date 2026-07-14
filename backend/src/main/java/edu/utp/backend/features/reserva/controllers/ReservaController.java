@@ -64,9 +64,13 @@ public class ReservaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(reservaService.create(request));
     }
 
-    @PatchMapping("/{id}/cancelar")
-    public ResponseEntity<Void> cancelar(@PathVariable Integer id) {
-        reservaService.cancelar(id);
-        return ResponseEntity.noContent().build();
+    @PatchMapping("/detalle/{idDetalle}/cancelar")
+    public ResponseEntity<?> cancelarDetalle(@PathVariable Integer idDetalle) {
+        try {
+            reservaService.cancelarDetalle(idDetalle);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Reserva cancelada correctamente."));
+        } catch (IllegalStateException | IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", ex.getMessage()));
+        }
     }
 }

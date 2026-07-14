@@ -35,4 +35,18 @@ public class DetalleReserva {
 
     @Column(name = "monto_subtotal", nullable = false)
     private BigDecimal montoSubtotal;
+
+    @ColumnTransformer(write = "?::estado_reserva_enum")
+    @Column(name = "estado_detalle", columnDefinition = "estado_reserva_enum DEFAULT 'pendiente'")
+    private String estadoDetalle;
+
+    @Column(name = "fecha_revision")
+    private LocalDateTime fechaRevision;
+
+    @PrePersist
+    public void prePersist() {
+        if (estadoDetalle == null || estadoDetalle.isBlank()) {
+            estadoDetalle = "pendiente";
+        }
+    }
 }

@@ -40,34 +40,33 @@ public class HojaRutaServiceImpl implements HojaRutaService {
     public HojaRutaResponseDTO create(HojaRutaRequestDTO request) {
         HojaRuta entity = new HojaRuta();
         entity.setIdReserva(request.idReserva());
+        entity.setIdDetalle(request.idDetalle());
         entity.setEstadoHoja(EstadoHoja.pendiente_envio);
         return toResponse(hojaRutaRepository.save(entity));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public FormularioHojaRutaDTO obtenerFormulario(Integer idReserva) {
-        List<Object[]> datos = hojaRutaRepository.obtenerDatosFormulario(idReserva);
-
+    public FormularioHojaRutaDTO obtenerFormulario(Integer idDetalle) {
+        List<Object[]> datos = hojaRutaRepository.obtenerDatosFormulario(idDetalle);
         if (datos.isEmpty()) {
-            throw new IllegalArgumentException("Reserva no encontrada: " + idReserva);
+            throw new IllegalArgumentException("Detalle no encontrado: " + idDetalle);
         }
-
         Object[] row = datos.get(0);
 
         SedeResumenDTO sede = new SedeResumenDTO(
-                ((Number) row[3]).intValue(),
-                (String) row[4],
+                ((Number) row[4]).intValue(),
                 (String) row[5],
                 (String) row[6],
                 (String) row[7],
-                (String) row[8]);
+                (String) row[8],
+                (String) row[9]);
 
         return new FormularioHojaRutaDTO(
-                idReserva,
-                (String) row[0],
+                ((Number) row[0]).intValue(),
                 (String) row[1],
                 (String) row[2],
+                (String) row[3],
                 sede);
     }
 
@@ -89,15 +88,16 @@ public class HojaRutaServiceImpl implements HojaRutaService {
         return results.stream()
                 .map(row -> new CardHojaRutaDTO(
                         ((Number) row[0]).intValue(),
-                        row[1] != null ? ((Number) row[1]).intValue() : null,
-                        (String) row[2],
+                        ((Number) row[1]).intValue(),
+                        row[2] != null ? ((Number) row[2]).intValue() : null,
                         (String) row[3],
                         (String) row[4],
                         (String) row[5],
                         (String) row[6],
                         (String) row[7],
                         (String) row[8],
-                        row[9] != null ? ((java.sql.Timestamp) row[9]).toLocalDateTime() : null))
+                        (String) row[9],
+                        toLocalDateTime(row[10])))
                 .toList();
     }
 
@@ -128,5 +128,17 @@ public class HojaRutaServiceImpl implements HojaRutaService {
                 entity.getEstadoHoja() != null ? entity.getEstadoHoja().name() : null,
                 entity.getFechaCreacion(),
                 entity.getFechaActualizacion());
+    }
+
+    private java.time.LocalDateTime toLocalDateTime(Object value) {
+        if (value == null)
+            return null;
+        if (value instanceof java.sql.Timestamp ts)
+            return ts.toLocalDateTime();
+        if (value instanceof java.time.Instant instant)
+            return instant.atZone(java.time.ZoneId.systemDefault()).toLocalDateTime();
+        if (value instanceof java.time.LocalDateTime ldt)
+            return ldt;
+        return null;
     }
 }

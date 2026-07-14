@@ -24,24 +24,29 @@ public class RevisionService {
     private final RevisionRepository revisionRepository;
     private final HojaRutaRepository hojaRutaRepository;
 
+    @Transactional
+    public void limpiarVencidas() {
+        revisionRepository.limpiarReservasVencidas();
+    }
+
     @Transactional(readOnly = true)
     public List<RevisionPacienteDto> obtenerPacientesParaRevision(Integer idInstructor) {
         List<Object[]> results = revisionRepository.obtenerPacientesParaRevision(idInstructor);
         return results.stream()
                 .map(row -> new RevisionPacienteDto(
                         ((Number) row[0]).intValue(),
-                        ((Number) row[1]).intValue(), 
-                        (String) row[2], 
-                        (String) row[3], 
-                        ((Number) row[4]).intValue(), 
-                        row[5] != null ? ((java.sql.Date) row[5]).toLocalDate() : null, 
+                        ((Number) row[1]).intValue(),
+                        (String) row[2],
+                        (String) row[3],
+                        ((Number) row[4]).intValue(),
+                        row[5] != null ? ((java.sql.Date) row[5]).toLocalDate() : null,
                         row[6] != null ? ((java.sql.Time) row[6]).toLocalTime() : null,
-                        (String) row[7], 
-                        (String) row[8] 
-                ))
+                        (String) row[7],
+                        (String) row[8]))
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public FechaCriticaDto obtenerFechaCritica(Integer idReserva) {
         Object[] result = revisionRepository.obtenerFechaCritica(idReserva);
         return new FechaCriticaDto(
@@ -61,17 +66,20 @@ public class RevisionService {
         Integer idReserva = ((Number) result[1]).intValue();
 
         if (request.aprobada()) {
-            HojaRuta hojaRuta = new HojaRuta();
-            hojaRuta.setIdReserva(idReserva);
-            hojaRuta.setEstadoHoja(EstadoHoja.pendiente_envio);
-            hojaRutaRepository.save(hojaRuta);
+            if (hojaRutaRepository.findByIdDetalle(idDetalle).isEmpty()) {
+                HojaRuta hojaRuta = new HojaRuta();
+                hojaRuta.setIdReserva(idReserva);
+                hojaRuta.setIdDetalle(idDetalle);
+                hojaRuta.setEstadoHoja(EstadoHoja.pendiente_envio);
+                hojaRutaRepository.save(hojaRuta);
+            }
         }
 
         return new RevisionDecisionResponse(
                 idDetalle,
                 idReserva,
                 (String) result[2],
-                ((java.sql.Timestamp) result[3]).toLocalDateTime());
+                result[3] != null ? ((java.sql.Timestamp) result[3]).toLocalDateTime() : null);
     }
 
     @Transactional(readOnly = true)

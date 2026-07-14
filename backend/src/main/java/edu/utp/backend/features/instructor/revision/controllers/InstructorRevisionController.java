@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,5 +56,11 @@ public class InstructorRevisionController {
     public ResponseEntity<List<RecienteSemanalDto>> obtenerRecienteSemanal(
             @PathVariable Integer idInstructor) {
         return ResponseEntity.ok(revisionService.obtenerRecienteSemanal(idInstructor));
+    }
+
+    @PostMapping("/limpiar-vencidas")
+    public ResponseEntity<Void> limpiarVencidas() {
+        revisionService.limpiarVencidas();
+        return ResponseEntity.ok().build();
     }
 }

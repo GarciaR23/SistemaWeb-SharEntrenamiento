@@ -17,7 +17,7 @@ public interface DetalleRutinaRepository extends JpaRepository<DetalleRutina, In
     @Query(value = """
             SELECT dr.duracion_entrenamiento::text
             FROM detalle_reserva dr
-            INNER JOIN hoja_ruta hr ON dr.id_reserva = hr.id_reserva
+            INNER JOIN hoja_ruta hr ON dr.id_detalle = hr.id_detalle
             WHERE hr.id_ruta = :idRuta
             """, nativeQuery = true)
     String obtenerDuracionPermitida(@Param("idRuta") Integer idRuta);

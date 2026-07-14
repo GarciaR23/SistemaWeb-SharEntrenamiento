@@ -46,17 +46,15 @@ public class DetalleRutinaServiceImpl implements DetalleRutinaService {
         HojaRuta hojaRuta = hojaRutaRepository.findById(request.idRuta())
                 .orElseThrow(() -> new IllegalArgumentException("Hoja de ruta no encontrada: " + request.idRuta()));
 
-        // Obtener duración permitida
         String duracionPermitidaStr = detalleRutinaRepository.obtenerDuracionPermitida(request.idRuta());
-        Duration duracionPermitida = Duration.parse(duracionPermitidaStr);
+        Duration duracionPermitida = parseDuracion(duracionPermitidaStr);
 
-        // Sumar duraciones actuales
         List<DetalleRutina> ejerciciosActuales = detalleRutinaRepository.findByHojaRuta_IdRuta(request.idRuta());
         Duration duracionActual = ejerciciosActuales.stream()
                 .map(DetalleRutina::getDuracionEstimada)
                 .reduce(Duration.ZERO, Duration::plus);
 
-        Duration nuevaDuracion = Duration.parse(request.duracionEstimada());
+        Duration nuevaDuracion = parseDuracion(request.duracionEstimada());
         Duration total = duracionActual.plus(nuevaDuracion);
 
         if (total.compareTo(duracionPermitida) > 0) {
@@ -68,7 +66,7 @@ public class DetalleRutinaServiceImpl implements DetalleRutinaService {
         DetalleRutina entity = DetalleRutina.builder()
                 .hojaRuta(hojaRuta)
                 .nombreEjercicio(request.nombreEjercicio())
-                .tipoEjercicio(TipoCategoriaEjercicio.valueOf(request.tipoEjercicio()))
+                .tipoEjercicio(mapearTipo(request.tipoEjercicio()))
                 .descripcionEjercicio(request.descripcionEjercicio())
                 .duracionEstimada(nuevaDuracion)
                 .build();
@@ -80,6 +78,36 @@ public class DetalleRutinaServiceImpl implements DetalleRutinaService {
     @Transactional
     public void delete(Integer id) {
         detalleRutinaRepository.deleteById(id);
+    }
+
+    private Duration parseDuracion(String valor) {
+        if (valor == null || valor.isBlank()) {
+            throw new IllegalArgumentException("La duración es obligatoria.");
+        }
+        if (valor.startsWith("PT")) {
+            return Duration.parse(valor);
+        }
+        if (valor.contains(":")) {
+            String[] partes = valor.split(":");
+            long horas = Long.parseLong(partes[0]);
+            long minutos = Long.parseLong(partes[1]);
+            long segundos = partes.length > 2 ? Long.parseLong(partes[2]) : 0;
+            return Duration.ofHours(horas).plusMinutes(minutos).plusSeconds(segundos);
+        }
+        throw new IllegalArgumentException("Formato de duración no válido: " + valor);
+    }
+
+    private TipoCategoriaEjercicio mapearTipo(String tipo) {
+        if (tipo == null)
+            throw new IllegalArgumentException("El tipo de ejercicio es obligatorio.");
+        return switch (tipo.toUpperCase()) {
+            case "CARDIO" -> TipoCategoriaEjercicio.cardio;
+            case "FUERZA" -> TipoCategoriaEjercicio.fuerza;
+            case "FLEXIBILIDAD" -> TipoCategoriaEjercicio.regulacion_sensorial;
+            case "MOVILIDAD" -> TipoCategoriaEjercicio.calentamiento;
+            case "RESISTENCIA" -> TipoCategoriaEjercicio.relajacion;
+            default -> throw new IllegalArgumentException("Tipo de ejercicio no válido: " + tipo);
+        };
     }
 
     private DetalleRutinaResponseDTO toResponse(DetalleRutina entity) {

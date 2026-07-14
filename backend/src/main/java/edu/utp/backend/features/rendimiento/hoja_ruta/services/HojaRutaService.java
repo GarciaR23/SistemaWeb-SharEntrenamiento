@@ -15,7 +15,7 @@ public interface HojaRutaService {
 
     HojaRutaResponseDTO create(HojaRutaRequestDTO request);
 
-    FormularioHojaRutaDTO obtenerFormulario(Integer idReserva);
+    FormularioHojaRutaDTO obtenerFormulario(Integer idDetalle);
 
     ContadorHojasDTO obtenerContadorHojas(Integer idInstructor);
 

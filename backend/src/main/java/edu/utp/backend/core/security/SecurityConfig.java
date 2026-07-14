@@ -61,6 +61,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/instructores/analitica/**")
                         .hasAnyAuthority("admin", "instructor")
 
+                        .requestMatchers(HttpMethod.PATCH, "/api/reservas/detalle/*/cancelar")
+                        .hasAnyAuthority("tutor", "admin")
+
                         // BÚSQUEDA DE INSTRUCTORES
                         .requestMatchers(HttpMethod.GET, "/api/instructores/busqueda")
                         .hasAnyAuthority("tutor", "admin")
@@ -110,7 +113,7 @@ public class SecurityConfig {
                 "http://127.0.0.1:5501",
                 "http://127.0.0.1:5502"));
 
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);

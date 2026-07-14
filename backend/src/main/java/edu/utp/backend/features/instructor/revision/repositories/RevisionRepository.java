@@ -13,6 +13,12 @@ public class RevisionRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
+    public void limpiarReservasVencidas() {
+        entityManager
+                .createNativeQuery("SELECT public.fn_limpiar_reservas_vencidas()")
+                .getSingleResult();
+    }
+
     @SuppressWarnings("unchecked")
     public List<Object[]> obtenerPacientesParaRevision(Integer idInstructor) {
         return entityManager
@@ -23,8 +29,8 @@ public class RevisionRepository {
                             p.nombre_completo,
                             p.url_imagen_paciente,
                             p.edad,
-                            r.fecha_creacion::date,
-                            dr.hora_inicio_estimada::time,
+                            dr.hora_inicio_estimada::date AS fecha_reserva,
+                            dr.hora_inicio_estimada::time AS hora_inicio,
                             dr.duracion_entrenamiento::text,
                             s.zona_sede
                         FROM detalle_reserva dr
@@ -32,7 +38,7 @@ public class RevisionRepository {
                         INNER JOIN paciente p ON r.id_paciente = p.id_paciente
                         INNER JOIN sede s ON r.id_sede = s.id_sede
                         WHERE r.id_instructor = :idInstructor
-                          AND r.estado_reserva = 'pendiente'
+                          AND dr.estado_detalle = 'pendiente'
                         ORDER BY dr.hora_inicio_estimada ASC
                         """)
                 .setParameter("idInstructor", idInstructor)
@@ -57,42 +63,39 @@ public class RevisionRepository {
                 .getSingleResult();
     }
 
-    public Object[] actualizarEstadoRevision(Integer idDetalle, String estadoReserva) {
+    public Object[] actualizarEstadoRevision(Integer idDetalle, String estadoDetalle) {
         return (Object[]) entityManager
                 .createNativeQuery("""
-                        UPDATE reserva r
-                        SET estado_reserva = CAST(:estadoReserva AS estado_reserva_enum),
+                        UPDATE detalle_reserva
+                        SET estado_detalle = CAST(:estadoDetalle AS estado_reserva_enum),
                             fecha_revision = CURRENT_TIMESTAMP
-                        FROM detalle_reserva dr
-                        WHERE r.id_reserva = dr.id_reserva
-                          AND dr.id_detalle = :idDetalle
-                        RETURNING dr.id_detalle, r.id_reserva, r.estado_reserva::text, r.fecha_revision
+                        WHERE id_detalle = :idDetalle
+                        RETURNING id_detalle, id_reserva, estado_detalle::text, fecha_revision
                         """)
                 .setParameter("idDetalle", idDetalle)
-                .setParameter("estadoReserva", estadoReserva)
+                .setParameter("estadoDetalle", estadoDetalle)
                 .getSingleResult();
     }
 
-    // ─── CONTADOR PENDIENTES ───
     public Long contarPendientes(Integer idInstructor) {
         return ((Number) entityManager
                 .createNativeQuery("""
                         SELECT COUNT(*)
-                        FROM reserva
-                        WHERE id_instructor = :idInstructor
-                          AND estado_reserva = 'pendiente'
+                        FROM detalle_reserva dr
+                        INNER JOIN reserva r ON dr.id_reserva = r.id_reserva
+                        WHERE r.id_instructor = :idInstructor
+                          AND dr.estado_detalle = 'pendiente'
                         """)
                 .setParameter("idInstructor", idInstructor)
                 .getSingleResult()).longValue();
     }
 
-    // ─── RECIENTE / SEMANAL ───
     @SuppressWarnings("unchecked")
     public List<Object[]> obtenerRecienteSemanal(Integer idInstructor) {
         return entityManager
                 .createNativeQuery("""
                         SELECT
-                            r.id_reserva,
+                            dr.id_detalle,
                             p.nombre_completo,
                             CASE
                                 WHEN r.fecha_creacion >= CURRENT_TIMESTAMP - INTERVAL '24 hours'
@@ -100,10 +103,11 @@ public class RevisionRepository {
                                 ELSE 'semanal'
                             END AS clasificacion,
                             r.fecha_creacion
-                        FROM reserva r
+                        FROM detalle_reserva dr
+                        INNER JOIN reserva r ON dr.id_reserva = r.id_reserva
                         INNER JOIN paciente p ON r.id_paciente = p.id_paciente
                         WHERE r.id_instructor = :idInstructor
-                          AND r.fecha_creacion >= date_trunc('week', CURRENT_TIMESTAMP)
+                          AND dr.estado_detalle = 'pendiente'
                         ORDER BY r.fecha_creacion DESC
                         """)
                 .setParameter("idInstructor", idInstructor)

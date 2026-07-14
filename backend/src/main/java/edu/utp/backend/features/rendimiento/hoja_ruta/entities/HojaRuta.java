@@ -2,6 +2,8 @@ package edu.utp.backend.features.rendimiento.hoja_ruta.entities;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.ColumnTransformer;
+
 import edu.utp.backend.features.rendimiento.hoja_ruta.enums.EstadoHoja;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,7 +34,11 @@ public class HojaRuta {
     @Column(name = "id_reserva", nullable = false)
     private Integer idReserva;
 
+    @Column(name = "id_detalle", unique = true)
+    private Integer idDetalle;
+
     @Enumerated(EnumType.STRING)
+    @ColumnTransformer(write = "?::tipo_estado_hoja")
     @Column(name = "estado_hoja", columnDefinition = "tipo_estado_hoja DEFAULT 'pendiente_envio'")
     private EstadoHoja estadoHoja;
 
@@ -41,5 +47,4 @@ public class HojaRuta {
 
     @Column(name = "fecha_actualizacion", insertable = false, updatable = false)
     private LocalDateTime fechaActualizacion;
-
 }

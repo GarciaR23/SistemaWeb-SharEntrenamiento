@@ -36,23 +36,13 @@ public class Reserva {
     @Column(name = "monto_total_acumulado", nullable = false)
     private BigDecimal montoTotalAcumulado;
 
-    @ColumnTransformer(write = "?::estado_reserva_enum")
-    @Column(name = "estado_reserva", nullable = false, columnDefinition = "estado_reserva_enum")
-    private String estadoReserva;
-
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion;
-
-    @Column(name = "fecha_revision")
-    private LocalDateTime fechaRevision;
 
     @PrePersist
     public void prePersist() {
         if (fechaCreacion == null) {
             fechaCreacion = LocalDateTime.now();
-        }
-        if (estadoReserva == null || estadoReserva.isBlank()) {
-            estadoReserva = "pendiente";
         }
     }
 }
