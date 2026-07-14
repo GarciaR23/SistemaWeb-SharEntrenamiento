@@ -10,37 +10,65 @@
         </div>
     </div>
 
-    <div class="modal-overlay" *ngIf="mostrarModalDetalle && sesionDetalle">
-        <div class="detail-modal">
-            <button class="modal-close" (click)="cerrarDetalle()"><svg viewBox="0 0 24 24" fill="none">
-                    <path d="M18 6L6 18"></path>
-                    <path d="M6 6l12 12"></path>
-                </svg></button>
-            <div class="detail-header">
-                <img [src]="obtenerImagenSesion(sesionDetalle)" [alt]="obtenerNombreInstructor(sesionDetalle)">
-                <div>
-                    <span class="mini-badge" [ngClass]="obtenerClaseBadge(sesionDetalle)">{{
-                        obtenerEstadoTexto(sesionDetalle) }}</span>
-                    <h2>{{ obtenerNombreInstructor(sesionDetalle) }}</h2>
-                    <p>{{ sesionDetalle.especialidad || 'Instructor certificado' }}</p>
+    <div class="modal-overlay" *ngIf="mostrarModalDetalle && sesionDetalle" (click)="cerrarDetalle()">
+        <div class="detail-modal" (click)="$event.stopPropagation()">
+            <div class="detail-shell">
+                <div class="detail-header-card">
+                    <img [src]="obtenerImagenSesion(sesionDetalle)" [alt]="obtenerNombreInstructor(sesionDetalle)">
+                    <div class="detail-header-content">
+                        <div class="detail-chip-row">
+                            <span class="mini-badge" [ngClass]="obtenerClaseBadge(sesionDetalle)">{{
+                                obtenerEstadoTexto(sesionDetalle) }}</span>
+                            <span class="detail-pill">Reserva #{{ sesionDetalle.idReserva }}</span>
+                        </div>
+                        <h2>{{ obtenerNombreInstructor(sesionDetalle) }}</h2>
+                        <p>{{ sesionDetalle.especialidad || 'Instructor certificado' }}</p>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">Resumen de la reserva</div>
+                    <div class="detail-grid">
+                        <div class="detail-item"><span>Fecha</span><strong>{{ obtenerFecha(sesionDetalle) }}</strong></div>
+                        <div class="detail-item"><span>Hora</span><strong>{{ obtenerHora(sesionDetalle) }} - {{
+                                obtenerHoraFin(sesionDetalle) }}</strong></div>
+                        <div class="detail-item"><span>Duración</span><strong>{{ obtenerDuracionTexto(sesionDetalle) }}</strong>
+                        </div>
+                        <div class="detail-item"><span>Monto</span><strong>{{ obtenerMonto(sesionDetalle) }}</strong></div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">Ubicación y contacto</div>
+                    <div class="detail-grid">
+                        <div class="detail-item wide"><span>Sede</span><strong>{{ obtenerSede(sesionDetalle) }}</strong></div>
+                        <div class="detail-item wide"><span>Dirección</span><strong>{{ obtenerDireccionSede(sesionDetalle)
+                                }}</strong></div>
+                        <div class="detail-item"><span>Detalle</span><strong>#{{ sesionDetalle.idDetalle }}</strong></div>
+                        <div class="detail-item"><span>Estado</span><strong>{{ obtenerEstadoTexto(sesionDetalle) }}</strong></div>
+                    </div>
                 </div>
             </div>
-            <div class="detail-grid">
-                <div class="detail-item"><span>Reserva</span><strong>#{{ sesionDetalle.idReserva }}</strong></div>
-                <div class="detail-item"><span>Detalle</span><strong>#{{ sesionDetalle.idDetalle }}</strong></div>
-                <div class="detail-item"><span>Estado</span><strong>{{ obtenerEstadoTexto(sesionDetalle) }}</strong>
-                </div>
-                <div class="detail-item"><span>Fecha</span><strong>{{ obtenerFecha(sesionDetalle) }}</strong></div>
-                <div class="detail-item"><span>Hora</span><strong>{{ obtenerHora(sesionDetalle) }} - {{
-                        obtenerHoraFin(sesionDetalle) }}</strong></div>
-                <div class="detail-item"><span>Duración</span><strong>{{ obtenerDuracionTexto(sesionDetalle) }}</strong>
-                </div>
-                <div class="detail-item"><span>Monto</span><strong>{{ obtenerMonto(sesionDetalle) }}</strong></div>
-                <div class="detail-item wide"><span>Sede</span><strong>{{ obtenerSede(sesionDetalle) }}</strong></div>
-                <div class="detail-item wide"><span>Dirección</span><strong>{{ obtenerDireccionSede(sesionDetalle)
-                        }}</strong></div>
+            <div class="detail-actions">
+                <button class="btn-modal-secondary" (click)="cerrarDetalle()">Cerrar</button>
             </div>
-            <div class="detail-actions"><button class="btn-modal-secondary" (click)="cerrarDetalle()">Cerrar</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" *ngIf="mostrarModalConfirmacionCancelacion" (click)="cerrarConfirmacionCancelacion()">
+        <div class="confirm-modal" (click)="$event.stopPropagation()">
+            <div class="confirm-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 9v4"></path>
+                    <path d="M12 16h.01"></path>
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                </svg>
+            </div>
+            <h2>¿Cancelar esta reserva?</h2>
+            <p>La sesión se marcará como cancelada y dejará de aparecer como activa en tu panel.</p>
+            <div class="confirm-actions">
+                <button class="btn-modal-secondary" type="button" (click)="cerrarConfirmacionCancelacion()">Volver</button>
+                <button class="btn-modal-primary danger" type="button" (click)="confirmarCancelacion()">Sí, cancelar</button>
             </div>
         </div>
     </div>
@@ -90,7 +118,7 @@
                 <ng-container *ngIf="normalizarTexto(sesion.estadoReserva) === 'pendiente'">
                     <button class="btn-main" (click)="verDetalles(sesion); $event.stopPropagation()">Detalles</button>
                     <button class="btn-cancel"
-                        (click)="cancelarReservaVisual(sesion); $event.stopPropagation()">Cancelar</button>
+                        (click)="abrirConfirmacionCancelacion(sesion); $event.stopPropagation()">Cancelar</button>
                 </ng-container>
                 <ng-container
                     *ngIf="normalizarTexto(sesion.estadoReserva) === 'aprobada' || normalizarTexto(sesion.estadoReserva) === 'confirmada'">
@@ -100,7 +128,7 @@
                         (click)="$event.stopPropagation()">
                         <button class="dropdown-item" (click)="verDetalles(sesion)">Detalles</button>
                         <button class="dropdown-item dropdown-danger"
-                            (click)="cancelarReservaVisual(sesion)">Cancelar</button>
+                            (click)="abrirConfirmacionCancelacion(sesion)">Cancelar</button>
                     </div>
                 </ng-container>
             </div>

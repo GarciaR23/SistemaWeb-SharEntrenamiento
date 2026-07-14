@@ -41,7 +41,7 @@ export class FormularioReserva implements OnInit {
   mesIndex = new Date().getMonth(); anio = new Date().getFullYear();
   mesSeleccionado = `${this.anio}-${String(this.mesIndex + 1).padStart(2, '0')}`;
   aceptaTerminos = false; cargando = true; guardando = false; validando = false;
-  mostrarModal = false; mostrarAlerta = false; alertaMensaje = '';
+  mostrarModal = false; mostrarAlerta = false; mostrarConfirmacion = false; alertaMensaje = '';
   private ordenDias: Record<string, number> = { 'L': 1, 'M': 2, 'Mi': 3, 'J': 4, 'V': 5, 'S': 6, 'D': 7 };
   private nombresDias: Record<string, string> = { 'L': 'Lunes', 'M': 'Martes', 'Mi': 'Miércoles', 'J': 'Jueves', 'V': 'Viernes', 'S': 'Sábado', 'D': 'Domingo' };
 
@@ -160,6 +160,10 @@ export class FormularioReserva implements OnInit {
 
   eliminarSesion(i: number): void { this.sesionesAgregadas.splice(i, 1); this.actualizarTotales(); }
   cerrarModal(): void { this.mostrarModal = false; }
+  cerrarConfirmacion(): void {
+    this.mostrarConfirmacion = false;
+    this.router.navigate(['/tutor/reserva']);
+  }
   actualizarTotales(): void { this.horasTotales = this.sesionesAgregadas.reduce((s, x) => s + x.duracion, 0); this.montoTotal = this.sesionesAgregadas.reduce((s, x) => s + x.subtotal, 0); }
   formatearHora(h: string): string { if (!h) return ''; const [hh, mm] = h.split(':').map(Number); const p = hh >= 12 ? 'PM' : 'AM'; const h12 = hh === 0 ? 12 : hh > 12 ? hh - 12 : hh; return `${h12}:${String(mm).padStart(2, '0')} ${p}`; }
   puedeAgregarSesion(): boolean { return !!(this.diaSeleccionado && this.horaInicioSeleccionada && this.esDuracionValida(this.duracionSeleccionada) && this.sedeSeleccionada && !this.validando); }
@@ -170,7 +174,10 @@ export class FormularioReserva implements OnInit {
     this.guardando = true;
     const detalles = this.sesionesAgregadas.map(s => { const [h, m] = s.horaInicio.split(':').map(Number); return { horaInicioEstimada: `${this.anio}-${String(this.mesIndex + 1).padStart(2, '0')}-${String(s.fechaNumero).padStart(2, '0')}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`, duracionMinutos: Math.round(s.duracion * 60), montoSubtotal: s.subtotal }; });
     this.tutorApiService.crearReserva({ idPaciente: this.idPaciente, idInstructor: this.idInstructor, idSede: this.sedeSeleccionada!.idSede, montoTotalAcumulado: this.montoTotal, detalles }).subscribe({
-      next: () => { this.guardando = false; this.router.navigate(['/tutor/reserva'], { queryParams: { reservaCreada: 'true' } }); },
+      next: () => {
+        this.guardando = false;
+        this.mostrarConfirmacion = true;
+      },
       error: (err: any) => { this.guardando = false; this.alertaMensaje = err.error?.message || 'Error.'; this.mostrarAlerta = true; }
     });
   }

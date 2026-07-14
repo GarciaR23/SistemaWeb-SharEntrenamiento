@@ -1,9 +1,5 @@
 <div class="perfil-container">
 
-    <button class="btn-back" type="button" (click)="volverCatalogo()">
-        ← Volver al catálogo
-    </button>
-
     <div *ngIf="cargando" class="loading-placeholder">
         Cargando perfil del instructor...
     </div>
@@ -15,6 +11,14 @@
     <ng-container *ngIf="!cargando && !errorMessage && resumen">
 
         <section class="hero-profile">
+            <button class="back-button" type="button" (click)="volverCatalogo()" aria-label="Volver al catálogo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M11 8l-4 4 4 4"></path>
+                    <path d="M7 12h8"></path>
+                </svg>
+            </button>
+
             <div class="profile-image-box">
                 <img [src]="obtenerImagenPerfil()" [alt]="resumen.nombreCompleto">
 
@@ -125,7 +129,7 @@
         </section>
 
         <section class="section-block testimonials-layout">
-            <div>
+            <div class="testimonials-panel">
                 <h2 class="section-title">
                     <span class="section-title-icon">
                         <img src="assets/icons/message-square-text.png" alt="Testimonios" class="icon-img">
@@ -156,8 +160,16 @@
                     </article>
                 </div>
 
-                <div class="empty-state" *ngIf="calificaciones.length === 0">
-                    Este instructor todavía no tiene testimonios.
+                <div class="empty-state-card" *ngIf="calificaciones.length === 0">
+                    <div class="empty-state-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            <path d="M8 9h8"></path>
+                            <path d="M8 13h5"></path>
+                        </svg>
+                    </div>
+                    <h3>No hay testimonios aún</h3>
+                    <p>Este instructor todavía no tiene testimonios registrados.</p>
                 </div>
             </div>
 
