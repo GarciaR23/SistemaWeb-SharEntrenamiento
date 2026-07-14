@@ -18,7 +18,7 @@
             <path [attr.d]="item.icon" />
           </svg>
           <span class="sidebar-label">{{ item.label }}</span>
-          @if (modo === 'instructor' && item.countKey && (counts[item.countKey] || 0) > 0) {
+          @if (item.countKey && (counts[item.countKey] || 0) > 0) {
             <span class="sidebar-count">{{ counts[item.countKey] || 0 }}</span>
           }
         </a>

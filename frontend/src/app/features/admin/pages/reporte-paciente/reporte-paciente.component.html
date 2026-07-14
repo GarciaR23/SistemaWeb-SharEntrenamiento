@@ -6,14 +6,14 @@
         <p>Supervisión centralizada de relaciones familiares y servicios activos.</p>
       </div>
       <div class="header-actions">
-        <button class="btn btn-secondary">
+        <button class="btn btn-secondary" (click)="toggleFiltroAvanzado()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders-horizontal">
             <path d="M21 4h-5M11 4H3M21 12h-9M8 12H3M21 20h-7M10 20H3M12 2v4M8 10v4M10 18v4" />
           </svg>
           Filtros Avanzados
         </button>
-        <button class="btn btn-secondary">
+        <button class="btn btn-secondary" (click)="exportarPDF()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -24,6 +24,142 @@
         </button>
       </div>
     </header>
+
+    <div class="offcanvas-backdrop" [class.open]="mostrarFiltroAvanzado" (click)="toggleFiltroAvanzado()"></div>
+    <aside class="offcanvas-panel" [class.open]="mostrarFiltroAvanzado">
+      <div class="offcanvas-header">
+        <div class="offcanvas-title">
+          <h3>Filtro avanzado</h3>
+          <p>Selecciona criterios clave para priorizar pacientes con una experiencia visual más clara.</p>
+        </div>
+        <button type="button" class="icon-button close-btn" (click)="toggleFiltroAvanzado()"
+          aria-label="Cerrar filtros">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="offcanvas-body">
+        <div class="advanced-search-card">
+          <div class="advanced-search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" x2="16.65" y1="21" y2="16.65" />
+            </svg>
+            <input type="text" placeholder="Buscar por nombre..." [(ngModel)]="terminoBusqueda"
+              (ngModelChange)="buscar($event)">
+          </div>
+        </div>
+
+        <div class="filter-accordion">
+          <div class="accordion-card">
+            <button type="button" class="accordion-trigger" (click)="toggleAccordion('mostrar')">
+              <span class="accordion-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 12h16" />
+                  <path d="M4 6h16" />
+                  <path d="M4 18h10" />
+                </svg>
+              </span>
+              <span class="accordion-text">
+                <strong>Mostrar</strong>
+                <small>Filtra por volumen de servicios</small>
+              </span>
+              <span class="accordion-arrow" [class.rotated]="accordionStates.mostrar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+            </button>
+            <div class="accordion-content" *ngIf="accordionStates.mostrar">
+              <div class="select-field">
+                <select id="serviciosPaciente" [(ngModel)]="filtroServicios">
+                  <option value="all">Todos los pacientes</option>
+                  <option value="top">Sólo con más servicios</option>
+                </select>
+                <span class="select-chevron">▾</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-card">
+            <button type="button" class="accordion-trigger" (click)="toggleAccordion('ordenar')">
+              <span class="accordion-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 7h18" />
+                  <path d="M7 12h10" />
+                  <path d="M10 17h4" />
+                </svg>
+              </span>
+              <span class="accordion-text">
+                <strong>Ordenar</strong>
+                <small>Define la jerarquía de resultados</small>
+              </span>
+              <span class="accordion-arrow" [class.rotated]="accordionStates.ordenar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+            </button>
+            <div class="accordion-content" *ngIf="accordionStates.ordenar">
+              <div class="select-field">
+                <select id="ordenNombrePaciente" [(ngModel)]="filtroOrdenNombre">
+                  <option value="asc">Nombre ascendente</option>
+                  <option value="desc">Nombre descendente</option>
+                </select>
+                <span class="select-chevron">▾</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-card">
+            <button type="button" class="accordion-trigger" (click)="toggleAccordion('estado')">
+              <span class="accordion-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3l7 4v5c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V7l7-4z" />
+                </svg>
+              </span>
+              <span class="accordion-text">
+                <strong>Estado</strong>
+                <small>Filtra por condición de cuenta</small>
+              </span>
+              <span class="accordion-arrow" [class.rotated]="accordionStates.estado">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+            </button>
+            <div class="accordion-content" *ngIf="accordionStates.estado">
+              <div class="select-field">
+                <select id="estadoCuentaPaciente" [(ngModel)]="filtroEstadoCuenta">
+                  <option value="todos">Todos</option>
+                  <option value="activo">Activo</option>
+                  <option value="suspendido">Bloqueado</option>
+                  <option value="pendiente_validacion">Pendiente</option>
+                </select>
+                <span class="select-chevron">▾</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="offcanvas-footer">
+        <button class="btn btn-primary footer-btn" (click)="aplicarFiltroAvanzado()">Aplicar filtros</button>
+        <button class="btn btn-secondary footer-btn" (click)="limpiarFiltros(); aplicarFiltros()">Limpiar</button>
+      </div>
+    </aside>
 
     <section class="kpi-grid">
       <div class="kpi-card">
@@ -81,75 +217,56 @@
               <th>TUTOR RELACIONADO</th>
               <th>ESTADO DE CUENTA</th>
               <th>HISTORIAL</th>
+              <th>CONDICIÓN</th>
               <th>INSTRUCTORES</th>
               <th>ÚLTIMA INTERACCIÓN</th>
-              <th class="text-right">ACCIONES</th>
             </tr>
           </thead>
           <tbody>
             @for (p of pacientesPaginados; track p) {
-              <tr>
-                <td>
-                  <div class="user-profile">
-                    <img [src]="p.urlImagenPaciente" [alt]="p.nombrePaciente" class="avatar">
-                    <div class="user-info">
-                      <span class="user-name">{{ p.nombrePaciente }}</span>
-                      <span class="user-id">ID: P-{{ p.idPaciente }}</span>
-                    </div>
+            <tr>
+              <td>
+                <div class="user-profile">
+                  <img [src]="p.urlImagenPaciente" [alt]="p.nombrePaciente" class="avatar">
+                  <div class="user-info">
+                    <span class="user-name">{{ p.nombrePaciente }}</span>
+                    <span class="user-id">ID: P-{{ p.idPaciente }}</span>
                   </div>
-                </td>
-                <td>
-                  <div class="relation-cell">
-                    <svg class="cell-icon icon-muted" width="14" height="14" viewBox="0 0 24 24"
-                      fill="none" stroke="currentColor" stroke-width="2">
-                      <circle cx="12" cy="12" r="10" />
-                      <circle cx="12" cy="10" r="3" />
-                      <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
-                    </svg>
-                    {{ p.nombreTutor }}
-                  </div>
-                </td>
-                <td><span class="status-dot" [class]="getEstadoClass(p.estadoCuenta)">{{
-                getEstadoLabel(p.estadoCuenta) }}</span></td>
-                <td><span class="badge badge-services">{{ p.historialSesiones }} Servicios</span></td>
-                <td>
-                  <div class="avatar-group">
-                    @for (img of getInstructoresAvatares(p.imagenesInstructores).slice(0,2); track img) {
-                      <img
-                        [src]="img" alt="Instructor">
-                    }
-                    @if (getInstructorRestantes(p.imagenesInstructores) > 0) {
-                      <span class="avatar-more"
-                        >+{{
-                      getInstructorRestantes(p.imagenesInstructores) }}</span>
-                    }
-                  </div>
-                </td>
-                <td>
-                  <div class="datetime-cell">
-                    <span class="date">{{ getUltimoLogin(p.ultimoLogin) }}</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="action-buttons">
-                    <button class="btn-icon">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
-                        <circle cx="12" cy="12" r="3" />
-                      </svg>
-                    </button>
-                    <button class="btn-icon">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                        <line x1="12" x2="12" y1="17" y2="17" />
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
+                </div>
+              </td>
+              <td>
+                <div class="relation-cell">
+                  <svg class="cell-icon icon-muted" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <circle cx="12" cy="10" r="3" />
+                    <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
+                  </svg>
+                  {{ p.nombreTutor }}
+                </div>
+              </td>
+              <td><span class="status-dot" [class]="getEstadoClass(p.estadoCuenta)">{{
+                  getEstadoLabel(p.estadoCuenta) }}</span></td>
+              <td><span class="badge badge-services">{{ p.historialSesiones }} Servicios</span></td>
+              <td><span class="condition-badge">{{ getCondicionLabel(p.estadoCuenta) }}</span></td>
+              <td>
+                <div class="avatar-group">
+                  @for (img of getInstructoresAvatares(p.imagenesInstructores).slice(0,2); track img) {
+                  <img [src]="img" alt="Instructor">
+                  }
+                  @if (getInstructorRestantes(p.imagenesInstructores) > 0) {
+                  <span class="avatar-more">+{{
+                    getInstructorRestantes(p.imagenesInstructores) }}</span>
+                  }
+                </div>
+              </td>
+              <td>
+                <div class="datetime-cell">
+                  <span class="date">{{ getUltimoLogin(p.ultimoLogin) }}</span>
+                </div>
+              </td>
+
+            </tr>
             }
           </tbody>
         </table>
@@ -157,23 +274,22 @@
 
       <footer class="table-footer">
         <span class="footer-stats">Mostrando {{ pacientesPaginados.length }} de {{ pacientes.length }}
-        pacientes</span>
+          pacientes</span>
         <div class="pagination">
-          <button class="page-btn text-btn" [class.disabled]="paginaActual === 1"
-            (click)="irPagina(paginaActual - 1)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <button class="page-btn text-btn" [class.disabled]="paginaActual === 1" (click)="irPagina(paginaActual - 1)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
           @for (p of [].constructor(totalPaginas); track p; let i = $index) {
-            <button class="page-btn num-btn"
-            [class.active]="paginaActual === i + 1" (click)="irPagina(i + 1)">{{ i + 1 }}</button>
+          <button class="page-btn num-btn" [class.active]="paginaActual === i + 1" (click)="irPagina(i + 1)">{{ i + 1
+            }}</button>
           }
           <button class="page-btn text-btn" [class.disabled]="paginaActual === totalPaginas"
             (click)="irPagina(paginaActual + 1)">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
               <polyline points="9 18 15 12 9 6" />
             </svg>
           </button>
