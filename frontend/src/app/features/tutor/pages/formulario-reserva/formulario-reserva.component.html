@@ -11,6 +11,19 @@
     </div>
 </div>
 <div class="reserva-container">
+    <div class="alerta-backdrop" *ngIf="mostrarConfirmacion" (click)="cerrarConfirmacion()">
+        <div class="alerta-dialog confirm-dialog" (click)="$event.stopPropagation()">
+            <div class="alerta-icono confirm-icon">
+                <svg viewBox="0 0 24 24" fill="none" width="48" height="48">
+                    <circle cx="12" cy="12" r="10" stroke="#78f2c5" stroke-width="2"></circle>
+                    <path d="M8.5 12.5l2.5 2.5 4.5-5" stroke="#78f2c5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+            </div>
+            <h2 class="alerta-titulo">Reserva creada</h2>
+            <p class="alerta-mensaje">Todo se agregó correctamente. Serás redirigido a la sección de reservas.</p>
+            <button class="alerta-boton confirm-button" (click)="cerrarConfirmacion()">Entendido</button>
+        </div>
+    </div>
     <section class="reserva-card">
         <header class="reserva-header">
             <h1>Reserva de Sesión</h1>
@@ -103,7 +116,7 @@
                     <strong>términos de servicio</strong> y el protocolo de seguridad técnica.</span></label>
             <div class="reserva-actions"><button class="btn-back" (click)="cancelar()">← Cancelar y
                     volver</button><button class="btn-confirm" [disabled]="!puedeConfirmar() || guardando"
-                    (click)="confirmarReserva()">{{ guardando ? 'Guardando...' : 'Confirmar Reserva →' }}</button></div>
+                    (click)="confirmarReserva()">{{ guardando ? 'Guardando...' : 'Confirmar Reserva' }}</button></div>
         </div>
     </section>
     <div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal()">

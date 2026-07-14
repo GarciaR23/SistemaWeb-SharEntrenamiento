@@ -9,5 +9,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./progreso-paciente.component.scss'],
 })
 export class Progreso {
-
+  progresos: unknown[] = [];
 }

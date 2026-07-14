@@ -140,4 +140,18 @@
     </article>
   </section>
 
+  <div class="session-empty-container" *ngIf="sesionesFiltradas.length === 0">
+    <section class="session-empty-card">
+      <div class="empty-icon" aria-hidden="true">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12h18"></path>
+          <path d="M12 3v18"></path>
+          <circle cx="12" cy="12" r="6"></circle>
+        </svg>
+      </div>
+      <h2>No hay sesiones registradas</h2>
+      <p>Aún no tienes datos disponibles en esta sección. Regresa cuando tengas sesiones programadas.</p>
+    </section>
+  </div>
+
 </div>

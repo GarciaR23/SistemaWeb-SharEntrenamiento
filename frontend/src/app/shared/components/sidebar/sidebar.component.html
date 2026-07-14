@@ -1,12 +1,12 @@
 <aside class="sidebar" [class.open]="mobileOpen">
 
   <div class="sidebar-brand-header">
-    <div class="logo-link">
+    <button class="logo-link" type="button" (click)="irInicio()" aria-label="Ir al inicio del panel">
       <div class="logo-icon">
         <img src="assets/icons/logo.png" alt="Shar Entrenamiento" class="logo-image">
       </div>
       <span class="logo-text">Shar<span class="logo-text-green">Entrenamiento</span></span>
-    </div>
+    </button>
   </div>
 
   <nav class="sidebar-nav">
@@ -17,7 +17,10 @@
           <svg viewBox="0 0 24 24">
             <path [attr.d]="item.icon" />
           </svg>
-          {{ item.label }}
+          <span class="sidebar-label">{{ item.label }}</span>
+          @if (modo === 'instructor' && item.countKey && (counts[item.countKey] || 0) > 0) {
+            <span class="sidebar-count">{{ counts[item.countKey] || 0 }}</span>
+          }
         </a>
       </li>
       }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 type EstadoSesion = 'pendiente' | 'en_curso' | 'visto' | 'finalizado' | 'reprogramado';
 
@@ -24,7 +24,7 @@ interface SesionProgramada{
   templateUrl: './sesion.html',
   styleUrl: './sesion.scss',
 })
-export class SesionComponent {
+export class SesionComponent implements OnInit {
   filtroActivo: 'recientes' | 'reprogramado' | 'finalizado' = 'recientes';
 
   // Se llenará desde el backend
@@ -44,6 +44,9 @@ export class SesionComponent {
     return this.sesiones.filter(
       (s) => s.estado === 'pendiente' || s.estado === 'en_curso'
     ).length;
+  }
+
+  ngOnInit(): void {
   }
 
   cambiarFiltro(

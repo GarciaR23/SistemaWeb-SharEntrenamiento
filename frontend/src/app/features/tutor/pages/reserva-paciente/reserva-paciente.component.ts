@@ -19,7 +19,9 @@ export class ReservaPaciente implements OnInit {
     errorMessage = '';
     mostrarModalReserva = false;
     mostrarModalDetalle = false;
+    mostrarModalConfirmacionCancelacion = false;
     sesionDetalle: ReservaTutorSesionDto | null = null;
+    sesionCancelacion: ReservaTutorSesionDto | null = null;
     dropdownAbierto: number | null = null;
     idTutor: number | null = null;
     idPacienteSeleccionado: number | null = null;
@@ -122,7 +124,22 @@ export class ReservaPaciente implements OnInit {
     cerrarDropdowns(): void { this.dropdownAbierto = null; }
     verDetalles(s: ReservaTutorSesionDto): void { this.sesionDetalle = s; this.mostrarModalDetalle = true; this.dropdownAbierto = null; }
     cerrarDetalle(): void { this.mostrarModalDetalle = false; this.sesionDetalle = null; }
-    cancelarReservaVisual(s: ReservaTutorSesionDto): void { s.estadoReserva = 'cancelada'; this.dropdownAbierto = null; }
+    abrirConfirmacionCancelacion(s: ReservaTutorSesionDto): void {
+        this.sesionCancelacion = s;
+        this.mostrarModalConfirmacionCancelacion = true;
+        this.dropdownAbierto = null;
+        this.mostrarModalDetalle = false;
+    }
+    cerrarConfirmacionCancelacion(): void {
+        this.mostrarModalConfirmacionCancelacion = false;
+        this.sesionCancelacion = null;
+    }
+    confirmarCancelacion(): void {
+        if (!this.sesionCancelacion) return;
+        this.sesionCancelacion.estadoReserva = 'cancelada';
+        this.cerrarConfirmacionCancelacion();
+        this.cerrarDetalle();
+    }
     irCatalogo(): void { this.router.navigate(['/tutor/catalogo-instructor']); }
     normalizarTexto(t: string): string { return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim(); }
 }
