@@ -75,11 +75,12 @@ export class ReservaPaciente implements OnInit {
     obtenerNombreInstructor(s: ReservaTutorSesionDto): string { return s.instructorNombre || `Instructor #${s.idInstructor}`; }
 
     obtenerEstadoTexto(s: ReservaTutorSesionDto): string {
-        const e = this.normalizarTexto(s.estadoReserva || '');
+        const e = this.normalizarTexto(s.estadoDetalle || '');
         if (e === 'pendiente') return 'Pendiente';
         if (e === 'aprobada' || e === 'confirmada') return 'Aprobado';
         if (e === 'cancelada') return 'Cancelado';
         if (e === 'rechazada') return 'Rechazado';
+        if (e === 'plazo_vencido') return 'Plazo vencido';
         return 'Pendiente';
     }
 
@@ -104,15 +105,20 @@ export class ReservaPaciente implements OnInit {
         const hoy = new Date();
         return this.sesiones.filter(s => {
             const f = new Date(s.horaInicioEstimada);
-            return f.getFullYear() === hoy.getFullYear() && f.getMonth() === hoy.getMonth() && f.getDate() === hoy.getDate();
+            const estado = this.normalizarTexto(s.estadoDetalle || '');
+            const esHoy = f.getFullYear() === hoy.getFullYear()
+                && f.getMonth() === hoy.getMonth()
+                && f.getDate() === hoy.getDate();
+            const esActiva = estado === 'pendiente' || estado === 'aprobada';
+            return esHoy && esActiva;
         }).length;
     }
 
     obtenerClaseBadge(s: ReservaTutorSesionDto): string {
-        const e = this.normalizarTexto(s.estadoReserva || '');
+        const e = this.normalizarTexto(s.estadoDetalle || '');
         if (e === 'pendiente') return 'badge-wait';
         if (e === 'aprobada' || e === 'confirmada') return 'badge-ready';
-        if (e === 'cancelada' || e === 'rechazada') return 'badge-declined';
+        if (e === 'cancelada' || e === 'rechazada' || e === 'plazo_vencido') return 'badge-declined';
         return 'badge-wait';
     }
 
@@ -124,22 +130,50 @@ export class ReservaPaciente implements OnInit {
     cerrarDropdowns(): void { this.dropdownAbierto = null; }
     verDetalles(s: ReservaTutorSesionDto): void { this.sesionDetalle = s; this.mostrarModalDetalle = true; this.dropdownAbierto = null; }
     cerrarDetalle(): void { this.mostrarModalDetalle = false; this.sesionDetalle = null; }
+
     abrirConfirmacionCancelacion(s: ReservaTutorSesionDto): void {
+        const ahora = new Date();
+        const horaInicio = new Date(s.horaInicioEstimada);
+        const horasRestantes = (horaInicio.getTime() - ahora.getTime()) / (1000 * 60 * 60);
+
+        if (horasRestantes < 2) {
+            this.errorMessage = 'No se puede cancelar con menos de 2 horas de anticipación.';
+            setTimeout(() => this.errorMessage = '', 5000);
+            return;
+        }
+
         this.sesionCancelacion = s;
         this.mostrarModalConfirmacionCancelacion = true;
         this.dropdownAbierto = null;
         this.mostrarModalDetalle = false;
     }
+
     cerrarConfirmacionCancelacion(): void {
         this.mostrarModalConfirmacionCancelacion = false;
         this.sesionCancelacion = null;
     }
+
     confirmarCancelacion(): void {
         if (!this.sesionCancelacion) return;
-        this.sesionCancelacion.estadoReserva = 'cancelada';
-        this.cerrarConfirmacionCancelacion();
-        this.cerrarDetalle();
+
+        console.log('Cancelando detalle:', this.sesionCancelacion.idDetalle);
+
+        this.tutorApiService.cancelarDetalle(this.sesionCancelacion.idDetalle).subscribe({
+            next: (res) => {
+                console.log('Cancelado exitosamente:', res);
+                this.cerrarConfirmacionCancelacion();
+                this.cerrarDetalle();
+                this.cargarSesionesTutorFiltradas();
+            },
+            error: (err) => {
+                console.error('Error al cancelar:', err);
+                this.errorMessage = err?.error?.message || 'Error al cancelar la reserva.';
+                this.cerrarConfirmacionCancelacion();
+                setTimeout(() => this.errorMessage = '', 5000);
+            }
+        });
     }
+
     irCatalogo(): void { this.router.navigate(['/tutor/catalogo-instructor']); }
     normalizarTexto(t: string): string { return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim(); }
 }

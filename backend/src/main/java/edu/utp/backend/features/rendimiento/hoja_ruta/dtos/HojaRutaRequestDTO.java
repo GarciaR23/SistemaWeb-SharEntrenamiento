@@ -1,6 +1,8 @@
-// package edu.utp.backend.features.rendimiento.hoja_ruta.dtos;
+package edu.utp.backend.features.rendimiento.hoja_ruta.dtos;
 
-// public record HojaRutaRequestDTO(
-//     Integer idReserva,
-//     Integer idPaciente) {
-// }
+import jakarta.validation.constraints.NotNull;
+
+public record HojaRutaRequestDTO(
+                @NotNull Integer idReserva,
+                Integer idDetalle) {
+}

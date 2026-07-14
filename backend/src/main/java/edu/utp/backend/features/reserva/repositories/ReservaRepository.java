@@ -33,7 +33,7 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
                 dr.hora_fin_estimada AS horaFinEstimada,
                 EXTRACT(EPOCH FROM dr.duracion_entrenamiento) / 60 AS duracionMinutos,
                 dr.monto_subtotal AS montoSubtotal,
-                r.estado_reserva AS estadoReserva,
+                dr.estado_detalle AS estadoDetalle,
                 COALESCE(se.estado_sesion::text, 'programada') AS estadoSesion,
                 r.fecha_creacion AS fechaCreacion
             FROM reserva r

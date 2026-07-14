@@ -1,14 +1,13 @@
-// package edu.utp.backend.features.rendimiento.rutina.dtos;
+package edu.utp.backend.features.rendimiento.rutina.dtos;
 
-// public class DetalleRutinaRequestDTO {
-//     private Integer idRuta;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-//     private String nombreEjercicio;
-
-//     private String descripcionEjercicio;
-
-//     // ISO-8601 → PT30M
-//     private String duracionEstimada;
-
-//     private String tipoEjercicio;
-// }
+public record DetalleRutinaRequestDTO(
+        @NotNull Integer idRuta,
+        @NotBlank String nombreEjercicio,
+        @NotBlank String tipoEjercicio,
+        String descripcionEjercicio,
+        @NotBlank String duracionEstimada 
+) {
+}

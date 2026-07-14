@@ -15,7 +15,7 @@ export interface ReservaTutorSesionDto {
     horaFinEstimada: string;
     duracionMinutos: number;
     montoSubtotal: number;
-    estadoReserva: string;
+    estadoDetalle: string;
     estadoSesion: string;
     fechaCreacion: string;
 }

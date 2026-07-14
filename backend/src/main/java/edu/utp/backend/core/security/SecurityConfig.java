@@ -53,23 +53,38 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/instructores", "/api/tutores", "/api/pacientes",
                                 "/api/documentos")
                         .permitAll()
+
+                        // ADMIN
                         .requestMatchers("/api/admin/**").hasAuthority("admin")
 
+                        // ANALÍTICA / CONTADORES (admin e instructor)
+                        .requestMatchers(HttpMethod.GET, "/api/instructores/analitica/**")
+                        .hasAnyAuthority("admin", "instructor")
+
+                        .requestMatchers(HttpMethod.PATCH, "/api/reservas/detalle/*/cancelar")
+                        .hasAnyAuthority("tutor", "admin")
+
+                        // BÚSQUEDA DE INSTRUCTORES
                         .requestMatchers(HttpMethod.GET, "/api/instructores/busqueda")
                         .hasAnyAuthority("tutor", "admin")
 
+                        // PERFIL DE INSTRUCTOR
                         .requestMatchers(HttpMethod.GET, "/api/instructores/*/perfil/**")
                         .hasAnyAuthority("tutor", "admin")
 
+                        // LISTAR INSTRUCTORES
                         .requestMatchers(HttpMethod.GET, "/api/instructores")
                         .hasAnyAuthority("tutor", "admin", "instructor")
 
+                        // INSTRUCTORES (resto)
                         .requestMatchers("/api/instructores/**")
                         .hasAnyAuthority("instructor", "admin")
 
+                        // TUTORES
                         .requestMatchers("/api/tutores/**")
                         .hasAnyAuthority("tutor", "admin")
 
+                        // SEDES
                         .requestMatchers("/api/sedes/**")
                         .hasAnyAuthority("instructor", "admin")
 
@@ -98,7 +113,7 @@ public class SecurityConfig {
                 "http://127.0.0.1:5501",
                 "http://127.0.0.1:5502"));
 
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);

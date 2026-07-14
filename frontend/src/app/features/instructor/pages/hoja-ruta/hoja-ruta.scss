@@ -162,7 +162,6 @@
 
     &:hover {
       background: #00C484;
-
     }
   }
 }
@@ -307,7 +306,7 @@
     text-align: center;
   }
 
-  &.observado {
+  &.con_observacion {
     h3 {
       color: #ffaaa7;
     }
@@ -670,9 +669,8 @@
       color: #ffaaa7;
     }
 
-    .progress-fill::after {
-      width: 100%;
-      background: linear-gradient(90deg, transparent 80%, #ffaaa7 80%);
+    .progress-fill {
+      background: #ffaaa7;
     }
   }
 }
@@ -684,7 +682,7 @@
   margin: 8px 0 16px;
 
   strong {
-    color: #ffaaa7;
+    color: #6dffd0;
     font-size: 34px;
     font-weight: 900;
   }
@@ -719,108 +717,241 @@
   height: 100%;
   border-radius: 999px;
   background: #68f6bd;
-  transition: width 0.2s ease;
+  transition: width 0.3s ease;
 }
+
+/* ============================================= */
+/* ACTIVITY LIST - ESTILOS MEJORADOS              */
+/* ============================================= */
 
 .activity-list {
   display: grid;
-  gap: 16px;
+  gap: 14px;
 }
 
 .activity-row {
   display: grid;
-  grid-template-columns: 1fr 190px 36px 36px;
-  gap: 12px;
+  grid-template-columns: 1fr 150px 120px 1fr 36px 36px;
+  gap: 10px;
   align-items: center;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
+  transition: all 0.25s ease;
 
-  @media (max-width: 780px) {
+  @media (max-width: 980px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (max-width: 580px) {
     grid-template-columns: 1fr;
   }
 
-  input {
-    height: 60px;
-    border-radius: 13px;
-    border: 1px solid transparent;
-    background: #282d3d;
+  &:hover {
+    background: rgba(255, 255, 255, 0.025);
+    border-color: rgba(255, 255, 255, 0.07);
+  }
+
+  &.invalid {
+    border-color: rgba(255, 170, 167, 0.35);
+  }
+
+  &.warn {
+    border-color: rgba(255, 170, 167, 0.5);
+  }
+
+  // Solo una fila vacía
+  &:only-child {
+    border-style: dashed;
+    border-color: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.008);
+
+    input::placeholder {
+      color: #4a5568;
+      font-style: italic;
+    }
+  }
+
+  input[type="text"] {
+    height: 46px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.03);
     color: #e8edf8;
-    padding: 0 24px;
-    font-size: 16px;
+    padding: 0 14px;
+    font-size: 14px;
     outline: none;
+    transition: all 0.2s ease;
+
+    &:focus {
+      border-color: rgba(109, 255, 208, 0.35);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    &::placeholder {
+      color: #5a6377;
+      font-size: 13px;
+    }
   }
 
-  &.warn input,
-  &.invalid input {
-    border-color: rgba(255, 170, 167, 0.48);
-    color: #ffaaa7;
-  }
-}
+  // Combo box mejorados
+  .tipo-select {
+    appearance: none;
+    -webkit-appearance: none;
+    height: 46px;
+    border-radius: 10px;
+    padding: 0 34px 0 14px;
+    font-size: 13px;
+    font-weight: 600;
+    outline: none;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    transition: all 0.25s ease;
+    background-repeat: no-repeat;
+    background-position: right 10px center;
 
-.duration-field {
-  position: relative;
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+    }
 
-  input {
-    width: 100%;
-    padding-right: 64px;
-    text-align: center;
-    font-weight: 900;
-  }
+    &:focus {
+      border-color: rgba(109, 255, 208, 0.4);
+      box-shadow: 0 0 0 2px rgba(109, 255, 208, 0.08);
+    }
 
-  span {
-    position: absolute;
-    top: 50%;
-    right: 24px;
-    transform: translateY(-50%);
-    color: #697385;
-    font-size: 11px;
-    font-weight: 900;
-  }
-}
-
-.icon-btn {
-  width: 34px;
-  height: 34px;
-  border: none;
-  background: transparent;
-  color: #bacbbf;
-  cursor: pointer;
-
-  svg {
-    width: 20px;
-    height: 20px;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 2.2;
+    option {
+      background: #1a1f2e;
+      color: #e2e8f0;
+      padding: 8px;
+    }
   }
 
-  &.danger {
-    color: #b5c2bd;
+  // Tipo de ejercicio
+  .tipo-ejercicio {
+    background-color: rgba(109, 255, 208, 0.04);
+    color: #6dffd0;
+    border-color: rgba(109, 255, 208, 0.15);
+
+    &:hover {
+      background-color: rgba(109, 255, 208, 0.08);
+      border-color: rgba(109, 255, 208, 0.3);
+    }
+  }
+
+  // Duración
+  .duracion-select {
+    background: rgba(255, 255, 255, 0.03);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2360a5fa' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    color: #60a5fa;
+    border-color: rgba(96, 165, 250, 0.15);
+
+    &:hover {
+      background-color: rgba(96, 165, 250, 0.08);
+      border-color: rgba(96, 165, 250, 0.3);
+    }
+  }
+
+  // Campo de descripción
+  .descripcion-field {
+    height: 46px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.03);
+    color: #e8edf8;
+    padding: 12px 14px;
+    font-size: 13px;
+    outline: none;
+    resize: none;
+    transition: all 0.2s ease;
+    font-family: inherit;
+
+    &:focus {
+      border-color: rgba(109, 255, 208, 0.35);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    &::placeholder {
+      color: #5a6377;
+      font-size: 12px;
+    }
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.02);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    svg {
+      width: 16px;
+      height: 16px;
+      stroke: #64748b;
+      stroke-width: 2;
+    }
+
+    &.edit:hover {
+      background: rgba(109, 255, 208, 0.1);
+      border-color: rgba(109, 255, 208, 0.3);
+
+      svg {
+        stroke: #6dffd0;
+      }
+    }
+
+    &.danger:hover {
+      background: rgba(255, 170, 167, 0.1);
+      border-color: rgba(255, 170, 167, 0.3);
+
+      svg {
+        stroke: #ffaaa7;
+      }
+    }
   }
 }
 
 .add-activity {
   width: 100%;
-  height: 68px;
-  margin-top: 26px;
-  border-radius: 16px;
-  border: 1px dashed rgba(255, 255, 255, 0.09);
-  background: rgba(255, 255, 255, 0.015);
-  color: #bacbbf;
-  font-size: 15px;
-  font-weight: 900;
+  height: 56px;
+  margin-top: 20px;
+  border-radius: 14px;
+  border: 1px dashed rgba(109, 255, 208, 0.2);
+  background: rgba(109, 255, 208, 0.03);
+  color: #6dffd0;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
 
   span {
-    margin-right: 8px;
-    color: #6dffd0;
-    font-size: 20px;
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  &:hover {
+    background: rgba(109, 255, 208, 0.07);
+    border-color: rgba(109, 255, 208, 0.4);
   }
 }
 
 .form-warning {
   margin-top: 14px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255, 170, 167, 0.06);
+  border: 1px solid rgba(255, 170, 167, 0.2);
   color: #ffaaa7;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .modal-actions {
