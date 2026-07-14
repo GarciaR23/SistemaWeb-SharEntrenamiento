@@ -1,5 +1,4 @@
 package edu.utp.backend.features.rendimiento.hoja_ruta.repositories;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -64,6 +63,8 @@ public interface HojaRutaRepository extends JpaRepository<HojaRuta, Integer> {
             LEFT JOIN hoja_ruta hr ON dr.id_detalle = hr.id_detalle
             WHERE r.id_instructor = :idInstructor
               AND dr.estado_detalle = 'aprobada'
+              AND (hr.id_ruta IS NULL
+                   OR hr.estado_hoja IN ('pendiente_envio', 'enviado_al_tutor', 'observado_tutor'))
             ORDER BY dr.hora_inicio_estimada ASC
             """, nativeQuery = true)
     List<Object[]> obtenerCardsClasificadas(@Param("idInstructor") Integer idInstructor);

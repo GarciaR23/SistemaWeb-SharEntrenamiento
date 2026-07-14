@@ -29,8 +29,9 @@ public class RevisionService {
         revisionRepository.limpiarReservasVencidas();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<RevisionPacienteDto> obtenerPacientesParaRevision(Integer idInstructor) {
+        revisionRepository.limpiarReservasVencidas();
         List<Object[]> results = revisionRepository.obtenerPacientesParaRevision(idInstructor);
         return results.stream()
                 .map(row -> new RevisionPacienteDto(
@@ -82,14 +83,16 @@ public class RevisionService {
                 result[3] != null ? ((java.sql.Timestamp) result[3]).toLocalDateTime() : null);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public ContadorPendienteDto obtenerContadorPendiente(Integer idInstructor) {
+        revisionRepository.limpiarReservasVencidas();
         Long total = revisionRepository.contarPendientes(idInstructor);
         return new ContadorPendienteDto(total);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<RecienteSemanalDto> obtenerRecienteSemanal(Integer idInstructor) {
+        revisionRepository.limpiarReservasVencidas();
         List<Object[]> results = revisionRepository.obtenerRecienteSemanal(idInstructor);
         return results.stream()
                 .map(row -> new RecienteSemanalDto(
