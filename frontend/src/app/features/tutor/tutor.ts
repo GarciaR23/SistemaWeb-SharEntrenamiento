@@ -1,18 +1,27 @@
-import { Component, ViewChild, AfterViewInit } from '@angular/core';
-import { Router, RouterOutlet, NavigationEnd, Event } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
+
 import { AuthApiService } from '../../core/services/auth-api.service';
+import { TutorApiService } from './services/tutor-api.service';
+
 import { SidebarComponent } from '../../shared/components/sidebar/sidebar.component';
 import { PanelHeaderComponent } from '../../shared/components/header/panel-header/panel-header.component';
 
+
 @Component({
     selector: 'app-tutor',
-    imports: [PanelHeaderComponent, SidebarComponent, RouterOutlet],
+    imports: [
+        PanelHeaderComponent,
+        SidebarComponent,
+        RouterOutlet
+    ],
     templateUrl: './tutor.html',
     styleUrls: ['./tutor.scss']
 })
-export class Tutor implements AfterViewInit {
+export class Tutor implements OnInit {
+
     mobileOpen = false;
+
     counts: Record<string, number> = {
         instructor: 0,
         reserva: 0,
@@ -21,82 +30,152 @@ export class Tutor implements AfterViewInit {
         progreso: 0,
     };
 
-    @ViewChild(RouterOutlet) routerOutlet?: RouterOutlet;
 
     constructor(
         private router: Router,
-        private authApiService: AuthApiService
+        private authApiService: AuthApiService,
+        private tutorApiService: TutorApiService
     ) { }
 
-    ngAfterViewInit(): void {
-        this.syncCountsFromCurrentPage();
-        setTimeout(() => this.syncCountsFromCurrentPage(0), 0);
 
-        this.router.events
-            .pipe(filter((event: Event): event is NavigationEnd => event instanceof NavigationEnd))
-            .subscribe(() => setTimeout(() => this.syncCountsFromCurrentPage(0), 0));
+    ngOnInit(): void {
+        this.cargarConteosDesdeServicios();
     }
 
-    private syncCountsFromCurrentPage(retryCount = 0): void {
-        const component = this.routerOutlet?.component as Record<string, unknown> | undefined;
-        if (!component) {
+
+    private cargarConteosDesdeServicios(): void {
+
+        const idTutor = this.obtenerIdTutorSesion();
+
+        if (!idTutor) {
+            console.error('No se pudo obtener el tutor');
             return;
         }
 
-        const nextCounts: Record<string, number> = { ...this.counts };
+        // Contador de instructores
+        this.tutorApiService.getPacientesPorTutor(idTutor)
+            .subscribe({
+                next: (data) => {
 
-        if (Object.prototype.hasOwnProperty.call(component, 'instructores')) {
-            nextCounts['instructor'] = this.getArrayLength(component, 'instructores');
-        } else {
-            nextCounts['instructor'] = 0;
-        }
+                    this.updateCount(
+                        'instructor',
+                        data?.length || 0
+                    );
 
-        if (Object.prototype.hasOwnProperty.call(component, 'sesiones')) {
-            nextCounts['reserva'] = this.getArrayLength(component, 'sesiones');
-        } else {
-            nextCounts['reserva'] = 0;
-        }
+                },
+                error: (err) => {
+                    console.error(
+                        'Error cargando instructores:',
+                        err
+                    );
+                }
+            });
 
-        if (Object.prototype.hasOwnProperty.call(component, 'planes')) {
-            nextCounts['plan'] = this.getArrayLength(component, 'planes');
-        } else {
-            nextCounts['plan'] = 0;
-        }
+        // Contador de reservas
+        this.tutorApiService.getSesionesTutor(idTutor)
+            .subscribe({
+                next: (data) => {
 
-        if (Object.prototype.hasOwnProperty.call(component, 'actividades')) {
-            nextCounts['actividad'] = this.getArrayLength(component, 'actividades');
-        } else {
-            nextCounts['actividad'] = 0;
-        }
+                    this.updateCount(
+                        'reserva',
+                        data?.length || 0
+                    );
 
-        if (Object.prototype.hasOwnProperty.call(component, 'progresos')) {
-            nextCounts['progreso'] = this.getArrayLength(component, 'progresos');
-        } else {
-            nextCounts['progreso'] = 0;
-        }
+                },
+                error: (err) => {
+                    console.error(
+                        'Error cargando reservas:',
+                        err
+                    );
+                }
+            });
 
-        this.counts = nextCounts;
+        // cuando tengas los endpoints se agregan aquí
+        /*
+        this.tutorApiService.obtenerPlanes(idTutor)
+            .subscribe({
+                next:(data)=>{
+                    this.updateCount(
+                       'plan',
+                       data.length
+                    );
+                }
+            });
+        */
 
-        const hasVisibleCounts = Object.values(this.counts).some(count => count > 0);
-        if (!hasVisibleCounts && retryCount < 5) {
-            setTimeout(() => this.syncCountsFromCurrentPage(retryCount + 1), 250);
+        /*
+        this.tutorApiService.obtenerActividades(idTutor)
+            .subscribe({
+                next:(data)=>{
+                    this.updateCount(
+                       'actividad',
+                       data.length
+                    );
+                }
+            });
+        */
+
+        /*
+        this.tutorApiService.obtenerProgresos(idTutor)
+            .subscribe({
+                next:(data)=>{
+                    this.updateCount(
+                       'progreso',
+                       data.length
+                    );
+                }
+            });
+        */
+
+    }
+
+    private obtenerIdTutorSesion(): number | null {
+
+        const raw =
+            localStorage.getItem('authUser_tutor') ||
+            localStorage.getItem('authUser');
+        if (!raw) return null;
+        try {
+            const usuario = JSON.parse(raw);
+
+            return Number(
+                usuario.idTutor ||
+                usuario.tutor?.idTutor ||
+                usuario.id_tutor
+            ) || null;
+        } catch {
+            return null;
         }
     }
 
-    private getArrayLength(component: Record<string, unknown>, key: string): number {
-        const value = component[key];
-        return Array.isArray(value) ? value.length : 0;
-    }
+    private updateCount(
+        key: string,
+        value: number
+    ): void {
+        this.counts = {
+            ...this.counts,
+            [key]: value
+        };
 
-    logout(): void {
-        const sesion = this.authApiService.getSesionActiva();
-        if (sesion) {
-            this.authApiService.logout(sesion.rol);
-        }
-        this.router.navigate(['/']);
     }
 
     toggleSidebar(): void {
         this.mobileOpen = !this.mobileOpen;
     }
+
+    logout(): void {
+
+        const sesion =
+            this.authApiService.getSesionActiva();
+        if (sesion) {
+
+            this.authApiService.logout(
+                sesion.rol
+            );
+        }
+
+        this.router.navigate(['/']);
+
+    }
+
 }
