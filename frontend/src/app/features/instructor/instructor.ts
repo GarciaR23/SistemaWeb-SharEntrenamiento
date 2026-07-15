@@ -30,16 +30,27 @@ export class Instructor implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.syncCountsFromCurrentPage();
-        setTimeout(() => this.syncCountsFromCurrentPage(), 0);
+
+        setTimeout(() => {
+            this.syncCountsFromCurrentPage();
+        }, 0);
 
         this.router.events
             .pipe(filter((event: Event): event is NavigationEnd => event instanceof NavigationEnd))
-            .subscribe(() => setTimeout(() => this.syncCountsFromCurrentPage(), 0));
+            .subscribe(() => {
+                setTimeout(() => {
+                    this.syncCountsFromCurrentPage();
+                }, 0);
+            });
     }
 
-    private syncCountsFromCurrentPage(): void {
+    private syncCountsFromCurrentPage(retryCount = 0): void {
         const component = this.routerOutlet?.component as Record<string, unknown> | undefined;
+
         if (!component) {
+            if (retryCount < 5) {
+                setTimeout(() => this.syncCountsFromCurrentPage(retryCount + 1), 250);
+            }
             return;
         }
 
@@ -47,22 +58,37 @@ export class Instructor implements AfterViewInit {
 
         if (Object.prototype.hasOwnProperty.call(component, 'solicitudes')) {
             nextCounts['revision'] = this.getArrayLength(component, 'solicitudes');
+        } else {
+            nextCounts['revision'] = 0;
         }
 
         if (Object.prototype.hasOwnProperty.call(component, 'sesiones')) {
             nextCounts['rutas'] = this.getArrayLength(component, 'sesiones');
             nextCounts['sesion'] = this.getArrayLength(component, 'sesiones');
+        } else {
+            nextCounts['rutas'] = 0;
+            nextCounts['sesion'] = 0;
         }
 
         if (Object.prototype.hasOwnProperty.call(component, 'sessions')) {
             nextCounts['calendario'] = this.getArrayLength(component, 'sessions');
+        } else {
+            nextCounts['calendario'] = 0;
         }
 
         if (Object.prototype.hasOwnProperty.call(component, 'transacciones')) {
             nextCounts['pagos'] = this.getArrayLength(component, 'transacciones');
+        } else {
+            nextCounts['pagos'] = 0;
         }
 
         this.counts = nextCounts;
+
+        const hasVisibleCounts = Object.values(this.counts).some(count => count > 0);
+
+        if (!hasVisibleCounts && retryCount < 5) {
+            setTimeout(() => this.syncCountsFromCurrentPage(retryCount + 1), 250);
+        }
     }
 
     private getArrayLength(component: Record<string, unknown>, key: string): number {
