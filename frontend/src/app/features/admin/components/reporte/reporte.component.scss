@@ -1,0 +1,184 @@
+.btn-exportar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #00e59b;
+    color: #022C22;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 20px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover {
+        opacity: 0.9;
+    }
+}
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    z-index: 2000;
+}
+
+.modal-preview {
+    width: min(900px, 100%);
+    max-height: 90vh;
+    background: #1B1E28;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 28px 32px;
+    overflow-y: auto;
+    color: #e2e8f0;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h2 {
+        margin: 0;
+        font-size: 20px;
+    }
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 24px;
+    cursor: pointer;
+
+    &:hover {
+        color: #fff;
+    }
+}
+
+.preview-resumen {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 16px;
+}
+
+.preview-table-wrapper {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+}
+
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+
+    th {
+        background: #0d1117;
+        padding: 10px;
+        text-align: left;
+        text-transform: uppercase;
+        font-size: 11px;
+        color: #94a3b8;
+    }
+
+    td {
+        padding: 8px 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+}
+
+.preview-more {
+    text-align: center;
+    color: #64748b;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.preview-formatos {
+    margin-bottom: 20px;
+
+    p {
+        font-size: 13px;
+        color: #94a3b8;
+        margin-bottom: 10px;
+    }
+}
+
+.formato-options {
+    display: flex;
+    gap: 10px;
+}
+
+.formato-btn {
+    flex: 1;
+    padding: 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    span {
+        margin-right: 6px;
+    }
+
+    &.active,
+    &:hover {
+        background: rgba(0, 229, 155, 0.08);
+        border-color: rgba(0, 229, 155, 0.3);
+        color: #00e59b;
+    }
+}
+
+.preview-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.formato-btn span {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 8px;
+    vertical-align: middle;
+
+    ::ng-deep svg {
+        stroke: currentColor;
+    }
+}
+
+.btn-cancelar,
+.btn-descargar {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-cancelar {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+}
+
+.btn-descargar {
+    background: #00e59b;
+    border: none;
+    color: #022C22;
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+}

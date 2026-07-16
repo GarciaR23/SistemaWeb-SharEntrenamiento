@@ -1,284 +1,274 @@
 <div class="dashboard-container">
+  <div class="view-section">
 
-  <header class="dashboard-header">
-    <div class="header-text">
-      <h1>Gestión de Instructores</h1>
-      <p>Es el espacio donde se acompaña el crecimiento de los profesionales</p>
-    </div>
-    <div class="header-actions">
-      <button class="btn btn-secondary" (click)="toggleFiltroAvanzado()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sliders">
-          <line x1="4" x2="4" y1="21" y2="14" />
-          <line x1="4" x2="4" y1="10" y2="3" />
-          <line x1="12" x2="12" y1="21" y2="12" />
-          <line x1="12" x2="12" y1="8" y2="3" />
-          <line x1="20" x2="20" y1="21" y2="16" />
-          <line x1="20" x2="20" y1="12" y2="3" />
-          <line x1="2" x2="6" y1="14" y2="14" />
-          <line x1="10" x2="14" y1="8" y2="8" />
-          <line x1="18" x2="22" y1="16" y2="16" />
-        </svg>
-        Filtros Avanzados
-      </button>
-      <button class="btn btn-secondary" (click)="exportarPDF()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-          <polyline points="7 10 12 15 17 10" />
-          <line x1="12" x2="12" y1="15" y2="3" />
-        </svg>
-        Exportar
-      </button>
-    </div>
-  </header>
+    <div class="offcanvas-backdrop" [class.open]="mostrarFiltroAvanzado" (click)="toggleFiltroAvanzado()"></div>
 
-  <div class="offcanvas-backdrop" [class.open]="mostrarFiltroAvanzado" (click)="toggleFiltroAvanzado()"></div>
-  <aside class="offcanvas-panel" [class.open]="mostrarFiltroAvanzado">
-    <div class="offcanvas-header">
-      <div class="offcanvas-title">
-        <h3>Filtro avanzado</h3>
-        <p>Selecciona criterios clave para priorizar instructores de forma ágil.</p>
-      </div>
-      <button type="button" class="icon-button close-btn" (click)="toggleFiltroAvanzado()" aria-label="Cerrar filtros">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </div>
-
-    <div class="offcanvas-body">
-      <div class="advanced-search-card">
-        <div class="advanced-search-box">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+    <aside class="offcanvas-panel" [class.open]="mostrarFiltroAvanzado">
+      <div class="offcanvas-header">
+        <div class="offcanvas-title">
+          <h3>Filtros avanzados</h3>
+          <p>Refina la vista para priorizar los reclamos más relevantes.</p>
+        </div>
+        <button type="button" class="icon-button close-btn" (click)="toggleFiltroAvanzado()"
+          aria-label="Cerrar filtros">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" x2="16.65" y1="21" y2="16.65" />
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>
-          <input type="text" placeholder="Buscar por nombre..." [(ngModel)]="terminoBusqueda"
-            (ngModelChange)="buscar($event)">
-        </div>
+        </button>
       </div>
 
-      <div class="filter-accordion">
-        <div class="accordion-card">
-          <button type="button" class="accordion-trigger" (click)="toggleAccordion('prioridad')">
-            <span class="accordion-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 12h16" />
-                <path d="M4 6h16" />
-                <path d="M4 18h10" />
-              </svg>
-            </span>
-            <span class="accordion-text">
-              <strong>Prioridad</strong>
-              <small>Resalta instructores destacados</small>
-            </span>
-            <span class="accordion-arrow" [class.rotated]="accordionStates.prioridad">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </span>
-          </button>
-          <div class="accordion-content" *ngIf="accordionStates.prioridad">
-            <label class="filter-checkbox">
-              <input type="checkbox" [(ngModel)]="filtroMayorPuntaje" />
-              <span>Mayor puntaje</span>
-            </label>
-            <label class="filter-checkbox">
-              <input type="checkbox" [(ngModel)]="filtroServicios" />
-              <span>Más servicios</span>
-            </label>
+      <div class="offcanvas-body">
+        <div class="advanced-search-card">
+          <div class="advanced-search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" x2="16.65" y1="21" y2="16.65" />
+            </svg>
+            <input type="text" placeholder="Buscar por nombre..." [(ngModel)]="terminoBusqueda"
+              (ngModelChange)="buscar($event)">
           </div>
         </div>
 
-        <div class="accordion-card">
-          <button type="button" class="accordion-trigger" (click)="toggleAccordion('ordenar')">
-            <span class="accordion-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 7h18" />
-                <path d="M7 12h10" />
-                <path d="M10 17h4" />
-              </svg>
-            </span>
-            <span class="accordion-text">
-              <strong>Ordenar</strong>
-              <small>Define la jerarquía de resultados</small>
-            </span>
-            <span class="accordion-arrow" [class.rotated]="accordionStates.ordenar">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </span>
-          </button>
-          <div class="accordion-content" *ngIf="accordionStates.ordenar">
-            <div class="select-field">
-              <select id="ordenNombre" [(ngModel)]="filtroOrdenNombre">
-                <option value="asc">Ascendente</option>
-                <option value="desc">Descendente</option>
-              </select>
-              <span class="select-chevron">▾</span>
+        <div class="filter-accordion">
+          <div class="accordion-card">
+            <button type="button" class="accordion-trigger" (click)="toggleAccordion('prioridad')">
+              <span class="accordion-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 12h16" />
+                  <path d="M4 6h16" />
+                  <path d="M4 18h10" />
+                </svg>
+              </span>
+              <span class="accordion-text">
+                <strong>Prioridad</strong><small>Resalta instructores destacados</small>
+              </span>
+              <span class="accordion-arrow" [class.rotated]="accordionStates.prioridad">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+            </button>
+            <div class="accordion-content" *ngIf="accordionStates.prioridad">
+              <label class="filter-checkbox"><input type="checkbox" [(ngModel)]="filtroMayorPuntaje" /><span>Mayor
+                  puntaje</span></label>
+              <label class="filter-checkbox"><input type="checkbox" [(ngModel)]="filtroServicios" /><span>Más
+                  servicios</span></label>
             </div>
           </div>
-        </div>
 
-        <div class="accordion-card">
-          <button type="button" class="accordion-trigger" (click)="toggleAccordion('especialidad')">
-            <span class="accordion-icon">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 3l7 4v5c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V7l7-4z" />
-              </svg>
-            </span>
-            <span class="accordion-text">
-              <strong>Especialidad</strong>
-              <small>Filtra por perfil técnico</small>
-            </span>
-            <span class="accordion-arrow" [class.rotated]="accordionStates.especialidad">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="6 9 12 15 18 9"></polyline>
-              </svg>
-            </span>
-          </button>
-          <div class="accordion-content" *ngIf="accordionStates.especialidad">
-            <div class="select-field">
-              <select id="especialidad" [(ngModel)]="filtroEspecialidad">
-                <option value="">Todas</option>
-                <option *ngFor="let especialidad of especialidadesDisponibles" [value]="especialidad">{{ especialidad }}</option>
-              </select>
-              <span class="select-chevron">▾</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="offcanvas-footer">
-      <button class="btn btn-primary footer-btn" (click)="aplicarFiltroAvanzado()">Aplicar filtros</button>
-      <button class="btn btn-secondary footer-btn" (click)="limpiarFiltros(); aplicarFiltros()">Limpiar</button>
-    </div>
-  </aside>
-
-  <section class="kpi-grid">
-    <div class="kpi-card">
-      <div class="card-bg-icon text-neon-green"></div>
-      <div class="kpi-content">
-        <span class="kpi-title">Instructores</span>
-        <span class="kpi-value text-neon-green">{{ conteo.totalInstructor }}</span>
-      </div>
-      <div class="card-icon-wrapper bg-neon-green-dim text-neon-green">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-          <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-        </svg>
-      </div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="card-bg-icon text-blue"></div>
-      <div class="kpi-content">
-        <span class="kpi-title">Activos</span>
-        <span class="kpi-value text-blue">{{ conteo.activoInstructor }}</span>
-      </div>
-      <div class="card-icon-wrapper bg-blue-dim text-blue">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-          <polyline points="16 11 18 13 22 9" />
-        </svg>
-      </div>
-    </div>
-
-    <div class="kpi-card">
-      <div class="kpi-content">
-        <span class="kpi-title">Pendientes</span>
-        <span class="kpi-value text-purple">{{ conteo.pendienteInstructor }}</span>
-      </div>
-      <div class="card-icon-wrapper bg-purple-dim text-purple">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="1" />
-          <circle cx="19" cy="12" r="1" />
-          <circle cx="5" cy="12" r="1" />
-        </svg>
-      </div>
-    </div>
-  </section>
-
-  <main class="table-container">
-    <div class="table-header">
-      <h2>Listado Maestro de Instructores</h2>
-    </div>
-
-    <div class="responsive-table">
-      <table class="custom-table">
-        <thead>
-          <tr>
-            <th>INSTRUCTOR</th>
-            <th>ESPECIALIDAD</th>
-            <th>ESTADO</th>
-            <th>PUNTAJE</th>
-            <th>SERVICIOS</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (ins of instructoresPaginados; track ins) {
-          <tr>
-            <td>
-              <div class="user-profile">
-                <img [src]="ins.urlImagen" [alt]="ins.nombreCompleto" class="avatar">
-                <div class="user-info">
-                  <span class="user-name">{{ ins.nombreCompleto }}</span>
-                  <span class="user-id">ID: INST-{{ ins.idInstructor }}</span>
-                </div>
+          <div class="accordion-card">
+            <button type="button" class="accordion-trigger" (click)="toggleAccordion('ordenar')">
+              <span class="accordion-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 7h18" />
+                  <path d="M7 12h10" />
+                  <path d="M10 17h4" />
+                </svg>
+              </span>
+              <span class="accordion-text">
+                <strong>Ordenar</strong><small>Define la jerarquía de resultados</small>
+              </span>
+              <span class="accordion-arrow" [class.rotated]="accordionStates.ordenar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+            </button>
+            <div class="accordion-content" *ngIf="accordionStates.ordenar">
+              <div class="select-field">
+                <select id="ordenNombre" [(ngModel)]="filtroOrdenNombre">
+                  <option value="asc">Ascendente</option>
+                  <option value="desc">Descendente</option>
+                </select>
+                <span class="select-chevron">▾</span>
               </div>
-            </td>
-            <td><span class="specialty-tag">{{ ins.especialidad }}</span></td>
-            <td><span class="status-indicator" [class]="getEstadoClass(ins.estadoCuenta)">
-                {{ getEstadoLabel(ins.estadoCuenta) }}
-              </span></td>
-            <td><span class="rating-stars text-neon-green">{{ getEstrellas(ins.puntaje) }} <span class="rating-num">{{
-                  ins.puntaje || 'N/A' }}</span></span></td>
-            <td><span class="services-count">{{ ins.numeroSesion }} Sesiones</span></td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+            </div>
+          </div>
 
-    <footer class="table-footer">
-      <span class="footer-stats">Mostrando {{ instructoresPaginados.length }} de {{ instructores.length }}
-        instructores</span>
-      <div class="pagination">
-        <button class="page-arrow" [class.disabled]="paginaActual === 1" (click)="irPagina(paginaActual - 1)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
-        @for (p of [].constructor(totalPaginas); track p; let i = $index) {
-        <button class="page-num" [class.active]="paginaActual === i + 1" (click)="irPagina(i + 1)">{{ i + 1 }}</button>
-        }
-        <button class="page-arrow" [class.disabled]="paginaActual === totalPaginas"
-          (click)="irPagina(paginaActual + 1)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
-        </button>
+          <div class="accordion-card">
+            <button type="button" class="accordion-trigger" (click)="toggleAccordion('especialidad')">
+              <span class="accordion-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3l7 4v5c0 5-3.5 7.5-7 9-3.5-1.5-7-4-7-9V7l7-4z" />
+                </svg>
+              </span>
+              <span class="accordion-text">
+                <strong>Especialidad</strong><small>Filtra por perfil técnico</small>
+              </span>
+              <span class="accordion-arrow" [class.rotated]="accordionStates.especialidad">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </span>
+            </button>
+            <div class="accordion-content" *ngIf="accordionStates.especialidad">
+              <div class="select-field">
+                <select id="especialidad" [(ngModel)]="filtroEspecialidad">
+                  <option value="">Todas</option>
+                  <option *ngFor="let especialidad of especialidadesDisponibles" [value]="especialidad">{{ especialidad
+                    }}</option>
+                </select>
+                <span class="select-chevron">▾</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </footer>
-  </main>
+
+      <div class="offcanvas-footer">
+        <button class="btn btn-primary footer-btn" (click)="aplicarFiltroAvanzado()">Aplicar filtros</button>
+        <button class="btn btn-secondary footer-btn" (click)="limpiarFiltros()">Limpiar</button>
+      </div>
+    </aside>
+
+    <header class="dashboard-header">
+      <div class="header-text">
+        <h1>Gestión de Instructores</h1>
+        <p>Es el espacio donde se acompaña el crecimiento de los profesionales</p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-header" (click)="toggleFiltroAvanzado()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 4h-5M11 4H3M21 12h-9M8 12H3M21 20h-7M10 20H3M12 2v4M8 10v4M10 18v4" />
+          </svg>
+          Filtros Avanzados
+        </button>
+
+        <app-reporte [config]="reporteConfig"></app-reporte>
+      </div>
+    </header>
+
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="card-bg-icon text-neon-green"></div>
+        <div class="kpi-content">
+          <span class="kpi-title">Instructores</span>
+          <span class="kpi-value text-neon-green">{{ conteo.totalInstructor }}</span>
+        </div>
+        <div class="card-icon-wrapper bg-neon-green-dim text-neon-green">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="card-bg-icon text-blue"></div>
+        <div class="kpi-content">
+          <span class="kpi-title">Activos</span>
+          <span class="kpi-value text-blue">{{ conteo.activoInstructor }}</span>
+        </div>
+        <div class="card-icon-wrapper bg-blue-dim text-blue">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <polyline points="16 11 18 13 22 9" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-content">
+          <span class="kpi-title">Pendientes</span>
+          <span class="kpi-value text-purple">{{ conteo.pendienteInstructor }}</span>
+        </div>
+        <div class="card-icon-wrapper bg-purple-dim text-purple">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="1" />
+            <circle cx="19" cy="12" r="1" />
+            <circle cx="5" cy="12" r="1" />
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <main class="table-container">
+      <div class="table-header">
+        <h2>Listado Maestro de Instructores</h2>
+      </div>
+
+      <div class="responsive-table">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>INSTRUCTOR</th>
+              <th>ESPECIALIDAD</th>
+              <th>ESTADO</th>
+              <th>PUNTAJE</th>
+              <th>SERVICIOS</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (ins of instructoresPaginados; track ins) {
+            <tr>
+              <td>
+                <div class="user-profile">
+                  <img [src]="ins.urlImagen" [alt]="ins.nombreCompleto" class="avatar">
+                  <div class="user-info">
+                    <span class="user-name">{{ ins.nombreCompleto }}</span>
+                    <span class="user-id">ID: INST-{{ ins.idInstructor }}</span>
+                  </div>
+                </div>
+              </td>
+              <td><span class="specialty-tag">{{ ins.especialidad }}</span></td>
+              <td>
+                <span class="status-indicator" [class]="getEstadoClass(ins.estadoCuenta)">
+                  {{ getEstadoLabel(ins.estadoCuenta) }}
+                </span>
+              </td>
+              <td>
+                <span class="rating-stars text-neon-green">
+                  {{ getEstrellas(ins.puntaje) }}
+                  <span class="rating-num">{{ ins.puntaje || 'N/A' }}</span>
+                </span>
+              </td>
+              <td><span class="services-count">{{ ins.numeroSesion }} Sesiones</span></td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="table-footer">
+        <span class="footer-stats">Mostrando {{ instructoresPaginados.length }} de {{ instructores.length }}
+          instructores</span>
+        <div class="pagination">
+          <button class="page-arrow" [class.disabled]="paginaActual === 1" (click)="irPagina(paginaActual - 1)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+          @for (p of [].constructor(totalPaginas); track p; let i = $index) {
+          <button class="page-num" [class.active]="paginaActual === i + 1" (click)="irPagina(i + 1)">{{ i + 1
+            }}</button>
+          }
+          <button class="page-arrow" [class.disabled]="paginaActual === totalPaginas"
+            (click)="irPagina(paginaActual + 1)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        </div>
+      </footer>
+    </main>
+  </div>
 </div>

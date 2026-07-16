@@ -1,13 +1,14 @@
-
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MonitoreoService, ConteoPaciente } from '../../services/monitoreo.service';
 import { PacienteMonitoreo } from '../../models/paciente-monitoreo.model';
+import { ReporteConfig } from '../../models/reporte-config.model';
+import { ReporteComponent } from "../../components/reporte/reporte.component";
 
 @Component({
   selector: 'app-reporte-paciente',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReporteComponent],
   templateUrl: './reporte-paciente.component.html',
   styleUrls: ['./reporte-paciente.component.scss'],
 })
@@ -96,72 +97,6 @@ export class ReportePaciente implements OnInit {
     this.aplicarFiltros();
   }
 
-  exportarPDF(): void {
-    const datosExportar = (this.pacientesPaginados.length ? this.pacientesPaginados : this.pacientes).map(p => ({
-      nombre: p.nombrePaciente,
-      tutor: p.nombreTutor,
-      estado: this.getEstadoLabel(p.estadoCuenta),
-      historial: p.historialSesiones,
-      condicion: this.getCondicionLabel(p.estadoCuenta),
-      ultimaInteraccion: p.ultimoLogin,
-    }));
-    const url = this.generarPDFUrl(datosExportar, 'Reporte de Pacientes');
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'reporte-pacientes.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setTimeout(() => URL.revokeObjectURL(url), 0);
-  }
-
-  private generarPDFUrl(datos: Array<Record<string, unknown>>, titulo: string): string {
-    const lineas = [`Reporte: ${titulo}`, ''];
-    datos.forEach((dato, index) => {
-      lineas.push(`${index + 1}. ${JSON.stringify(dato)}`);
-    });
-
-    const texto = lineas.join('\n');
-    const lineasPdf = texto.split('\n').map(linea => {
-      return linea
-        .replace(/\\/g, '\\\\')
-        .replace(/\(/g, '\\(')
-        .replace(/\)/g, '\\)');
-    });
-
-    const contenidoStream = lineasPdf
-      .map((linea, index) => `BT /F1 10 Tf 50 ${780 - index * 14} Td (${linea}) Tj ET`)
-      .join('\n');
-
-    const objects: string[] = [];
-    objects.push('<< /Type /Catalog /Pages 2 0 R >>');
-    objects.push('<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
-    objects.push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>');
-    objects.push(`<< /Length ${contenidoStream.length} >>\nstream\n${contenidoStream}\nendstream`);
-    objects.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
-
-    let pdf = '%PDF-1.4\n';
-    const offsets: number[] = [];
-
-    objects.forEach((obj, index) => {
-      offsets.push(pdf.length);
-      pdf += `${index + 1} 0 obj\n${obj}\nendobj\n`;
-    });
-
-    const xrefOffset = pdf.length;
-    pdf += `xref\n0 ${objects.length + 1}\n`;
-    pdf += '0000000000 65535 f \n';
-    offsets.forEach(offset => {
-      pdf += `${offset.toString().padStart(10, '0')} 00000 n \n`;
-    });
-
-    pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\n`;
-    pdf += `startxref\n${xrefOffset}\n%%EOF`;
-
-    const blob = new Blob([pdf], { type: 'application/pdf' });
-    return URL.createObjectURL(blob);
-  }
-
   cargarConteo(): void {
     this.monitoreoService.obtenerConteoPaciente().subscribe({
       next: (data) => (this.conteo = data),
@@ -180,11 +115,7 @@ export class ReportePaciente implements OnInit {
     this.filtroEstadoCuenta = 'todos';
     this.filtroOrdenNombre = 'asc';
     this.terminoBusqueda = '';
-    this.accordionStates = {
-      mostrar: true,
-      ordenar: false,
-      estado: false,
-    };
+    this.accordionStates = { mostrar: true, ordenar: false, estado: false };
   }
 
   getEstadoClass(estado: string): string {
@@ -225,7 +156,43 @@ export class ReportePaciente implements OnInit {
       case 'activo': return 'Activo';
       case 'suspendido': return 'Bloqueado';
       case 'pendiente_validacion': return 'Pendiente';
-      default: return 'N/A';
+      default: return estado || 'N/A';
     }
+  }
+
+  get reporteConfig(): ReporteConfig {
+    return {
+      titulo: 'Reporte de Pacientes',
+      tipo: 'pacientes',
+      columnas: [
+        { key: 'nombrePaciente', label: 'Paciente' },
+        { key: 'nombreTutor', label: 'Tutor' },
+        { key: 'estadoCuenta', label: 'Estado', tipo: 'estado' },
+        { key: 'historialSesiones', label: 'Historial' },
+        { key: 'condicion', label: 'Condición' },
+        { key: 'instructores', label: 'Instructores' },
+        { key: 'ultimoLogin', label: 'Última Interacción' }
+      ],
+      datos: this.pacientes.map(p => ({
+        ...p,
+        condicion: p.condicion || this.getCondicionLabel(p.estadoCuenta),
+        instructores: this.getInstructoresAvatares(p.imagenesInstructores).length + ' instructores',
+        ultimoLogin: this.getUltimoLogin(p.ultimoLogin)
+      })),
+      filtrosAplicados: this.getFiltrosActivos(),
+      resumen: [
+        { label: 'Total Pacientes', valor: String(this.conteo.totalPaciente) },
+        { label: 'Activos', valor: String(this.conteo.activoPaciente) },
+        { label: 'Inactivos', valor: String(this.conteo.inactivos60Dias) }
+      ]
+    };
+  }
+
+  getFiltrosActivos(): { label: string; valor: string }[] {
+    const filtros: { label: string; valor: string }[] = [];
+    if (this.terminoBusqueda) filtros.push({ label: 'Búsqueda', valor: this.terminoBusqueda });
+    if (this.filtroEstadoCuenta !== 'todos') filtros.push({ label: 'Estado', valor: this.filtroEstadoCuenta });
+    if (this.filtroServicios === 'top') filtros.push({ label: 'Orden', valor: 'Más servicios' });
+    return filtros;
   }
 }

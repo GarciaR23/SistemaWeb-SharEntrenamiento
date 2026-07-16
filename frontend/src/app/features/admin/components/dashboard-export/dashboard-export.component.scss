@@ -1,0 +1,192 @@
+.export-card {
+    background: linear-gradient(145deg, #181c27, #111622);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.export-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px 28px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.export-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+
+    .logo-img {
+        width: 36px;
+        height: 36px;
+    }
+
+    .logo-text {
+        font-size: 16px;
+        font-weight: 700;
+        color: #f8fafc;
+    }
+
+    .text-green {
+        color: #34d399;
+    }
+}
+
+.export-info {
+    h3 {
+        margin: 0 0 4px;
+        font-size: 18px;
+        font-weight: 700;
+        color: #f8fafc;
+    }
+
+    .periodo {
+        margin: 0;
+        font-size: 13px;
+        color: #94a3b8;
+    }
+
+    .fecha-export {
+        margin: 4px 0 0;
+        font-size: 11px;
+        color: #64748b;
+    }
+}
+
+.export-body {
+    padding: 24px 28px;
+}
+
+.export-fields {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+
+    label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+}
+
+.date-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 10px 14px;
+
+    svg {
+        color: #64748b;
+        flex-shrink: 0;
+    }
+}
+
+.date-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #f8fafc;
+    font-size: 14px;
+    cursor: pointer;
+
+    &::-webkit-calendar-picker-indicator {
+        filter: invert(0.7);
+        cursor: pointer;
+    }
+}
+
+.field-sep {
+    color: #64748b;
+    font-size: 18px;
+    margin-top: 20px;
+}
+
+.export-chips {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+
+    svg {
+        flex-shrink: 0;
+    }
+
+    &.active {
+        background: rgba(52, 211, 153, 0.1);
+        color: #34d399;
+        border: 1px solid rgba(52, 211, 153, 0.2);
+    }
+}
+
+.export-footer {
+    padding: 20px 28px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-export {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: #34d399;
+    border: none;
+    border-radius: 10px;
+    color: #022C22;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover:not(:disabled) {
+        opacity: 0.9;
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+}
+
+@media (max-width: 600px) {
+    .export-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .export-fields {
+        flex-direction: column;
+    }
+
+    .field-sep {
+        display: none;
+    }
+}

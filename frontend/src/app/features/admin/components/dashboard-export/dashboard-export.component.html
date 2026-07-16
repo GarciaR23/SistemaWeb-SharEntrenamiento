@@ -1,0 +1,80 @@
+<div class="export-card">
+    <div class="export-header">
+        <div class="export-logo">
+            <img src="assets/icons/logo.png" alt="Logo" class="logo-img" />
+            <span class="logo-text">Shar<span class="text-green">Entrenamiento</span></span>
+        </div>
+        <div class="export-info">
+            <h3>Exportar Dashboard</h3>
+            <p class="periodo">{{ periodoLabel }}</p>
+            @if (horaExportacion) {
+            <p class="fecha-export">Exportado: {{ horaExportacion }}</p>
+            }
+        </div>
+    </div>
+
+    <div class="export-body">
+        <div class="export-fields">
+            <div class="field-group">
+                <label>Fecha Inicio</label>
+                <div class="date-field">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <input type="date" [(ngModel)]="fechaInicio" class="date-input" />
+                </div>
+            </div>
+
+            <span class="field-sep">—</span>
+
+            <div class="field-group">
+                <label>Fecha Fin</label>
+                <div class="date-field">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <input type="date" [(ngModel)]="fechaFin" class="date-input" />
+                </div>
+            </div>
+        </div>
+
+        <div class="export-chips">
+            <span class="chip active">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+                    <polyline points="16 7 22 7 22 13"></polyline>
+                </svg>
+                Crecimiento Instructores
+            </span>
+            <span class="chip active">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                    <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+                </svg>
+                Estado Solicitudes
+            </span>
+        </div>
+    </div>
+
+    <div class="export-footer">
+        <button class="btn-export" (click)="exportar()" [disabled]="!fechaInicio || !fechaFin || exportando">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" x2="12" y1="15" y2="3" />
+            </svg>
+            {{ exportando ? 'Exportando...' : 'Exportar Dashboard' }}
+        </button>
+    </div>
+</div>
