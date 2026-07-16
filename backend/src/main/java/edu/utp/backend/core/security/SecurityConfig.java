@@ -83,7 +83,15 @@ public class SecurityConfig {
                         // TUTORES
                         .requestMatchers("/api/tutores/**")
                         .hasAnyAuthority("tutor", "admin")
+                         
+                        //PLAN
+                        .requestMatchers("/api/plan/**")
+                        .hasAnyAuthority("tutor", "instructor", "admin")
 
+                        // ACTIVIDAD DEL TUTOR
+                        .requestMatchers("/api/actividad/**")
+                        .hasAnyAuthority("tutor", "admin")
+                        
                         // SEDES
                         .requestMatchers("/api/sedes/**")
                         .hasAnyAuthority("instructor", "admin")
