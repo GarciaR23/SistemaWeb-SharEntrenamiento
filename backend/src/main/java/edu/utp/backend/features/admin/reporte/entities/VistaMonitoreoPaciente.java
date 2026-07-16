@@ -35,6 +35,9 @@ public class VistaMonitoreoPaciente {
     @Column(name = "historial_sesiones")
     private Long historialSesiones;
 
+    @Column(name = "condicion")
+    private String condicion;
+
     @Column(name = "imagenes_instructores")
     private String imagenesInstructores;
 
