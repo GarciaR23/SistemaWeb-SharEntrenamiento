@@ -327,6 +327,25 @@ h3 {
     }
 }
 
+.toast-alerta {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 12px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fbbf24;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 3000;
+    animation: slideInRight 0.3s ease, fadeOut 0.3s ease 3.7s forwards;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
 /* Barra de Filtros y Herramientas */
 .toolbar-actions {
     display: flex;

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import * as XLSX from 'xlsx';
 import { ConteoSolicitudes, SolicitudesService } from '../../services/solicitudes.service';
 import { MonitoreoService } from '../../services/monitoreo.service';
 import { AdminDashboardService } from '../../services/admin-dashboard.service';
@@ -25,6 +26,9 @@ export class Inicio implements OnInit {
   pacienteControl: PacienteControl | null = null;
   dashboardInstructores: DashboardInstructores | null = null;
   estadoSolicitudes: DashboardEstadoSolicitud | null = null;
+
+  mensajeAlerta: string = '';
+  mostrarAlerta: boolean = false;
 
   constructor(
     private solicitudesService: SolicitudesService,
@@ -104,9 +108,7 @@ export class Inicio implements OnInit {
   }
 
   obtenerMes(mes: string): string {
-    const meses: string[] = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    const num = parseInt(mes.substring(5, 7));
-    return meses[num - 1] || mes;
+    return mes.substring(5, 7);
   }
 
   selectCard(card: 'solicitudes' | 'instructores' | 'pacientes'): void {
@@ -119,5 +121,36 @@ export class Inicio implements OnInit {
     } else {
       this.cargarDashboardInstructores();
     }
+  }
+
+  exportarDashboard(): void {
+    if (!this.fechaInicio || !this.fechaFin) {
+      this.mensajeAlerta = 'Debes seleccionar ambas fechas antes de exportar.';
+      this.mostrarAlerta = true;
+      setTimeout(() => { this.mostrarAlerta = false; }, 4000);
+      return;
+    }
+
+    const wb = XLSX.utils.book_new();
+
+    if (this.dashboardInstructores?.crecimiento.length) {
+      const data1 = this.dashboardInstructores.crecimiento.map(c => ({
+        Mes: c.mes,
+        'Total Nuevos': c.totalNuevos
+      }));
+      data1.push({ Mes: 'Porcentaje Mensual', 'Total Nuevos': this.dashboardInstructores.porcentajeMensual });
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data1), 'Crecimiento Instructores');
+    }
+
+    if (this.estadoSolicitudes?.estados.length) {
+      const data2 = this.estadoSolicitudes.estados.map(e => ({
+        Estado: e.estado,
+        'Porcentaje (%)': e.porcentaje
+      }));
+      data2.push({ Estado: 'Total Solicitudes', 'Porcentaje (%)': this.estadoSolicitudes.totalSolicitudes });
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data2), 'Estado Solicitudes');
+    }
+
+    XLSX.writeFile(wb, `dashboard_${this.fechaInicio}_${this.fechaFin}.xlsx`);
   }
 }

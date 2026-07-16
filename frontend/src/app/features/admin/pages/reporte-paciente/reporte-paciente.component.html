@@ -13,15 +13,7 @@
           </svg>
           Filtros Avanzados
         </button>
-        <button class="btn btn-secondary" (click)="exportarPDF()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" x2="12" y1="15" y2="3" />
-          </svg>
-          Exportar
-        </button>
+        <app-reporte [config]="reporteConfig"></app-reporte>
       </div>
     </header>
 
@@ -67,8 +59,7 @@
                 </svg>
               </span>
               <span class="accordion-text">
-                <strong>Mostrar</strong>
-                <small>Filtra por volumen de servicios</small>
+                <strong>Mostrar</strong><small>Filtra por volumen de servicios</small>
               </span>
               <span class="accordion-arrow" [class.rotated]="accordionStates.mostrar">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -99,8 +90,7 @@
                 </svg>
               </span>
               <span class="accordion-text">
-                <strong>Ordenar</strong>
-                <small>Define la jerarquía de resultados</small>
+                <strong>Ordenar</strong><small>Define la jerarquía de resultados</small>
               </span>
               <span class="accordion-arrow" [class.rotated]="accordionStates.ordenar">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -129,8 +119,7 @@
                 </svg>
               </span>
               <span class="accordion-text">
-                <strong>Estado</strong>
-                <small>Filtra por condición de cuenta</small>
+                <strong>Estado</strong><small>Filtra por condición de cuenta</small>
               </span>
               <span class="accordion-arrow" [class.rotated]="accordionStates.estado">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -152,7 +141,6 @@
             </div>
           </div>
         </div>
-
       </div>
 
       <div class="offcanvas-footer">
@@ -177,7 +165,6 @@
           </svg>
         </div>
       </div>
-
       <div class="kpi-card">
         <div class="kpi-content">
           <span class="kpi-title">Activos</span>
@@ -191,7 +178,6 @@
           </svg>
         </div>
       </div>
-
       <div class="kpi-card">
         <div class="kpi-content">
           <span class="kpi-title">Inactivos</span>
@@ -245,18 +231,17 @@
                   {{ p.nombreTutor }}
                 </div>
               </td>
-              <td><span class="status-dot" [class]="getEstadoClass(p.estadoCuenta)">{{
-                  getEstadoLabel(p.estadoCuenta) }}</span></td>
+              <td><span class="status-dot" [class]="getEstadoClass(p.estadoCuenta)">{{ getEstadoLabel(p.estadoCuenta)
+                  }}</span></td>
               <td><span class="badge badge-services">{{ p.historialSesiones }} Servicios</span></td>
-              <td><span class="condition-badge">{{ getCondicionLabel(p.estadoCuenta) }}</span></td>
+              <td><span class="condition-badge">{{ p.condicion || getCondicionLabel(p.estadoCuenta) }}</span></td>
               <td>
                 <div class="avatar-group">
                   @for (img of getInstructoresAvatares(p.imagenesInstructores).slice(0,2); track img) {
                   <img [src]="img" alt="Instructor">
                   }
                   @if (getInstructorRestantes(p.imagenesInstructores) > 0) {
-                  <span class="avatar-more">+{{
-                    getInstructorRestantes(p.imagenesInstructores) }}</span>
+                  <span class="avatar-more">+{{ getInstructorRestantes(p.imagenesInstructores) }}</span>
                   }
                 </div>
               </td>
@@ -265,7 +250,6 @@
                   <span class="date">{{ getUltimoLogin(p.ultimoLogin) }}</span>
                 </div>
               </td>
-
             </tr>
             }
           </tbody>
@@ -273,8 +257,7 @@
       </div>
 
       <footer class="table-footer">
-        <span class="footer-stats">Mostrando {{ pacientesPaginados.length }} de {{ pacientes.length }}
-          pacientes</span>
+        <span class="footer-stats">Mostrando {{ pacientesPaginados.length }} de {{ pacientes.length }} pacientes</span>
         <div class="pagination">
           <button class="page-btn text-btn" [class.disabled]="paginaActual === 1" (click)="irPagina(paginaActual - 1)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"

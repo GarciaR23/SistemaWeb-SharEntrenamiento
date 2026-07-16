@@ -112,7 +112,7 @@
                     class="date-input">
             </div>
         </div>
-        <button class="btn-export">
+        <button class="btn-export" (click)="exportarDashboard()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                 stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"
                 style="margin-right: 6px; vertical-align: -2px;">
@@ -124,9 +124,20 @@
         </button>
     </div>
 
+    @if (mostrarAlerta) {
+    <div class="toast-alerta">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        <span>{{ mensajeAlerta }}</span>
+    </div>
+    }
+
     <section class="analytics-grid">
 
-        <!-- GRÁFICO LINEAL: Crecimiento de Instructores -->
         <div class="analytics-card chart-main">
             <div class="analytics-header">
                 <div>
@@ -164,7 +175,6 @@
             }
         </div>
 
-        <!-- GRÁFICO DE BARRAS + CÍRCULO CON TOTAL: Estado de Solicitudes -->
         <div class="analytics-card chart-side">
             <h3>Estado de Solicitudes</h3>
             @if (!estadoSolicitudes || totalSolicitudes === 0) {
@@ -179,7 +189,6 @@
             </div>
             } @else {
             <div class="donut-preview">
-                <!-- Círculo con total en el centro -->
                 <div class="donut-chart">
                     <svg viewBox="0 0 100 100">
                         <circle class="donut-track" cx="50" cy="50" r="42" />
@@ -197,23 +206,13 @@
                         <span>Total</span>
                     </div>
                 </div>
-                <!-- Leyenda con barras -->
                 <ul class="chart-legend compact-legend">
-                    <li>
-                        <span class="dot approved"></span>
-                        Aprobadas
-                        <span class="legend-val">{{ getPorcentajeEstado('aprobados') }}%</span>
-                    </li>
-                    <li>
-                        <span class="dot pending"></span>
-                        Pendientes
-                        <span class="legend-val">{{ getPorcentajeEstado('pendientes') }}%</span>
-                    </li>
-                    <li>
-                        <span class="dot rejected"></span>
-                        Rechazadas
-                        <span class="legend-val">{{ getPorcentajeEstado('rechazados') }}%</span>
-                    </li>
+                    <li><span class="dot approved"></span>Aprobadas<span class="legend-val">{{
+                            getPorcentajeEstado('aprobados') }}%</span></li>
+                    <li><span class="dot pending"></span>Pendientes<span class="legend-val">{{
+                            getPorcentajeEstado('pendientes') }}%</span></li>
+                    <li><span class="dot rejected"></span>Rechazadas<span class="legend-val">{{
+                            getPorcentajeEstado('rechazados') }}%</span></li>
                 </ul>
             </div>
             }

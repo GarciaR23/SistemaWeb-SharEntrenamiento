@@ -1,243 +1,238 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
-export interface UsuarioImplicado {
-  nombre: string;
-  rolSecundario: string;
-  avatarUrl: string;
-}
-
-export interface Evidencia {
-  tipo: 'documento' | 'video' | 'ninguna';
-  url?: string;
-}
-
-export interface Incidencia {
-  idIncidencia: string;
-  tipoReclamo: 'RECLAMO DE PACIENTE' | 'RECLAMO DE INSTRUCTOR';
-  gravedad: 'Crítica' | 'Moderada' | 'Baja';
-  reportador: UsuarioImplicado;
-  acusado: UsuarioImplicado;
-  detalle: string;
-  evidencia: Evidencia;
-}
-
-export interface ConteoIncidencias {
-  casos: number;
-  enMediacion: number;
-  rechazados: number;
-}
+import { Observacion, ContadorObservaciones } from '../../models/observacion.model';
+import { ObservacionService } from '../../services/observacion.service';
+import { ReporteComponent } from '../../components/reporte/reporte.component';
+import { ReporteConfig } from '../../models/reporte-config.model';
 
 @Component({
   selector: 'app-observacion-reclamo',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReporteComponent],
   templateUrl: './observacion-reclamo.html',
   styleUrl: './observacion-reclamo.scss',
 })
 export class ObservacionReclamo implements OnInit {
-  conteo: ConteoIncidencias = {
-    casos: 24,
-    enMediacion: 18,
-    rechazados: 14,
-  };
-
-  incidencias: Incidencia[] = [];
-  incidenciasFiltradas: Incidencia[] = [];
-  incidenciasPaginadas: Incidencia[] = [];
+  conteo: ContadorObservaciones = { totalCasos: 0, enMediacion: 0, rechazados: 0 };
+  observaciones: Observacion[] = [];
+  observacionesFiltradas: Observacion[] = [];
+  observacionesPaginadas: Observacion[] = [];
 
   terminoBusqueda = '';
-  filtroTipo: 'todos' | 'paciente' | 'instructor' = 'todos';
+  filtroTipo: 'todos' | 'impuntualidad' | 'mal_trato' | 'incidente_menor' | 'colapso_paciente' = 'todos';
   filtroGravedad: 'todas' | 'critica' | 'moderada' | 'baja' = 'todas';
-  filtroTipoReporte: 'todos' | 'documento' | 'video' | 'ninguna' = 'todos';
+  filtroAccion: 'todas' | 'pendiente' | 'mediacion' | 'rechazado' | 'suspender' = 'todas';
   mostrarFiltroAvanzado = false;
-  accordionStates: Record<'tipo' | 'gravedad' | 'reporte', boolean> = {
+  accordionStates: Record<'tipo' | 'gravedad' | 'accion', boolean> = {
     tipo: true,
     gravedad: false,
-    reporte: false,
+    accion: false,
   };
 
   paginaActual = 1;
   totalPaginas = 1;
   readonly pageSize = 10;
 
-  constructor() {}
+  dropdownAbierto: number | null = null;
+  modalEvidenciaAbierto = false;
+  evidenciaSeleccionada: Observacion | null = null;
+
+  modalConfirmacionAbierto = false;
+  accionPendiente: { id: number; accion: string } | null = null;
+
+  mensajeExito: string = '';
+  mostrarMensajeExito: boolean = false;
+
+  constructor(private observacionService: ObservacionService) { }
 
   ngOnInit(): void {
-    this.cargarDatosMuestra();
-    this.aplicarFiltros();
+    this.cargarContadores();
+    this.cargarObservaciones();
   }
 
-  getGravedadColor(gravedad: string): string {
-    switch (gravedad) {
-      case 'Crítica':
-        return 'indicator-critica';
-      case 'Moderada':
-        return 'indicator-moderada';
-      case 'Baja':
-        return 'indicator-baja';
-      default:
-        return '';
+  cargarContadores(): void {
+    this.observacionService.obtenerContadores().subscribe({
+      next: (data) => (this.conteo = data),
+      error: (err) => console.error('Error al cargar contadores:', err),
+    });
+  }
+
+  cargarObservaciones(): void {
+    this.observacionService.obtenerObservaciones().subscribe({
+      next: (data) => {
+        this.observaciones = data;
+        this.aplicarFiltros();
+      },
+      error: (err) => console.error('Error al cargar observaciones:', err),
+    });
+  }
+
+  getTipoLabel(tipo: string): string {
+    switch (tipo) {
+      case 'impuntualidad': return 'Impuntualidad';
+      case 'mal_trato': return 'Mal trato';
+      case 'incidente_menor': return 'Incidente menor';
+      case 'colapso_paciente': return 'Colapso paciente';
+      default: return tipo;
     }
   }
 
-  toggleFiltroAvanzado(): void {
-    this.mostrarFiltroAvanzado = !this.mostrarFiltroAvanzado;
+  getAccionLabel(accion: string): string {
+    switch (accion) {
+      case 'pendiente': return 'Pendiente';
+      case 'rechazado': return 'Rechazado';
+      case 'mediacion': return 'En mediación';
+      case 'suspender': return 'Suspendido';
+      default: return accion;
+    }
   }
 
-  toggleAccordion(section: 'tipo' | 'gravedad' | 'reporte'): void {
+  getGravedadColor(gravedad: string): string {
+    switch (gravedad?.toLowerCase()) {
+      case 'critica': case 'crítica': return 'indicator-critica';
+      case 'moderada': return 'indicator-moderada';
+      case 'baja': return 'indicator-baja';
+      default: return '';
+    }
+  }
+
+  toggleFiltroAvanzado(): void { this.mostrarFiltroAvanzado = !this.mostrarFiltroAvanzado; }
+
+  toggleAccordion(section: 'tipo' | 'gravedad' | 'accion'): void {
     this.accordionStates[section] = !this.accordionStates[section];
   }
 
-  aplicarFiltroAvanzado(): void {
-    this.mostrarFiltroAvanzado = false;
-    this.aplicarFiltros();
-  }
+  aplicarFiltroAvanzado(): void { this.mostrarFiltroAvanzado = false; this.aplicarFiltros(); }
 
-  buscar(texto: string): void {
-    this.terminoBusqueda = texto;
-    this.aplicarFiltros();
-  }
+  buscar(texto: string): void { this.terminoBusqueda = texto; this.aplicarFiltros(); }
 
   limpiarFiltros(): void {
     this.terminoBusqueda = '';
     this.filtroTipo = 'todos';
     this.filtroGravedad = 'todas';
-    this.filtroTipoReporte = 'todos';
-    this.accordionStates = { tipo: true, gravedad: false, reporte: false };
+    this.filtroAccion = 'todas';
+    this.accordionStates = { tipo: true, gravedad: false, accion: false };
     this.aplicarFiltros();
     this.mostrarFiltroAvanzado = false;
   }
 
   aplicarFiltros(): void {
-    const textoBusqueda = this.terminoBusqueda.trim().toLowerCase();
+    let resultados = [...this.observaciones];
+    const texto = this.terminoBusqueda.trim().toLowerCase();
 
-    let resultados = [...this.incidencias];
-
-    if (textoBusqueda) {
-      resultados = resultados.filter((incidencia) => {
-        const texto = `${incidencia.reportador.nombre} ${incidencia.detalle} ${incidencia.reportador.rolSecundario}`.toLowerCase();
-        return texto.includes(textoBusqueda);
-      });
+    if (texto) {
+      resultados = resultados.filter(o =>
+        o.nombrePaciente?.toLowerCase().includes(texto) ||
+        o.nombreInstructor?.toLowerCase().includes(texto) ||
+        o.detalleReclamo?.toLowerCase().includes(texto)
+      );
     }
 
     if (this.filtroTipo !== 'todos') {
-      const tipo = this.filtroTipo === 'paciente' ? 'RECLAMO DE PACIENTE' : 'RECLAMO DE INSTRUCTOR';
-      resultados = resultados.filter((incidencia) => incidencia.tipoReclamo === tipo);
+      resultados = resultados.filter(o => o.tipoReclamo === this.filtroTipo);
     }
 
     if (this.filtroGravedad !== 'todas') {
-      const gravedad = this.filtroGravedad.charAt(0).toUpperCase() + this.filtroGravedad.slice(1);
-      resultados = resultados.filter((incidencia) => incidencia.gravedad.toLowerCase() === gravedad.toLowerCase());
+      const g = this.filtroGravedad.charAt(0).toUpperCase() + this.filtroGravedad.slice(1);
+      resultados = resultados.filter(o => o.nivelGravedad?.toLowerCase() === g.toLowerCase());
     }
 
-    if (this.filtroTipoReporte !== 'todos') {
-      resultados = resultados.filter((incidencia) => incidencia.evidencia.tipo === this.filtroTipoReporte);
+    if (this.filtroAccion !== 'todas') {
+      resultados = resultados.filter(o => o.accionSugerida === this.filtroAccion);
     }
 
-    this.incidenciasFiltradas = resultados;
+    this.observacionesFiltradas = resultados;
     this.totalPaginas = Math.max(1, Math.ceil(resultados.length / this.pageSize));
     this.irPagina(1);
   }
 
   irPagina(pagina: number): void {
-    if (pagina < 1 || pagina > this.totalPaginas) {
-      return;
-    }
-
     this.paginaActual = pagina;
     const inicio = (pagina - 1) * this.pageSize;
-    this.incidenciasPaginadas = this.incidenciasFiltradas.slice(inicio, inicio + this.pageSize);
+    this.observacionesPaginadas = this.observacionesFiltradas.slice(inicio, inicio + this.pageSize);
   }
 
-  exportarPDF(): void {
-    const datosExportar = this.incidenciasFiltradas.length ? this.incidenciasFiltradas : this.incidencias;
-    const url = this.generarPDFUrl(datosExportar, 'Reporte de incidencias');
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'reporte-incidencias.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setTimeout(() => URL.revokeObjectURL(url), 0);
+  verEvidencia(obs: Observacion): void {
+    this.evidenciaSeleccionada = obs;
+    this.modalEvidenciaAbierto = true;
   }
 
-  private generarPDFUrl(datos: Array<Incidencia | Record<string, unknown>>, titulo: string): string {
-    const lineas = [`Reporte: ${titulo}`, ''];
-    datos.forEach((dato, index) => {
-      const entrada = dato as Record<string, unknown>;
-      const texto = Object.entries(entrada)
-        .map(([clave, valor]) => `${clave}: ${valor}`)
-        .join(' | ');
-      lineas.push(`${index + 1}. ${texto}`);
-    });
-
-    const texto = lineas.join('\n');
-    const lineasPdf = texto.split('\n').map((linea) => linea.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)'));
-
-    const contenidoStream = lineasPdf
-      .map((linea, index) => `BT /F1 10 Tf 50 ${780 - index * 14} Td (${linea}) Tj ET`)
-      .join('\n');
-
-    const objects: string[] = [];
-    objects.push('<< /Type /Catalog /Pages 2 0 R >>');
-    objects.push('<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
-    objects.push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>');
-    objects.push(`<< /Length ${contenidoStream.length} >>\nstream\n${contenidoStream}\nendstream`);
-    objects.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
-
-    let pdf = '%PDF-1.4\n';
-    const offsets: number[] = [];
-
-    objects.forEach((obj, index) => {
-      offsets.push(pdf.length);
-      pdf += `${index + 1} 0 obj\n${obj}\nendobj\n`;
-    });
-
-    const xrefOffset = pdf.length;
-    pdf += `xref\n0 ${objects.length + 1}\n`;
-    pdf += '0000000000 65535 f \n';
-    offsets.forEach((offset) => {
-      pdf += `${offset.toString().padStart(10, '0')} 00000 n \n`;
-    });
-
-    pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\n`;
-    pdf += `startxref\n${xrefOffset}\n%%EOF`;
-
-    const blob = new Blob([pdf], { type: 'application/pdf' });
-    return URL.createObjectURL(blob);
+  cerrarModalEvidencia(): void {
+    this.modalEvidenciaAbierto = false;
+    this.evidenciaSeleccionada = null;
   }
 
-  private cargarDatosMuestra(): void {
-    this.incidencias = [
-      {
-        idIncidencia: 'INC-001',
-        tipoReclamo: 'RECLAMO DE PACIENTE',
-        gravedad: 'Crítica',
-        reportador: { nombre: 'L. M. (Reportó)', rolSecundario: 'vs. Instructor G. Ortega', avatarUrl: 'assets/avatar1.png' },
-        acusado: { nombre: 'Instructor G. Ortega', rolSecundario: '', avatarUrl: 'assets/avatar2.png' },
-        detalle: 'El instructor canceló la sesión 5 minutos antes sin previo aviso y se produjo una afectación.',
-        evidencia: { tipo: 'documento', url: '#' },
+  imagenesEvidencia(): string[] {
+    if (!this.evidenciaSeleccionada) return [];
+    const e = this.evidenciaSeleccionada;
+    const imgs: string[] = [];
+    if (e.urlEvidencia1) imgs.push(e.urlEvidencia1);
+    if (e.urlEvidencia2) imgs.push(e.urlEvidencia2);
+    if (e.urlEvidencia3) imgs.push(e.urlEvidencia3);
+    return imgs;
+  }
+
+  toggleDropdown(id: number): void {
+    this.dropdownAbierto = this.dropdownAbierto === id ? null : id;
+  }
+
+  confirmarAccion(idIncidencia: number, accion: string): void {
+    this.accionPendiente = { id: idIncidencia, accion };
+    this.modalConfirmacionAbierto = true;
+    this.dropdownAbierto = null;
+  }
+
+  ejecutarAccionConfirmada(): void {
+    if (!this.accionPendiente) return;
+    const { id, accion } = this.accionPendiente;
+    this.observacionService.actualizarAccion(id, accion).subscribe({
+      next: () => {
+        this.modalConfirmacionAbierto = false;
+        this.accionPendiente = null;
+        this.mensajeExito = `Caso #${id} actualizado a "${this.getAccionLabel(accion)}" exitosamente.`;
+        this.mostrarMensajeExito = true;
+        setTimeout(() => { this.mostrarMensajeExito = false; }, 4000);
+        this.cargarObservaciones();
+        this.cargarContadores();
       },
-      {
-        idIncidencia: 'INC-002',
-        tipoReclamo: 'RECLAMO DE INSTRUCTOR',
-        gravedad: 'Moderada',
-        reportador: { nombre: 'Inst. Carlos A. (Reportó)', rolSecundario: 'vs. Paciente Mateo J.', avatarUrl: 'assets/avatar3.png' },
-        acusado: { nombre: 'Paciente Mateo J.', rolSecundario: '', avatarUrl: 'assets/avatar4.png' },
-        detalle: 'Conducta inapropiada recurrente durante las sesiones virtuales. El comportamiento afectó la confianza.',
-        evidencia: { tipo: 'video', url: '#' },
-      },
-      {
-        idIncidencia: 'INC-003',
-        tipoReclamo: 'RECLAMO DE PACIENTE',
-        gravedad: 'Baja',
-        reportador: { nombre: 'Elena S. (Reportó)', rolSecundario: 'vs. Inst. Maria Elena', avatarUrl: 'assets/avatar5.png' },
-        acusado: { nombre: 'Inst. Maria Elena', rolSecundario: '', avatarUrl: 'assets/avatar6.png' },
-        detalle: 'La calidad del audio durante la última sesión fue muy deficiente e impidió la continuidad.',
-        evidencia: { tipo: 'ninguna' },
-      },
-    ];
+      error: (err) => console.error('Error al actualizar acción:', err),
+    });
+  }
+
+  cerrarModalConfirmacion(): void {
+    this.modalConfirmacionAbierto = false;
+    this.accionPendiente = null;
+  }
+
+  get reporteConfig(): ReporteConfig {
+    return {
+      titulo: 'Reporte de Incidencias',
+      tipo: 'instructores',
+      columnas: [
+        { key: 'tipoReclamo', label: 'Tipo' },
+        { key: 'nivelGravedad', label: 'Gravedad' },
+        { key: 'nombrePaciente', label: 'Paciente' },
+        { key: 'nombreInstructor', label: 'Instructor' },
+        { key: 'detalleReclamo', label: 'Detalle' },
+        { key: 'accionSugerida', label: 'Acción', tipo: 'estado' }
+      ],
+      datos: this.observacionesFiltradas.map(o => ({ ...o, tipoReclamo: this.getTipoLabel(o.tipoReclamo) })),
+      filtrosAplicados: this.getFiltrosActivos(),
+      resumen: [
+        { label: 'Total Casos', valor: String(this.conteo.totalCasos) },
+        { label: 'En Mediación', valor: String(this.conteo.enMediacion) },
+        { label: 'Rechazados', valor: String(this.conteo.rechazados) }
+      ]
+    };
+  }
+
+  getFiltrosActivos(): { label: string; valor: string }[] {
+    const filtros: { label: string; valor: string }[] = [];
+    if (this.terminoBusqueda) filtros.push({ label: 'Búsqueda', valor: this.terminoBusqueda });
+    if (this.filtroTipo !== 'todos') filtros.push({ label: 'Tipo', valor: this.getTipoLabel(this.filtroTipo) });
+    if (this.filtroGravedad !== 'todas') filtros.push({ label: 'Gravedad', valor: this.filtroGravedad });
+    if (this.filtroAccion !== 'todas') filtros.push({ label: 'Acción', valor: this.getAccionLabel(this.filtroAccion) });
+    return filtros;
   }
 }

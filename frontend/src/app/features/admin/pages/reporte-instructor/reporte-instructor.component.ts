@@ -1,14 +1,15 @@
-
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InstructorMonitoreo } from '../../models/instructor-monitoreo.model';
 import { ConteoInstructor, MonitoreoService } from '../../services/monitoreo.service';
 import { FiltroInstructorService } from '../../services/filtro-instructor.service';
+import { ReporteConfig } from '../../models/reporte-config.model';
+import { ReporteComponent } from "../../components/reporte/reporte.component";
 
 @Component({
   selector: 'app-reporte-instructor',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReporteComponent],
   templateUrl: './reporte-instructor.component.html',
   styleUrls: ['./reporte-instructor.component.scss'],
 })
@@ -100,71 +101,6 @@ export class ReporteInstructor implements OnInit {
     this.aplicarFiltros();
   }
 
-  exportarPDF(): void {
-    const datosExportar = (this.instructoresPaginados.length ? this.instructoresPaginados : this.instructores).map(ins => ({
-      nombre: ins.nombreCompleto,
-      especialidad: ins.especialidad,
-      estado: this.getEstadoLabel(ins.estadoCuenta),
-      puntaje: ins.puntaje,
-      servicios: ins.numeroSesion,
-    }));
-    const url = this.generarPDFUrl(datosExportar, 'Reporte de Instructores');
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'reporte-instructores.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setTimeout(() => URL.revokeObjectURL(url), 0);
-  }
-
-  private generarPDFUrl(datos: Array<Record<string, unknown>>, titulo: string): string {
-    const lineas = [`Reporte: ${titulo}`, ''];
-    datos.forEach((dato, index) => {
-      lineas.push(`${index + 1}. ${JSON.stringify(dato)}`);
-    });
-
-    const texto = lineas.join('\n');
-    const lineasPdf = texto.split('\n').map(linea => {
-      return linea
-        .replace(/\\/g, '\\\\')
-        .replace(/\(/g, '\\(')
-        .replace(/\)/g, '\\)');
-    });
-
-    const contenidoStream = lineasPdf
-      .map((linea, index) => `BT /F1 10 Tf 50 ${780 - index * 14} Td (${linea}) Tj ET`)
-      .join('\n');
-
-    const objects: string[] = [];
-    objects.push('<< /Type /Catalog /Pages 2 0 R >>');
-    objects.push('<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
-    objects.push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>');
-    objects.push(`<< /Length ${contenidoStream.length} >>\nstream\n${contenidoStream}\nendstream`);
-    objects.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
-
-    let pdf = '%PDF-1.4\n';
-    const offsets: number[] = [];
-
-    objects.forEach((obj, index) => {
-      offsets.push(pdf.length);
-      pdf += `${index + 1} 0 obj\n${obj}\nendobj\n`;
-    });
-
-    const xrefOffset = pdf.length;
-    pdf += `xref\n0 ${objects.length + 1}\n`;
-    pdf += '0000000000 65535 f \n';
-    offsets.forEach(offset => {
-      pdf += `${offset.toString().padStart(10, '0')} 00000 n \n`;
-    });
-
-    pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\n`;
-    pdf += `startxref\n${xrefOffset}\n%%EOF`;
-
-    const blob = new Blob([pdf], { type: 'application/pdf' });
-    return URL.createObjectURL(blob);
-  }
-
   cargarConteo(): void {
     this.monitoreoService.obtenerConteoInstructor().subscribe({
       next: (data) => (this.conteo = data),
@@ -214,11 +150,36 @@ export class ReporteInstructor implements OnInit {
     this.filtroOrdenNombre = 'asc';
     this.filtroEspecialidad = '';
     this.terminoBusqueda = '';
-    this.accordionStates = {
-      prioridad: true,
-      ordenar: false,
-      especialidad: false,
+    this.accordionStates = { prioridad: true, ordenar: false, especialidad: false };
+  }
+
+  get reporteConfig(): ReporteConfig {
+    return {
+      titulo: 'Reporte de Instructores',
+      tipo: 'instructores',
+      columnas: [
+        { key: 'nombreCompleto', label: 'Instructor' },
+        { key: 'especialidad', label: 'Especialidad' },
+        { key: 'estadoCuenta', label: 'Estado', tipo: 'estado' },
+        { key: 'puntaje', label: 'Puntaje', tipo: 'puntaje' },
+        { key: 'numeroSesion', label: 'Servicios' }
+      ],
+      datos: this.instructores,
+      filtrosAplicados: this.getFiltrosActivos(),
+      resumen: [
+        { label: 'Total Instructores', valor: String(this.conteo.totalInstructor) },
+        { label: 'Activos', valor: String(this.conteo.activoInstructor) },
+        { label: 'Pendientes', valor: String(this.conteo.pendienteInstructor) }
+      ]
     };
   }
-}
 
+  getFiltrosActivos(): { label: string; valor: string }[] {
+    const filtros: { label: string; valor: string }[] = [];
+    if (this.terminoBusqueda) filtros.push({ label: 'Búsqueda', valor: this.terminoBusqueda });
+    if (this.filtroEspecialidad) filtros.push({ label: 'Especialidad', valor: this.filtroEspecialidad });
+    if (this.filtroMayorPuntaje) filtros.push({ label: 'Orden', valor: 'Mayor puntaje' });
+    if (this.filtroServicios) filtros.push({ label: 'Orden', valor: 'Más servicios' });
+    return filtros;
+  }
+}

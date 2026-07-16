@@ -6,6 +6,7 @@ import { MonitoreoService } from './services/monitoreo.service';
 import { SolicitudesService } from './services/solicitudes.service';
 import { SidebarComponent } from '../../shared/components/sidebar/sidebar.component';
 import { PanelHeaderComponent } from '../../shared/components/header/panel-header/panel-header.component';
+import { ObservacionService } from './services/observacion.service';
 
 @Component({
   selector: 'app-admin',
@@ -20,13 +21,15 @@ export class Admin implements OnInit {
     solicitudes: 0,
     instructores: 0,
     pacientes: 0,
+    observacion: 0
   };
 
   constructor(
     private router: Router,
     private authApiService: AuthApiService,
     private solicitudesService: SolicitudesService,
-    private monitoreoService: MonitoreoService
+    private monitoreoService: MonitoreoService,
+    private observacionService: ObservacionService
   ) { }
 
   ngOnInit(): void {
@@ -53,6 +56,13 @@ export class Admin implements OnInit {
         this.updateCount('pacientes', data?.length || 0);
       },
       error: (err: unknown) => console.error('Error al cargar conteo de pacientes:', err),
+    });
+
+    this.observacionService.obtenerObservaciones().subscribe({
+      next: (data: Array<unknown>) => {
+        this.updateCount('observacion', data?.length || 0);
+      },
+      error: (err: unknown) => console.error('Error al cargar conteo de observaciones:', err),
     });
   }
 
