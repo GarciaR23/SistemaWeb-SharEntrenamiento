@@ -1,0 +1,103 @@
+<button class="btn-exportar" (click)="abrirPreview()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+        <polyline points="7 10 12 15 17 10" />
+        <line x1="12" x2="12" y1="15" y2="3" />
+    </svg>
+    Exportar
+</button>
+
+@if (mostrarPreview && config) {
+<div class="modal-backdrop" (click)="cerrarPreview()">
+    <div class="modal-preview" (click)="$event.stopPropagation()">
+        <div class="preview-header">
+            <h2>{{ config.titulo }}</h2>
+            <button class="close-btn" (click)="cerrarPreview()">×</button>
+        </div>
+
+        <div class="preview-resumen">
+            <span>{{ totalRegistros }} registros</span>
+            @if (config.filtrosAplicados?.length) {
+            <span>| Filtros: {{ obtenerFiltrosTexto() }}</span>
+            }
+        </div>
+
+        <div class="preview-table-wrapper">
+            <table class="preview-table">
+                <thead>
+                    <tr>
+                        @for (col of config.columnas; track col.key) {
+                        <th>{{ col.label }}</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (row of config.datos.slice(0, 10); track row; let i = $index) {
+                    <tr>
+                        @for (col of config.columnas; track col.key) {
+                        <td>
+                            @if (col.tipo === 'estado') {
+                            <span class="estado-badge" [class]="obtenerEstadoClass(row[col.key])">{{ row[col.key]
+                                }}</span>
+                            } @else if (col.tipo === 'puntaje') {
+                            {{ '★'.repeat(redondear(row[col.key])) }}{{ '☆'.repeat(5 - redondear(row[col.key])) }} {{
+                            row[col.key] }}
+                            } @else if (col.tipo === 'imagen') {
+                            <img [src]="row[col.key]" width="28" height="28" style="border-radius:50%;" />
+                            } @else {
+                            {{ row[col.key] }}
+                            }
+                        </td>
+                        }
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            @if (totalRegistros > 10) {
+            <p class="preview-more">... y {{ totalRegistros - 10 }} registros más</p>
+            }
+        </div>
+
+        <div class="preview-formatos">
+            <p>Selecciona el formato de exportación:</p>
+            <div class="formato-options">
+                @for (op of opciones; track op.formato) {
+                <button class="formato-btn" [class.active]="formatoSeleccionado === op.formato"
+                    (click)="seleccionarFormato(op.formato)">
+                    <span>
+                        @if (op.icono === 'file-text') {
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                            <polyline points="10 9 9 9 8 9" />
+                        </svg>
+                        } @else {
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <line x1="3" y1="9" x2="21" y2="9" />
+                            <line x1="3" y1="15" x2="21" y2="15" />
+                            <line x1="9" y1="3" x2="9" y2="21" />
+                            <line x1="15" y1="3" x2="15" y2="21" />
+                        </svg>
+                        }
+                    </span>
+                    {{ op.label }}
+                </button>
+                }
+            </div>
+        </div>
+
+        <div class="preview-actions">
+            <button class="btn-cancelar" (click)="cerrarPreview()">Cancelar</button>
+            <button class="btn-descargar" [disabled]="!formatoSeleccionado" (click)="exportar()">
+                Descargar {{ formatoSeleccionado === 'pdf' ? 'PDF' : formatoSeleccionado === 'excel' ? 'Excel' : '' }}
+            </button>
+        </div>
+    </div>
+</div>
+}

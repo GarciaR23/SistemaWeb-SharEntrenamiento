@@ -54,6 +54,13 @@ public class SecurityConfig {
                                 "/api/documentos")
                         .permitAll()
 
+                        // NOTIFICACIONES
+                        .requestMatchers(HttpMethod.GET, "/api/notificaciones/admin").hasAuthority("admin")
+                        .requestMatchers(HttpMethod.GET, "/api/notificaciones/instructor/**")
+                        .hasAnyAuthority("instructor", "admin")
+                        .requestMatchers(HttpMethod.GET, "/api/notificaciones/paciente/**")
+                        .hasAnyAuthority("tutor", "admin")
+
                         // ADMIN
                         .requestMatchers("/api/admin/**").hasAuthority("admin")
 

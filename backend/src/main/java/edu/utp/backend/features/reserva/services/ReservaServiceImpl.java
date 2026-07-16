@@ -162,7 +162,6 @@ public class ReservaServiceImpl implements ReservaService {
         detalleReservaRepository.save(dr);
     }
 
-    @Transactional
     public void limpiarReservasVencidas() {
         entityManager
                 .createNativeQuery("SELECT public.fn_limpiar_reservas_vencidas()")
@@ -171,6 +170,7 @@ public class ReservaServiceImpl implements ReservaService {
 
     @Override
     public List<ReservaTutorSesionDto> findSesionesByTutor(Integer idTutor) {
+        limpiarReservasVencidas();
         return reservaRepository.findSesionesByTutor(idTutor)
                 .stream()
                 .filter(r -> !"oculto".equals(r.getEstadoDetalle()))

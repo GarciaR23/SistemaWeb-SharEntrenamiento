@@ -5,6 +5,7 @@ export interface PacienteMonitoreo {
     nombreTutor: string;
     estadoCuenta: string;
     historialSesiones: number;
+    condicion: string;
     imagenesInstructores: string;
     ultimoLogin: string;
     fechaRegistro: string;
