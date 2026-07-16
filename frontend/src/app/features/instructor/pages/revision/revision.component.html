@@ -1,0 +1,181 @@
+<div class="bitacora-page">
+  <header class="bitacora-header">
+    <h1>Estado de Revisión</h1>
+    <p>Procesamiento de solicitudes en fase crítica y técnica.</p>
+  </header>
+
+  @if (alertas.length > 0) {
+  <div class="alert-container">
+    @for (alerta of alertas; track alerta.texto) {
+    <div class="alert-box">
+      <div class="alert-content">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        <span>{{ alerta.texto }}</span>
+      </div>
+      <button class="btn-detalles">VER DETALLES</button>
+    </div>
+    }
+  </div>
+  }
+
+  <div class="filter-bar">
+    <div class="filter-status">
+      <span class="badge-pendientes">{{ totalPendientes }} Pendientes</span>
+      <span class="text-update">Última actualización: {{ ultimaActualizacion }}</span>
+    </div>
+    <div class="filter-actions">
+      <button class="btn-filter" [class.active]="filtroActivo === 'reciente'" (click)="setFiltro('reciente')">
+        Más Recientes
+      </button>
+      <button class="btn-filter" [class.active]="filtroActivo === 'semanal'" (click)="setFiltro('semanal')">
+        Semanal
+      </button>
+    </div>
+  </div>
+
+  @if (cargando) {
+  <div class="loading-state">
+    <p>Cargando solicitudes...</p>
+  </div>
+  }
+
+  @if (!cargando && solicitudes.length > 0) {
+  <div class="solicitudes-grid">
+    @for (sol of solicitudes; track sol.idDetalle) {
+    <article class="solicitud-card">
+      <div class="card-user">
+        <div class="avatar-box">
+          @if (sol.img) {
+          <img [src]="sol.img" alt="Avatar">
+          } @else {
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          }
+        </div>
+        <div class="user-details">
+          <div class="user-top">
+            <h3>{{ sol.nombre }}</h3>
+            <span class="badge-age">{{ sol.edad }} años</span>
+          </div>
+          <div class="info-row">
+            <span class="info-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              {{ sol.fecha }}
+            </span>
+            <span class="info-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              {{ sol.hora }}
+            </span>
+            <span class="info-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              {{ sol.duracion }}
+            </span>
+            <span class="info-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              {{ sol.sede }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-ficha" (click)="abrirFechaCritica(sol.idReserva)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          Ver Ficha Crítica
+        </button>
+        <div class="action-group">
+          <button class="btn-rechazar" (click)="confirmarAccion(sol.idDetalle, 'rechazar')">RECHAZAR</button>
+          <button class="btn-aceptar" (click)="confirmarAccion(sol.idDetalle, 'aceptar')">ACEPTAR</button>
+        </div>
+      </div>
+    </article>
+    }
+  </div>
+  }
+
+  @if (!cargando && solicitudes.length === 0) {
+  <div class="session-empty-container">
+    <section class="session-empty-card">
+      <div class="empty-icon" aria-hidden="true">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+        </svg>
+      </div>
+      <h2>{{ filtroActivo === 'reciente' ? 'Sin solicitudes recientes' : 'Sin solicitudes semanales' }}</h2>
+      <p>{{ filtroActivo === 'reciente' ? 'No tienes solicitudes de revisión en las últimas 24 horas.' : 'No tienes
+        solicitudes de revisión con más de 24 horas.' }}</p>
+    </section>
+  </div>
+  }
+
+  @if (modalFechaCriticaAbierto && fechaCritica) {
+  <div class="modal-backdrop" (click)="cerrarFechaCritica()">
+    <div class="modal-ficha" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="cerrarFechaCritica()">×</button>
+      <h2>Ficha Crítica del Paciente</h2>
+      <div class="ficha-grid">
+        <div class="ficha-item"><span>Sensibilidad</span><strong>{{ fechaCritica.sensibilidadPaciente }}</strong></div>
+        <div class="ficha-item"><span>Protocolo de Emergencia</span><strong>{{ fechaCritica.protocoloEmergencia
+            }}</strong></div>
+        <div class="ficha-item"><span>Grado de Autismo</span><strong>{{ fechaCritica.gradoAutismo }}</strong></div>
+        <div class="ficha-item"><span>Condición</span><strong>{{ fechaCritica.condicion }}</strong></div>
+        <div class="ficha-item ficha-full"><span>Tutor Responsable</span><strong>{{ fechaCritica.nombreTutor }}</strong>
+        </div>
+      </div>
+      <button class="btn-cerrar-ficha" (click)="cerrarFechaCritica()">Cerrar</button>
+    </div>
+  </div>
+  }
+
+  @if (modalConfirmacionAbierto) {
+  <div class="modal-backdrop" (click)="cerrarConfirmacion()">
+    <div class="modal-confirm" (click)="$event.stopPropagation()">
+      <h3>{{ accionSeleccionada === 'aceptar' ? '¿Aceptar solicitud?' : '¿Rechazar solicitud?' }}</h3>
+      <p>{{ accionSeleccionada === 'aceptar' ? 'Se creará una hoja de ruta automáticamente.' : 'Esta acción no se puede
+        deshacer.' }}</p>
+      <div class="confirm-actions">
+        <button class="btn-cancelar" (click)="cerrarConfirmacion()">Cancelar</button>
+        <button class="btn-confirmar" [class.rechazar]="accionSeleccionada === 'rechazar'" (click)="ejecutarAccion()">
+          {{ accionSeleccionada === 'aceptar' ? 'Aceptar' : 'Rechazar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+  }
+</div>

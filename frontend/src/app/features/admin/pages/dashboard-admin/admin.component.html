@@ -1,0 +1,222 @@
+<div class="dashboard-container">
+
+    <header class="dashboard-header">
+        <h1>Bienvenido de nuevo, Admin</h1>
+        <p>Gestione las operaciones de la plataforma, supervise el rendimiento de los instructores y mantenga la
+            integridad del sistema desde este panel central.</p>
+    </header>
+
+    <section class="cards-grid">
+
+        <div class="card" [class.active-card]="selectedCard === 'solicitudes'" (click)="selectCard('solicitudes')">
+            <div class="card-bg-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
+                    stroke-linejoin="round" class="lucide lucide-clipboard-list">
+                    <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                    <path d="M9 12h6" />
+                    <path d="M9 16h6" />
+                </svg>
+            </div>
+            <div class="card-icon-wrapper">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-list">
+                    <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                    <path d="M9 12h6" />
+                    <path d="M9 16h6" />
+                </svg>
+            </div>
+            <h2>Solicitudes de Registro</h2>
+            <span class="counter alert-text">{{ totalPendientes }} Pendientes</span>
+            <p class="card-desc">Hay solicitudes de nuevos instructores esperando revisión técnica y de credenciales.
+            </p>
+            <a routerLink="/admin/solicitud-instructor" class="btn-primary">VER SOLICITUDES</a>
+        </div>
+
+        <div class="card" [class.active-card]="selectedCard === 'instructores'" (click)="selectCard('instructores')">
+            <div class="card-bg-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
+                    stroke-linejoin="round" class="lucide lucide-users">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+            </div>
+            <div class="card-icon-wrapper">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+            </div>
+            <h2>Gestión de Instructores</h2>
+            <span class="counter default-text">{{totalActivos}} Activos</span>
+            <p class="card-desc">Supervise la actividad, sesiones programadas y valoraciones de los profesionales en
+                activo.</p>
+            <a routerLink="/admin/reporte-instructor" class="btn-secondary">IR A INSTRUCTORES</a>
+        </div>
+
+        <div class="card" [class.active-card]="selectedCard === 'pacientes'" (click)="selectCard('pacientes')">
+            <div class="card-bg-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"
+                    stroke-linejoin="round" class="lucide lucide-trending-up">
+                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                    <polyline points="16 7 22 7 22 13" />
+                </svg>
+            </div>
+            <div class="card-icon-wrapper">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up">
+                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                    <polyline points="16 7 22 7 22 13" />
+                </svg>
+            </div>
+            <h2>Control de Pacientes</h2>
+            <span class="counter success-text">{{ porcentajePacientes }} <small>crecimiento mensual</small></span>
+            <p class="card-desc">Una herramienta diseñada para supervisar la información de tus clientes, facilitando
+                una atención más eficiente.</p>
+            <a routerLink="/admin/reporte-paciente" class="btn-secondary">IR A CLIENTES</a>
+        </div>
+
+    </section>
+
+    <div class="toolbar-actions">
+        <div class="date-picker-mock">
+            <div class="date-field">
+                <svg class="calendar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    (click)="fechaInicioInput.showPicker()">
+                    <path d="M8 2v4"></path>
+                    <path d="M16 2v4"></path>
+                    <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                    <path d="M3 10h18"></path>
+                </svg>
+                <input #fechaInicioInput type="date" [(ngModel)]="fechaInicio" (change)="filtrarPorRango()"
+                    class="date-input">
+            </div>
+            <span class="date-separator">-</span>
+            <div class="date-field">
+                <svg class="calendar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    (click)="fechaFinInput.showPicker()">
+                    <path d="M8 2v4"></path>
+                    <path d="M16 2v4"></path>
+                    <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                    <path d="M3 10h18"></path>
+                </svg>
+                <input #fechaFinInput type="date" [(ngModel)]="fechaFin" (change)="filtrarPorRango()"
+                    class="date-input">
+            </div>
+        </div>
+        <button class="btn-export" (click)="exportarDashboard()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download"
+                style="margin-right: 6px; vertical-align: -2px;">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" x2="12" y1="15" y2="3" />
+            </svg>
+            Exportar Data
+        </button>
+    </div>
+
+    @if (mostrarAlerta) {
+    <div class="toast-alerta">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        <span>{{ mensajeAlerta }}</span>
+    </div>
+    }
+
+    <section class="analytics-grid">
+
+        <div class="analytics-card chart-main">
+            <div class="analytics-header">
+                <div>
+                    <h3>Crecimiento de Instructores</h3>
+                    <p>Evolución mensual de registros verificados</p>
+                </div>
+                @if (dashboardInstructores) {
+                <span class="badge-growth">{{ porcentajeInstructores }} este mes</span>
+                }
+            </div>
+            @if (!dashboardInstructores || dashboardInstructores.crecimiento.length === 0) {
+            <div class="empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart-3">
+                    <path d="M3 3v18h18" />
+                    <path d="M18 17V9" />
+                    <path d="M13 17V5" />
+                    <path d="M8 17v-3" />
+                </svg>
+                <h4>Sin datos aún</h4>
+                <p>El gráfico de crecimiento se mostrará cuando haya instructores verificados.</p>
+            </div>
+            } @else {
+            <div class="line-chart">
+                <svg viewBox="0 0 100 100" class="line-svg" preserveAspectRatio="none">
+                    <polyline [attr.points]="getLineChartPoints()" fill="none" stroke="#00e59b" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <div class="line-labels">
+                    @for (item of dashboardInstructores.crecimiento; track item.mes) {
+                    <span>{{ obtenerMes(item.mes) }}</span>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+
+        <div class="analytics-card chart-side">
+            <h3>Estado de Solicitudes</h3>
+            @if (!estadoSolicitudes || totalSolicitudes === 0) {
+            <div class="empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+                    stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pie-chart">
+                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+                    <path d="M22 12A10 10 0 0 0 12 2v10z" />
+                </svg>
+                <h4>Sin métricas</h4>
+                <p>Las estadísticas aparecerán cuando se procesen las primeras solicitudes.</p>
+            </div>
+            } @else {
+            <div class="donut-preview">
+                <div class="donut-chart">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="donut-track" cx="50" cy="50" r="42" />
+                        <circle class="donut-segment approved" cx="50" cy="50" r="42"
+                            [attr.stroke-dasharray]="getPorcentajeEstado('aprobados') * 2.64 + ' ' + (264 - getPorcentajeEstado('aprobados') * 2.64)" />
+                        <circle class="donut-segment pending" cx="50" cy="50" r="42"
+                            [attr.stroke-dasharray]="getPorcentajeEstado('pendientes') * 2.64 + ' ' + (264 - getPorcentajeEstado('pendientes') * 2.64)"
+                            [attr.stroke-dashoffset]="-getPorcentajeEstado('aprobados') * 2.64" />
+                        <circle class="donut-segment rejected" cx="50" cy="50" r="42"
+                            [attr.stroke-dasharray]="getPorcentajeEstado('rechazados') * 2.64 + ' ' + (264 - getPorcentajeEstado('rechazados') * 2.64)"
+                            [attr.stroke-dashoffset]="-(getPorcentajeEstado('aprobados') + getPorcentajeEstado('pendientes')) * 2.64" />
+                    </svg>
+                    <div class="donut-center">
+                        <strong>{{ totalSolicitudes }}</strong>
+                        <span>Total</span>
+                    </div>
+                </div>
+                <ul class="chart-legend compact-legend">
+                    <li><span class="dot approved"></span>Aprobadas<span class="legend-val">{{
+                            getPorcentajeEstado('aprobados') }}%</span></li>
+                    <li><span class="dot pending"></span>Pendientes<span class="legend-val">{{
+                            getPorcentajeEstado('pendientes') }}%</span></li>
+                    <li><span class="dot rejected"></span>Rechazadas<span class="legend-val">{{
+                            getPorcentajeEstado('rechazados') }}%</span></li>
+                </ul>
+            </div>
+            }
+        </div>
+
+    </section>
+</div>

@@ -1,0 +1,27 @@
+import { Component } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { HeaderComponent } from '../../../shared/components/header/landing-header/landing-header.component';
+import { FooterComponent } from '../../../shared/components/footer/footer.component';
+
+
+@Component({
+  selector: 'app-seleccion-rol',
+  standalone: true,
+  imports: [RouterLink, HeaderComponent, FooterComponent],
+  templateUrl: './seleccion-rol.component.html',
+  styleUrls: ['./seleccion-rol.component.scss']
+})
+export class SeleccionRolComponent {
+
+  constructor(private router: Router) { }
+
+  seleccionarRol(rol: string) {
+    localStorage.setItem('rolSeleccionado', rol);
+
+    if (rol === 'TUTOR') {
+      this.router.navigate(['/formulario-tutor']);
+    } else {
+      this.router.navigate(['/formulario']);
+    }
+  }
+}

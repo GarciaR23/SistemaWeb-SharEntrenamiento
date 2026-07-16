@@ -1,0 +1,566 @@
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(12px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Backdrop único reutilizable para evitar redundancias */
+.revision-modal-backdrop,
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+/* ==========================================================================
+   2. MODAL PRINCIPAL: VALIDACIÓN DE DOCUMENTOS
+   ========================================================================== */
+.revision-modal-container {
+    background-color: #151a26;
+    border: 1px solid #222b3e;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    animation: slideUp 0.25s ease-out;
+}
+
+.revision-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 24px 24px 16px 24px;
+}
+
+.header-title-group h2 {
+    color: #5effad;
+    /* Verde menta neón */
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+}
+
+.instructor-sub {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.instructor-sub span {
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.btn-close-x,
+.btn-close {
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 1.5rem;
+    transition: color 0.2s ease;
+}
+
+.btn-close-x:hover,
+.btn-close:hover {
+    color: #94a3b8;
+}
+
+/* Filas de Documentos */
+.revision-modal-body {
+    padding: 8px 24px 16px 24px;
+}
+
+.mensaje-info {
+    color: #f8fafc;
+    background: rgba(94, 255, 173, 0.12);
+    border: 1px solid rgba(94, 255, 173, 0.2);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    font-size: 0.87rem;
+}
+
+.documento-revision-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background-color: #1a2235;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    border: 1px solid transparent;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.documento-revision-row.approved {
+    border-color: #2ecc71;
+    box-shadow: 0 0 0 1px rgba(46, 204, 113, 0.12);
+}
+
+.btn-view.revisado {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.16) !important;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.btn-view.revisado svg {
+    color: #ffffff !important;
+    opacity: 1 !important;
+    stroke: #ffffff !important;
+    fill: none !important;
+}
+
+.btn-view.revisado svg path,
+.btn-view.revisado svg circle,
+.btn-view.revisado svg rect,
+.btn-view.revisado svg polyline {
+    stroke: #ffffff !important;
+}
+
+/* Borde coral si el documento está rechazado */
+.documento-revision-row:has(.btn-reject.selected) {
+    border-color: #ff6b6b;
+}
+
+.documento-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #94a3b8;
+}
+
+.icon-documento-tipo {
+    color: #64748b;
+}
+
+.documento-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Acciones de los Botones e Íconos */
+.documento-actions-group {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.btn-action-neon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s ease;
+}
+
+.btn-action-neon:hover {
+    transform: scale(1.1);
+}
+
+.btn-action-neon:not(.selected) svg {
+    opacity: 0.4;
+}
+
+.btn-action-neon.selected svg,
+.btn-action-neon:hover svg {
+    opacity: 1;
+}
+
+.btn-view svg {
+    color: #94a3b8;
+}
+
+.btn-view.selected {
+    background-color: rgba(255, 255, 255, 0.16) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+}
+
+.btn-view.selected svg {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+    opacity: 1 !important;
+}
+
+.icon-check {
+    color: #5effad;
+    /* Verde neón */
+}
+
+.icon-x {
+    color: #ff6b6b;
+    /* Coral/Rojo */
+}
+
+/* Footer del Modal Principal */
+.revision-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px 24px 24px;
+}
+
+.btn-foot-cancel {
+    background: none;
+    border: 1px solid #222b3e;
+    color: #94a3b8;
+    padding: 12px 24px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-foot-cancel:hover {
+    background-color: #1a2235;
+}
+
+.btn-foot-submit-approve {
+    background-color: #5effad;
+    border: none;
+    color: #0b1329;
+    padding: 12px 28px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(94, 255, 173, 0.25);
+    transition: background-color 0.2s ease;
+}
+
+.btn-foot-submit-approve:hover {
+    background-color: #3cd070;
+}
+
+.modal-confirm-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.65);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1100;
+}
+
+.modal-confirm-container {
+    background: #0f1522;
+    border: 1px solid #202a3f;
+    border-radius: 18px;
+    padding: 28px 24px;
+    width: min(420px, calc(100vw - 40px));
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    text-align: center;
+}
+
+.modal-confirm-container h3 {
+    margin: 0 0 12px;
+    color: #5effad;
+    font-size: 1.2rem;
+}
+
+.modal-confirm-container p {
+    margin: 0 0 22px;
+    color: #cbd5e1;
+    line-height: 1.5;
+}
+
+.modal-confirm-actions {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+}
+
+/* ==========================================================================
+   3. MODAL SECUNDARIO / SECCIÓN DE RECHAZO
+   ========================================================================== */
+.modal-rechazo-container {
+    background-color: #171923;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    animation: slideUp 0.25s ease-out;
+}
+
+.rechazo-section {
+    padding: 0 24px 24px 24px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px 10px 24px;
+}
+
+.modal-header h2,
+.rechazo-section h3 {
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.rechazo-section h3 {
+    color: #f8fafc;
+    font-size: 1.1rem;
+    margin: 16px 0 6px 0;
+}
+
+.subtitle,
+.rechazo-instruction {
+    color: #718096;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-bottom: 20px;
+}
+
+.rechazo-instruction {
+    color: #64748b;
+    font-size: 0.8rem;
+    margin: 0 0 16px 0;
+}
+
+.modal-body {
+    padding: 0 24px 24px 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Textarea y Contador de caracteres */
+.textarea-container,
+.textarea-wrapper {
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.textarea-wrapper {
+    margin-bottom: 20px;
+}
+
+textarea,
+.textarea-wrapper textarea {
+    width: 100%;
+    height: 130px;
+    background-color: #232736;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 14px;
+    color: #ffffff;
+    font-size: 0.9rem;
+    resize: none;
+    box-sizing: border-box;
+    font-family: inherit;
+    outline: none;
+}
+
+.textarea-wrapper textarea {
+    height: 120px;
+    background-color: #1e2640;
+    border: 1px solid #2a3554;
+    color: #f1f5f9;
+    font-size: 0.875rem;
+    border-radius: 12px;
+}
+
+textarea:focus {
+    border-color: #feb2b2;
+}
+
+textarea::placeholder {
+    color: #4a5568;
+}
+
+.char-counter {
+    position: absolute;
+    bottom: 10px;
+    right: 14px;
+    color: #4a5568;
+    font-size: 0.75rem;
+}
+
+.textarea-wrapper .char-counter {
+    bottom: 12px;
+    color: #475569;
+}
+
+/* Botones de Envío de Rechazo (Letras cambiadas a Blanco Puro) */
+.btn-send-reject {
+    width: 100%;
+    background-color: #ffb3b3;
+    color: #ffffff;
+    /* Ajustado a blanco puro */
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-bottom: 16px;
+}
+
+.btn-send-reject:hover {
+    background-color: #ffa1a1;
+}
+
+.btn-enviar-rechazo {
+    background-color: #cf5757;
+    color: #f1f5f9;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    margin-bottom: 14px;
+}
+
+.btn-enviar-rechazo:hover:not(:disabled) {
+    background-color: #ff7979;
+}
+
+.btn-enviar-rechazo:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Botones Guardar Borrador */
+.btn-save-draft,
+.btn-borrador {
+    width: 100%;
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    margin-bottom: 24px;
+    transition: color 0.2s ease;
+}
+
+.btn-borrador {
+    color: #a0aec0;
+    text-decoration: none;
+    margin-bottom: 14px;
+    align-self: center;
+}
+
+.btn-save-draft:hover {
+    color: #94a3b8;
+}
+
+.btn-borrador:hover {
+    color: #ffffff;
+}
+
+
+.modal-footer-historial,
+.historial-box {
+    background-color: #11131c;
+    padding: 20px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.historial-box {
+    background-color: #111622;
+    border: 1px solid #1c2436;
+    border-radius: 8px;
+    padding: 14px;
+}
+
+.modal-footer-historial h3,
+.historial-box h4 {
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin: 0 0 12px 0;
+}
+
+.historial-box h4 {
+    color: #475569;
+    letter-spacing: 0.05em;
+    margin: 0 0 10px 0;
+}
+
+.historial-item {
+    border-left: 2px solid #feb2b2;
+    padding-left: 12px;
+}
+
+.historial-box .historial-item {
+    border-left: 2px solid #ff6b6b;
+}
+
+.status-badge,
+.historial-status {
+    color: #feb2b2;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.historial-status {
+    color: #ffb3b3;
+    font-size: 0.75rem;
+    margin-bottom: 2px;
+}
+
+.historial-text,
+.historial-comment {
+    color: #718096;
+    font-size: 0.8rem;
+    margin: 0;
+    font-style: italic;
+}
+
+.historial-comment {
+    color: #64748b;
+}
+

@@ -1,0 +1,15 @@
+<div class="workspace-layout">
+
+    <app-sidebar [modo]="'tutor'" [counts]="counts"></app-sidebar>
+
+    <div class="workspace-body">
+
+        <app-panel-header modo="tutor" (logoutClick)="logout()"></app-panel-header>
+
+        <main class="tutor-workspace">
+            <router-outlet></router-outlet>
+        </main>
+
+    </div>
+
+</div>

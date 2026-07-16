@@ -1,20 +1,19 @@
 package edu.utp.backend.features.instructor.controllers;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import edu.utp.backend.features.instructor.dtos.InstructorBusquedaResponse;
 import edu.utp.backend.features.instructor.dtos.InstructorRequest;
 import edu.utp.backend.features.instructor.dtos.InstructorResponse;
 import edu.utp.backend.features.instructor.services.InstructorService;
+import edu.utp.backend.features.instructor.dtos.InstructorPerfilResumenDto;
+import edu.utp.backend.features.instructor.dtos.InstructorPerfilSedeDto;
+import edu.utp.backend.features.instructor.dtos.InstructorPerfilServicioDto;
+import edu.utp.backend.features.instructor.dtos.InstructorPerfilCalificacionDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +29,24 @@ public class InstructorController {
         return ResponseEntity.ok(instructorService.findAll());
     }
 
+    @GetMapping("/busqueda")
+    public ResponseEntity<List<InstructorBusquedaResponse>> buscarInstructoresParaTutor(
+            @RequestParam(required = false) String texto,
+            @RequestParam(required = false) String distrito,
+            @RequestParam(required = false) String especialidad,
+            @RequestParam(required = false) BigDecimal tarifaMin,
+            @RequestParam(required = false) BigDecimal tarifaMax,
+            @RequestParam(required = false) String turno) {
+        return ResponseEntity.ok(
+                instructorService.buscarInstructoresParaTutor(
+                        texto,
+                        distrito,
+                        especialidad,
+                        tarifaMin,
+                        tarifaMax,
+                        turno));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<InstructorResponse> findById(@PathVariable Integer id) {
         return ResponseEntity.ok(instructorService.findById(id));
@@ -41,7 +58,9 @@ public class InstructorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<InstructorResponse> update(@PathVariable Integer id, @Valid @RequestBody InstructorRequest request) {
+    public ResponseEntity<InstructorResponse> update(
+            @PathVariable Integer id,
+            @Valid @RequestBody InstructorRequest request) {
         return ResponseEntity.ok(instructorService.update(id, request));
     }
 
@@ -50,4 +69,29 @@ public class InstructorController {
         instructorService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{idInstructor}/perfil/resumen")
+    public ResponseEntity<InstructorPerfilResumenDto> obtenerPerfilResumen(
+            @PathVariable Integer idInstructor) {
+        return ResponseEntity.ok(instructorService.obtenerPerfilResumen(idInstructor));
+    }
+
+    @GetMapping("/{idInstructor}/perfil/sedes")
+    public ResponseEntity<List<InstructorPerfilSedeDto>> obtenerPerfilSedes(
+            @PathVariable Integer idInstructor) {
+        return ResponseEntity.ok(instructorService.obtenerPerfilSedes(idInstructor));
+    }
+
+    @GetMapping("/{idInstructor}/perfil/servicios")
+    public ResponseEntity<List<InstructorPerfilServicioDto>> obtenerPerfilServicios(
+            @PathVariable Integer idInstructor) {
+        return ResponseEntity.ok(instructorService.obtenerPerfilServicios(idInstructor));
+    }
+
+    @GetMapping("/{idInstructor}/perfil/calificaciones")
+    public ResponseEntity<List<InstructorPerfilCalificacionDto>> obtenerPerfilCalificaciones(
+            @PathVariable Integer idInstructor) {
+        return ResponseEntity.ok(instructorService.obtenerPerfilCalificaciones(idInstructor));
+    }
+
 }

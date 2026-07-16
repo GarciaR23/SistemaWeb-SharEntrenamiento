@@ -1,0 +1,35 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+
+// Contenedor principal de la página
+.workspace-layout {
+    display: flex !important;
+    /* Forzamos el comportamiento en fila (lado a lado) */
+    flex-direction: row;
+    /* Sidebar a la izquierda, Contenido a la derecha */
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #0c0f17;
+}
+
+// Columna derecha (Contiene el Header y el Main)
+.workspace-body {
+    flex: 1;
+    /* Toma absolutamente todo el ancho restante de la derecha */
+    display: flex;
+    flex-direction: column;
+    /* Header arriba, Main abajo */
+    height: 100%;
+    overflow: hidden;
+}
+
+// Espacio de trabajo del Instructor con scroll propio
+.instructor-workspace {
+    flex: 1;
+    overflow-y: auto;
+    /* Permite scroll vertical únicamente en esta zona */
+    background-color: #0c0f17;
+    padding: 20px 24px 24px;
+    box-sizing: border-box;
+}

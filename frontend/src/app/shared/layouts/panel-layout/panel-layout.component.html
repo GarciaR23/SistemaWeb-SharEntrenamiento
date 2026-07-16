@@ -1,0 +1,10 @@
+<div class="dashboard-layout" [class.mobile-sidebar-open]="isSidebarOpen">
+    <app-sidebar [modo]="modo" [mobileOpen]="isSidebarOpen"></app-sidebar>
+    <div class="sidebar-backdrop" *ngIf="isSidebarOpen" (click)="closeSidebarOnMobile()"></div>
+    <div class="dashboard-body" (click)="closeSidebarOnMobile()">
+        <app-panel-header [modo]="modo" (logoutClick)="handleLogout()" (menuToggle)="toggleSidebar()"></app-panel-header>
+        <main class="dashboard-content">
+            <router-outlet></router-outlet>
+        </main>
+    </div>
+</div>

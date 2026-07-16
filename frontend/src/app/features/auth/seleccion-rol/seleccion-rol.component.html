@@ -1,0 +1,40 @@
+<app-header></app-header>
+
+<div class="rol-page">
+  <div class="rol-card">
+    <div class="rol-header">
+      <h2>¿Cómo deseas<br>integrarte hoy?</h2>
+      <p>Selecciona tu rol para comenzar tu experiencia<br>personalizada.</p>
+    </div>
+
+    <div class="rol-options">
+      <button class="rol-option tutor" (click)="seleccionarRol('TUTOR')">
+        <div class="rol-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="rol-info">
+          <h3>Tutor</h3>
+          <p>Responsable de persona con autismo.</p>
+        </div>
+        <span class="rol-arrow">›</span>
+      </button>
+
+      <button class="rol-option instructor" (click)="seleccionarRol('INSTRUCTOR')">
+        <div class="rol-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>
+        </div>
+        <div class="rol-info">
+          <h3>Instructor</h3>
+          <p>Especialista en entrenamiento adaptado.</p>
+        </div>
+        <span class="rol-arrow">›</span>
+      </button>
+    </div>
+
+    <div class="rol-footer">
+      ¿Ya tienes cuenta? <a routerLink="/login">Iniciar sesión</a>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

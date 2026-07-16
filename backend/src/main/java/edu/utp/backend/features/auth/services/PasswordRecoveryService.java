@@ -12,9 +12,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.utp.backend.features.auth.usuario.entities.Usuario;
-import edu.utp.backend.features.auth.usuario.repositories.UsuarioRepository;
-import edu.utp.backend.features.auth.usuario.services.CorreoService;
+import edu.utp.backend.features.usuario.entities.Usuario;
+import edu.utp.backend.features.usuario.repositories.UsuarioRepository;
+import edu.utp.backend.features.usuario.services.CorreoService;
 import lombok.RequiredArgsConstructor;
 
 @Service

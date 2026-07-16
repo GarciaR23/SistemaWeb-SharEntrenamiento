@@ -2,53 +2,66 @@ import { Routes } from '@angular/router';
 import { AuthGuard } from './core/guards/auth.guard';
 import { statusGuard } from './core/guards/status.guard';
 
-import { LandingComponent } from './modules/landing/landing.component';
-import { Login } from './modules/auth/login/login';
-import { RecuperarContrasena } from './modules/auth/recuperar-contrasena/recuperar-contrasena';
-import { TokenContrasena } from './modules/auth/token-contrasena/token-contrasena';
-import { RestaurarContrasena } from './modules/auth/restaurar-contrasena/restaurar-contrasena';
-import { Perfil } from './modules/instructor/perfil/perfil';
-import { Certificado } from './modules/instructor/certificado/certificado';
-import { Cuenta } from './modules/instructor/cuenta/cuenta';
-import { SeleccionRolComponent } from './modules/auth/seleccion-rol/seleccion-rol';
+import { LandingComponent } from './features/landing/landing.component';
+import { Login } from './features/auth/login/login.component';
+import { RecuperarContrasena } from './features/auth/recuperar-contrasena/recuperar-contrasena.component';
+import { TokenContrasena } from './features/auth/token-contrasena/token-contrasena.component';
+import { RestaurarContrasena } from './features/auth/restaurar-contrasena/restaurar-contrasena.component';
+import { Perfil } from './features/instructor/pages/perfil/perfil.component';
+import { Certificado } from './features/instructor/pages/certificado/certificado.component';
+import { Cuenta } from './features/instructor/pages/cuenta/cuenta.component';
+import { SeleccionRolComponent } from './features/auth/seleccion-rol/seleccion-rol.component';
 
-import { ReporteInstructor } from './modules/admin/reporte-instructor/reporte-instructor';
-import { ReportePaciente } from './modules/admin/reporte-paciente/reporte-paciente';
-import { Inicio as AdminInicio } from './modules/admin/inicio/inicio';
-import { Inicio as InstructorInicio } from './modules/instructor/inicio/inicio';
-import { Inicio as TutorInicio } from './modules/tutor/inicio/inicio';
-import { Solicitud } from './modules/admin/solicitud/solicitud';
-import { Admin } from './modules/admin/admin';
-import { Sede } from './modules/instructor/sede/sede';
-import { Bitacora } from './modules/instructor/bitacora/bitacora';
-import { Pago } from './modules/instructor/pago/pago';
-import { Instructor } from './modules/instructor/instructor';
-import { Tutor } from './modules/tutor/tutor';
-import { CatalogoInstructor } from './modules/tutor/catalogo-instructor/catalogo-instructor';
-import { Sesion } from './modules/tutor/sesion/sesion';
-import { Progreso } from './modules/tutor/progreso/progreso';
-import { FormularioTutor } from './modules/tutor/formulario-tutor/formulario-tutor';
+import { ReporteInstructor } from './features/admin/pages/reporte-instructor/reporte-instructor.component';
+import { ReportePaciente } from './features/admin/pages/reporte-paciente/reporte-paciente.component';
+import { Inicio as AdminInicio } from './features/admin/pages/dashboard-admin/admin.component';
+import { Inicio as InstructorInicio } from './features/instructor/pages/dashboard-instructor/instructor.component';
+import { Inicio as TutorInicio } from './features/tutor/pages/dashboard-tutor/tutor.component';
+import { Solicitud } from './features/admin/pages/solicitud-registro/solicitud.component';
+import { Admin } from './features/admin/admin';
+import { Sede } from './features/instructor/pages/sede/sede.component';
+import { Pago } from './features/instructor/pages/pago/pago.component';
+import { Instructor } from './features/instructor/instructor';
+import { Tutor } from './features/tutor/tutor';
+import { CatalogoInstructor } from './features/tutor/pages/catalogo-instructor/catalogo-instructor.component';
+import { Progreso } from './features/tutor/pages/progreso-paciente/progreso-paciente.component';
+import { FormularioTutor } from './features/tutor/pages/formulario-tutor/formulario-tutor.component';
+import { Error403 } from './shared/errors/error-403/error-403';
+import { Error404 } from './shared/errors/error-404/error-404';
+import { Error500 } from './shared/errors/error-500/error-500';
+import { ErrorConnection } from './shared/errors/error-connection/error-connection';
+import { PerfilInstructorComponent } from './features/tutor/pages/perfil-instructor/perfil-instructor.component';
+import { PlanPaciente } from './features/tutor/pages/plan-paciente/plan-paciente';
+import { ActividadPaciente } from './features/tutor/pages/actividad-paciente/actividad-paciente';
+import { ReservaPaciente } from './features/tutor/pages/reserva-paciente/reserva-paciente.component';
+import { FormularioReserva } from './features/tutor/pages/formulario-reserva/formulario-reserva.component';
+import { CalendarioComponent } from './features/instructor/pages/calendario/calendario';
+import { HojaRutaComponent } from './features/instructor/pages/hoja-ruta/hoja-ruta';
+import { SesionComponent } from './features/instructor/pages/sesion/sesion';
+import { RevisionComponent } from './features/instructor/pages/revision/revision.component';
+import { ObservacionReclamo } from './features/admin/pages/observacion-reclamo/observacion-reclamo';
+
 
 export const routes: Routes = [
-  { path: '', component: LandingComponent },
-  { path: 'metodologia', component: LandingComponent },
-  { path: 'testimonios', component: LandingComponent },
-  { path: 'seguridad', component: LandingComponent },
-  { path: 'soporte', component: LandingComponent },
+  { path: '', component: LandingComponent, title: 'Inicio | SharEntrenamiento' },
+  { path: 'metodologia', component: LandingComponent, title: 'Metodología | SharEntrenamiento' },
+  { path: 'testimonios', component: LandingComponent, title: 'Testimonios | SharEntrenamiento' },
+  { path: 'seguridad', component: LandingComponent, title: 'Seguridad | SharEntrenamiento' },
+  { path: 'soporte', component: LandingComponent, title: 'Soporte | SharEntrenamiento' },
 
   {
     path: '',
     canActivate: [statusGuard],
     children: [
-      { path: 'login', component: Login },
-      { path: 'seleccion-rol', component: SeleccionRolComponent },
-      { path: 'recuperar-contrasena', component: RecuperarContrasena },
-      { path: 'token-contrasena', component: TokenContrasena },
-      { path: 'restaurar-contrasena', component: RestaurarContrasena },
-      { path: 'formulario', component: Perfil },
-      { path: 'certificado', component: Certificado },
-      { path: 'cuenta', component: Cuenta },
-      { path: 'formulario-tutor', component: FormularioTutor },
+      { path: 'login', component: Login, title: 'Iniciar Sesión | SharEntrenamiento' },
+      { path: 'seleccion-rol', component: SeleccionRolComponent, title: 'Selección de Rol | SharEntrenamiento' },
+      { path: 'recuperar-contrasena', component: RecuperarContrasena, title: 'Recuperar Contraseña | SharEntrenamiento' },
+      { path: 'token-contrasena', component: TokenContrasena, title: 'Verificar Token | SharEntrenamiento' },
+      { path: 'restaurar-contrasena', component: RestaurarContrasena, title: 'Restaurar Contraseña | SharEntrenamiento' },
+      { path: 'formulario', component: Perfil, title: 'Perfil de Instructor | SharEntrenamiento' },
+      { path: 'certificado', component: Certificado, title: 'Certificado | SharEntrenamiento' },
+      { path: 'cuenta', component: Cuenta, title: 'Configuración de Cuenta | SharEntrenamiento' },
+      { path: 'formulario-tutor', component: FormularioTutor, title: 'Perfil de Tutor | SharEntrenamiento' },
 
       {
         path: 'admin',
@@ -56,10 +69,11 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         children: [
           { path: '', redirectTo: 'inicio', pathMatch: 'full' },
-          { path: 'inicio', component: AdminInicio },
-          { path: 'instructores', component: Solicitud },
-          { path: 'reporte-instructor', component: ReporteInstructor },
-          { path: 'reporte-paciente', component: ReportePaciente }
+          { path: 'inicio', component: AdminInicio, title: 'Dashboard Admin | SharEntrenamiento' },
+          { path: 'solicitud-instructor', component: Solicitud, title: 'Solicitudes de Instructores | SharEntrenamiento' },
+          { path: 'reporte-instructor', component: ReporteInstructor, title: 'Reportes de Instructores | SharEntrenamiento' },
+          { path: 'reporte-paciente', component: ReportePaciente, title: 'Reportes de Pacientes | SharEntrenamiento' },
+          { path: 'observacion-reclamo', component: ObservacionReclamo, title: 'Observaciones | SharEntrenamiento' }
         ]
       },
 
@@ -69,10 +83,13 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         children: [
           { path: '', redirectTo: 'inicio', pathMatch: 'full' },
-          { path: 'inicio', component: InstructorInicio },
-          { path: 'sede', component: Sede },
-          { path: 'bitacora', component: Bitacora },
-          { path: 'pago', component: Pago }
+          { path: 'inicio', component: InstructorInicio, title: 'Dashboard Instructor | SharEntrenamiento' },
+          { path: 'sede', component: Sede, title: 'Gestión de Sedes | SharEntrenamiento' },
+          { path: 'pago', component: Pago, title: 'Pagos | SharEntrenamiento' },
+          { path: 'revision', component: RevisionComponent, title: 'Revision de Sesiones | SharEntrenamiento' },
+          { path: 'hoja-ruta', component: HojaRutaComponent, title: 'Hoja de Ruta | SharEntrenamiento' },
+          { path: 'calendario', component: CalendarioComponent, title: 'Calendario de Sesiones | SharEntrenamiento' },
+          { path: 'sesion', component: SesionComponent, title: 'Sesiones | SharEntrenamiento' }
         ]
       },
 
@@ -82,14 +99,65 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         children: [
           { path: '', redirectTo: 'inicio', pathMatch: 'full' },
-          { path: 'inicio', component: TutorInicio },
-          { path: 'catalogo-instructor', component: CatalogoInstructor },
-          { path: 'sesion', component: Sesion },
-          { path: 'progreso', component: Progreso }
+          {
+            path: 'inicio',
+            component: TutorInicio,
+            title: 'Dashboard Tutor | SharEntrenamiento'
+          },
+          {
+            path: 'catalogo-instructor',
+            component: CatalogoInstructor,
+            title: 'Catálogo de Instructores | SharEntrenamiento'
+          },
+          {
+            path: 'perfil-instructor/:idInstructor',
+            component: PerfilInstructorComponent,
+            title: 'Perfil del Instructor | SharEntrenamiento'
+          },
+          {
+            path: 'formulario-reserva',
+            component: FormularioReserva,
+            title: 'Formulario de Reserva | SharEntrenamiento'
+          },
+          {
+            path: 'reserva',
+            component: ReservaPaciente,
+            title: 'Reserva | SharEntrenamiento'
+          },
+          {
+            path: 'plan',
+            component: PlanPaciente,
+            title: 'Plan | SharEntrenamiento'
+          },
+          {
+            path: 'plan/:idReserva',
+            component: PlanPaciente,
+            title: 'Hoja de Ruta | SharEntrenamiento'
+          },
+          {
+            path: 'actividad',
+            component: ActividadPaciente,
+            title: 'Actividad | SharEntrenamiento'
+          },
+          {
+            path: 'progreso',
+            component: Progreso,
+            title: 'Progreso | SharEntrenamiento'
+          }
         ]
-      }
+      },
+
+      {
+        path: 'error',
+        children: [
+          { path: '403', component: Error403, title: 'Acceso Denegado | SharEntrenamiento' },
+          { path: '404', component: Error404, title: 'Página no encontrada | SharEntrenamiento' },
+          { path: '500', component: Error500, title: 'Error Interno | SharEntrenamiento' },
+          { path: 'connection', component: ErrorConnection, title: 'Error de Conexión | SharEntrenamiento' },
+        ]
+      },
     ]
   },
 
-  { path: '**', redirectTo: '' }
+  { path: '**', component: Error404, title: 'Página no encontrada | SharEntrenamiento' }
 ];

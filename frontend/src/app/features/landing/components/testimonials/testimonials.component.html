@@ -1,0 +1,34 @@
+<section id="testimonios" class="testimonials-section">
+    <div class="container">
+
+        <div class="header-text">
+            <span class="badge">TESTIMONIOS</span>
+            <h2 class="section-title">
+                Lo que dicen nuestras <span class="highlight">familias</span>
+            </h2>
+        </div>
+
+        <div class="testimonial-grid">
+            @for (testimonial of testimonials; track testimonial.name) {
+                <div class="testimonial-card">
+
+                    <div class="stars">★★★★★</div>
+
+                    <p class="testimonial-text">
+                        "{{ testimonial.text }}"
+                    </p>
+
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <img [src]="testimonial.avatar" [alt]="testimonial.name" loading="lazy" />
+                        </div>
+                        <div class="user-details">
+                            <span class="user-name">{{ testimonial.name }}</span>
+                            <span class="user-role">{{ testimonial.role }}</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

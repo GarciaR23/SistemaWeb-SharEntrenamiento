@@ -1,0 +1,30 @@
+<aside class="sidebar" [class.open]="mobileOpen">
+
+  <div class="sidebar-brand-header">
+    <button class="logo-link" type="button" (click)="irInicio()" aria-label="Ir al inicio del panel">
+      <div class="logo-icon">
+        <img src="assets/icons/logo.png" alt="Shar Entrenamiento" class="logo-image">
+      </div>
+      <span class="logo-text">Shar<span class="logo-text-green">Entrenamiento</span></span>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul>
+      @for (item of currentMenu; track item.path) {
+      <li>
+        <a [routerLink]="item.path" routerLinkActive="active">
+          <svg viewBox="0 0 24 24">
+            <path [attr.d]="item.icon" />
+          </svg>
+          <span class="sidebar-label">{{ item.label }}</span>
+          @if (item.countKey && (counts[item.countKey] || 0) > 0) {
+            <span class="sidebar-count">{{ counts[item.countKey] || 0 }}</span>
+          }
+        </a>
+      </li>
+      }
+    </ul>
+  </nav>
+
+</aside>

@@ -9,9 +9,12 @@ public interface TutorService {
 
     TutorDto findById(Integer id);
 
+    TutorDto findByIdUsuario(Long idUsuario);
+
     TutorDto create(TutorDto request);
 
     TutorDto update(Integer id, TutorDto request);
 
     void delete(Integer id);
+    
 }

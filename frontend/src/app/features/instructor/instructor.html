@@ -1,0 +1,15 @@
+<div class="workspace-layout">
+
+    <app-sidebar [modo]="'instructor'" [mobileOpen]="mobileOpen" [counts]="counts"></app-sidebar>
+
+    <div class="workspace-body">
+
+        <app-panel-header modo="instructor" (logoutClick)="logout()" (menuToggle)="toggleSidebar()"></app-panel-header>
+
+        <main class="instructor-workspace">
+            <router-outlet></router-outlet>
+        </main>
+
+    </div>
+
+</div>

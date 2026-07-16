@@ -1,0 +1,313 @@
+@use 'variables' as var;
+
+.panel-header-container {
+    width: 100%;
+    height: 72px;
+    background-color: #0d1117;
+    border-bottom: 1px solid #1e293b;
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 110;
+}
+
+.panel-navbar {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.5rem;
+    box-sizing: border-box;
+}
+
+.panel-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.panel-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    height: 100%;
+}
+
+.icon-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    position: relative;
+
+    svg {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
+        display: block;
+    }
+
+    &:hover {
+        color: #ffffff;
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+}
+
+.icon-btn-wrapper {
+    position: relative;
+}
+
+.badge-count {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+// Dropdown de notificaciones
+.notif-dropdown {
+    position: absolute;
+    right: 0;
+    top: 52px;
+    width: 380px;
+    max-height: 420px;
+    overflow-y: auto;
+    background: #141b25;
+    border: 1px solid #222f43;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+    z-index: 120;
+    animation: dropdownFadeIn 0.2s ease-out;
+
+    .dropdown-header {
+        padding: 16px 18px;
+        border-bottom: 1px solid #222f43;
+
+        h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        small {
+            color: #64748b;
+            font-size: 12px;
+        }
+    }
+}
+
+.notif-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.03);
+    }
+
+    .notif-icon {
+        flex-shrink: 0;
+        margin-top: 1px;
+        color: #94a3b8;
+
+        ::ng-deep svg {
+            stroke: currentColor;
+            fill: none;
+        }
+    }
+
+    .notif-content {
+        flex: 1;
+        min-width: 0;
+
+        strong {
+            display: block;
+            font-size: 13px;
+            color: #f8fafc;
+            margin-bottom: 3px;
+            line-height: 1.3;
+        }
+
+        p {
+            margin: 0;
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        small {
+            color: #64748b;
+            font-size: 10px;
+            display: block;
+            margin-top: 4px;
+        }
+    }
+
+    .dot-red {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ef4444;
+        flex-shrink: 0;
+        margin-top: 6px;
+    }
+
+    &.empty {
+        justify-content: center;
+        padding: 24px;
+
+        p {
+            color: #64748b;
+            font-size: 13px;
+        }
+    }
+}
+
+// Dropdown de perfil
+.user-avatar-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    height: 100%;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #1e293b;
+    object-fit: cover;
+    transition: border-color 0.2s ease;
+
+    &:hover {
+        border-color: #28c768;
+    }
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 70px;
+    right: 0;
+    width: 170px;
+    background-color: #141b25;
+    border: 1px solid #222f43;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+    padding: 0.6rem 0;
+    z-index: 120;
+    animation: dropdownFadeIn 0.2s ease-out;
+}
+
+.dropdown-header {
+    padding: 4px 16px;
+    display: flex;
+
+    .user-role {
+        font-size: 11px;
+        color: #28c768;
+        font-weight: 800;
+        letter-spacing: .08em;
+    }
+}
+
+.dropdown-divider {
+    border: 0;
+    border-top: 1px solid #222f43;
+    margin: 8px 0;
+}
+
+.dropdown-item {
+    width: 100%;
+    background: transparent;
+    border: none;
+    padding: 10px 16px;
+    color: #94a3b8;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+
+    &.logout-action {
+        color: #f87171;
+
+        svg {
+            width: 16px;
+            height: 16px;
+            fill: #f87171;
+            transition: fill 0.2s ease;
+        }
+
+        &:hover {
+            background-color: rgba(248, 113, 113, 0.08);
+            color: #ef4444;
+
+            svg {
+                fill: #ef4444;
+            }
+        }
+    }
+}
+
+// Mobile
+.mobile-menu-btn {
+    display: none;
+}
+
+@media (max-width: var.$breakpoint-md) {
+    .panel-navbar {
+        padding: 0 1rem;
+    }
+
+    .panel-actions {
+        gap: 0.75rem;
+    }
+
+    .mobile-menu-btn {
+        display: inline-flex;
+    }
+
+    .notif-dropdown {
+        width: 320px;
+        right: -60px;
+    }
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

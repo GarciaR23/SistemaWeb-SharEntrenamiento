@@ -1,0 +1,389 @@
+@use 'variables' as var;
+@use 'mixins' as mix;
+
+.solicitudes-container {
+    width: 100%;
+    box-sizing: border-box;
+    padding: var.$spacing-md var.$spacing-xl var.$spacing-2xl var.$spacing-xl;
+
+    @media (max-width: var.$breakpoint-md) {
+        padding: var.$spacing-md var.$spacing-md var.$spacing-xl var.$spacing-md;
+    }
+}
+
+.solicitudes-header {
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) auto;
+    align-items: start;
+    gap: 28px;
+    margin-bottom: 32px;
+
+    .header-copy {
+        max-width: 640px;
+    }
+
+    h1 {
+        font-size: 32px;
+        margin: 0 0 8px 0;
+        font-weight: 700;
+    }
+
+    p {
+        color: var.$color-text-secondary;
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.6;
+        max-width: 620px;
+    }
+}
+
+.metrics-wrapper {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+
+    .metric-box {
+        background-color: var.$color-bg-card;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 14px 16px;
+        border-radius: var.$border-radius-xl;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 100px;
+        max-width: 150px;
+        min-height: 110px;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+        gap: 6px;
+
+        .metric-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var.$color-text-tertiary;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .metric-value {
+            font-size: 26px;
+            font-weight: 700;
+
+            &.alert-neon {
+                color: var.$color-primary;
+            }
+
+            &.blue-neon {
+                color: var.$color-info;
+            }
+
+            &.warning-neon {
+                color: #b45309;
+            }
+        }
+    }
+
+    .metric-warning {
+        border-color: rgba(180, 83, 9, 0.35);
+        background: rgba(180, 83, 9, 0.10);
+    }
+}
+
+.cards-section {
+    margin-bottom: 24px;
+    padding: 10px 0 0 0;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var.$spacing-lg;
+}
+
+.card-solicitud {
+    background: linear-gradient(145deg, var.$color-bg-card, #111622);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: var.$border-radius-xl;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 30px;
+
+    // Registro del día de hoy → azul
+    &.card-today {
+        border-color: rgba(59, 130, 246, 0.55);
+        box-shadow: 0 0 18px rgba(59, 130, 246, 0.12);
+    }
+
+    // Registro normal → verde
+    &.card-approved {
+        border-color: rgba(var.$color-primary, 0.45);
+        box-shadow: 0 0 18px rgba(var.$color-primary, 0.12);
+    }
+
+    // Por vencer → naranja oscuro
+    &.card-pending {
+        border-color: rgba(180, 83, 9, 0.70);
+        box-shadow: 0 0 18px rgba(180, 83, 9, 0.18);
+    }
+
+    // Vencido → rojo
+    &.card-rejected {
+        border-color: rgba(239, 68, 68, 0.55);
+        box-shadow: 0 0 18px rgba(239, 68, 68, 0.12);
+    }
+
+    &.card-default {
+        border-color: rgba(148, 163, 184, 0.25);
+    }
+
+    .card-header-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+
+        .avatar-container {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            margin-right: 14px;
+
+            .avatar-img {
+                width: 100%;
+                height: 100%;
+                border-radius: var.$border-radius-md;
+                object-fit: cover;
+            }
+
+            .status-dot-active {
+                position: absolute;
+                bottom: -2px;
+                right: -2px;
+                width: 10px;
+                height: 10px;
+                background-color: var.$color-primary;
+                border: 2px solid #0d121f;
+                border-radius: 50%;
+            }
+        }
+
+        .meta-profile {
+            min-width: 0;
+
+            h3 {
+                margin: 0 0 4px 0;
+                font-size: 18px;
+                font-weight: 600;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+            }
+
+            .specialty-text {
+                margin: 0;
+                font-size: 13px;
+                color: var.$color-text-tertiary;
+            }
+        }
+
+        .status-badge,
+        .badge-status-today,
+        .badge-status-pending,
+        .badge-status-approved,
+        .badge-status-rejected,
+        .badge-status-default {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: var.$border-radius-full;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        // Registro del día de hoy → azul
+        .badge-status-today {
+            background-color: rgba(59, 130, 246, 0.14);
+            color: #3b82f6;
+            border-color: rgba(59, 130, 246, 0.40);
+        }
+
+        // Registro normal → verde
+        .badge-status-approved {
+            background-color: rgba(var.$color-primary, 0.12);
+            color: var.$color-primary;
+            border-color: rgba(var.$color-primary, 0.35);
+        }
+
+        // Por vencer → naranja oscuro
+        .badge-status-pending {
+            background-color: rgba(180, 83, 9, 0.18);
+            color: #d97706;
+            border-color: rgba(180, 83, 9, 0.55);
+        }
+
+        // Vencido → rojo
+        .badge-status-rejected {
+            background-color: rgba(239, 68, 68, 0.12);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.35);
+        }
+
+        .badge-status-default {
+            background-color: rgba(148, 163, 184, 0.12);
+            color: #94a3b8;
+            border-color: rgba(148, 163, 184, 0.35);
+        }
+    }
+
+    .card-body-details {
+        margin-bottom: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: var.$color-text-secondary;
+
+            .icon-inline {
+                margin-right: 10px;
+                color: var.$color-text-tertiary;
+            }
+
+            // Registro del día de hoy → azul
+            &.expiration-today {
+                color: #3b82f6;
+                font-weight: 700;
+
+                .icon-inline {
+                    color: #3b82f6;
+                }
+            }
+
+            // Registro normal → verde
+            &.expiration-ok {
+                color: var.$color-primary;
+                font-weight: 700;
+
+                .icon-inline {
+                    color: var.$color-primary;
+                }
+            }
+
+            // Por vencer → naranja oscuro
+            &.expiration-warning {
+                color: #d97706;
+                font-weight: 700;
+
+                .icon-inline {
+                    color: #d97706;
+                }
+            }
+
+            // Vencido → rojo
+            &.expiration-expired {
+                color: #ef4444;
+                font-weight: 700;
+
+                .icon-inline {
+                    color: #ef4444;
+                }
+            }
+        }
+    }
+
+    .btn-validate {
+        background-color: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: var.$color-text-primary;
+        font-size: 14px;
+        font-weight: var.$font-weight-bold;
+        padding: 14px 16px;
+        border-radius: var.$border-radius-xl;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color var.$transition-fast, border-color var.$transition-fast, transform var.$transition-fast, color var.$transition-fast;
+        width: 100%;
+        margin-top: auto;
+
+        .arrow-icon {
+            margin-left: 8px;
+            transition: transform var.$transition-fast;
+        }
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.10);
+            border-color: rgba(255, 255, 255, 0.18);
+            color: var.$color-text-primary;
+            transform: translateY(-1px);
+
+            .arrow-icon {
+                transform: translateX(3px);
+            }
+        }
+    }
+}
+
+@media (max-width: var.$breakpoint-md) {
+    .solicitudes-header {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .solicitudes-header .header-copy h1 {
+        font-size: 28px;
+    }
+
+    .metrics-wrapper {
+        justify-content: flex-start;
+    }
+
+    .metrics-wrapper .metric-box {
+        min-width: 100%;
+        max-width: 100%;
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card-solicitud {
+        padding: 22px;
+    }
+
+    .card-header-info {
+        align-items: flex-start;
+    }
+
+    .card-header-info .avatar-container {
+        margin-right: 0;
+    }
+
+    .card-body-details {
+        gap: 12px;
+    }
+
+    .btn-validate {
+        padding: 14px 14px;
+    }
+}
+
+.loading-placeholder {
+    text-align: center;
+    color: var.$color-text-tertiary;
+    padding: 40px;
+}

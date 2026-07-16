@@ -1,0 +1,297 @@
+<div class="catalogo-container">
+
+    <header class="catalogo-header">
+        <div>
+            <h1>Búsqueda de Instructores</h1>
+            <p>Encuentra especialistas de alto rendimiento para tu entrenamiento técnico.</p>
+        </div>
+    </header>
+
+    <section class="top-search-bar">
+        <div class="search-input-wrapper">
+            <span class="search-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <path d="M20 20l-3.5-3.5"></path>
+                </svg>
+            </span>
+
+            <input type="text" placeholder="Buscar por nombre, especialidad o descripción" [(ngModel)]="textoBusqueda"
+                (keyup.enter)="buscar()">
+        </div>
+
+        <button class="btn-filter-toggle" type="button" (click)="abrirPanelFiltros()">
+            <span class="filter-toggle-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <line x1="4" y1="6" x2="20" y2="6"></line>
+                    <circle cx="9" cy="6" r="2"></circle>
+
+                    <line x1="4" y1="12" x2="20" y2="12"></line>
+                    <circle cx="15" cy="12" r="2"></circle>
+
+                    <line x1="4" y1="18" x2="20" y2="18"></line>
+                    <circle cx="11" cy="18" r="2"></circle>
+                </svg>
+            </span>
+            <span>Filtros</span>
+        </button>
+    </section>
+
+    <div class="filters-overlay" *ngIf="mostrarPanelFiltros" (click)="cerrarPanelFiltros()"></div>
+
+    <aside class="filters-drawer" *ngIf="mostrarPanelFiltros">
+
+        <div class="filters-drawer-header">
+            <div>
+                <h2>Filtros</h2>
+                <p>Refina la búsqueda de instructores.</p>
+            </div>
+
+            <button class="btn-close-filter" type="button" (click)="cerrarPanelFiltros()">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M18 6L6 18"></path>
+                    <path d="M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="filtros-aplicados" *ngIf="hayFiltrosActivos()">
+            <span class="chip" *ngIf="distritoSeleccionado">
+                Distrito: {{ distritoSeleccionado }}
+            </span>
+
+            <span class="chip" *ngIf="especialidadSeleccionada">
+                Especialidad: {{ especialidadSeleccionada }}
+            </span>
+
+            <span class="chip" *ngIf="tarifaSeleccionada">
+                Tarifa: {{ obtenerLabelTarifa(tarifaSeleccionada) }}
+            </span>
+
+            <span class="chip" *ngIf="turnoSeleccionado">
+                Turno: {{ obtenerLabelTurno(turnoSeleccionado) }}
+            </span>
+        </div>
+
+        <div class="filters-drawer-body">
+
+            <div class="filter-section">
+                <button class="filter-section-title" type="button" (click)="toggleFiltro('distrito')">
+                    <span class="filter-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M12 21s7-4.5 7-11a7 7 0 0 0-14 0c0 6.5 7 11 7 11z"></path>
+                            <circle cx="12" cy="10" r="2.5"></circle>
+                        </svg>
+                    </span>
+
+                    <strong>Distrito</strong>
+
+                    <svg class="arrow-icon" [class.open]="filtroAbierto === 'distrito'" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18l6-6-6-6"></path>
+                    </svg>
+                </button>
+
+                <div class="filter-content" *ngIf="filtroAbierto === 'distrito'">
+                    <select [(ngModel)]="filtrosTemp.distrito">
+                        <option value="">Todos</option>
+                        <option *ngFor="let distrito of distritos" [value]="distrito">
+                            {{ distrito }}
+                        </option>
+                    </select>
+
+                    <button class="btn-add-filter" type="button" (click)="agregarFiltro('distrito')">
+                        Agregar filtro
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <button class="filter-section-title" type="button" (click)="toggleFiltro('especialidad')">
+                    <span class="filter-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.3 6.4 20.2 7.5 14 3 9.6l6.2-.9L12 3z">
+                            </path>
+                        </svg>
+                    </span>
+
+                    <strong>Especialidad</strong>
+
+                    <svg class="arrow-icon" [class.open]="filtroAbierto === 'especialidad'" viewBox="0 0 24 24"
+                        fill="none">
+                        <path d="M9 18l6-6-6-6"></path>
+                    </svg>
+                </button>
+
+                <div class="filter-content" *ngIf="filtroAbierto === 'especialidad'">
+                    <select [(ngModel)]="filtrosTemp.especialidad">
+                        <option value="">Todas</option>
+                        <option *ngFor="let especialidad of especialidades" [value]="especialidad">
+                            {{ especialidad }}
+                        </option>
+                    </select>
+
+                    <button class="btn-add-filter" type="button" (click)="agregarFiltro('especialidad')">
+                        Agregar filtro
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <button class="filter-section-title" type="button" (click)="toggleFiltro('tarifa')">
+                    <span class="filter-icon text-icon">
+                        S/
+                    </span>
+
+                    <strong>Tarifa</strong>
+
+                    <svg class="arrow-icon" [class.open]="filtroAbierto === 'tarifa'" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18l6-6-6-6"></path>
+                    </svg>
+                </button>
+
+                <div class="filter-content" *ngIf="filtroAbierto === 'tarifa'">
+                    <select [(ngModel)]="filtrosTemp.tarifa">
+                        <option value="">Todas</option>
+                        <option value="0-50">Hasta S/ 50</option>
+                        <option value="50-80">S/ 50 - S/ 80</option>
+                        <option value="80-120">S/ 80 - S/ 120</option>
+                        <option value="120-mas">Más de S/ 120</option>
+                    </select>
+
+                    <button class="btn-add-filter" type="button" (click)="agregarFiltro('tarifa')">
+                        Agregar filtro
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <button class="filter-section-title" type="button" (click)="toggleFiltro('turno')">
+                    <span class="filter-icon">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 7v5l3 2"></path>
+                        </svg>
+                    </span>
+
+                    <strong>Turno</strong>
+
+                    <svg class="arrow-icon" [class.open]="filtroAbierto === 'turno'" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18l6-6-6-6"></path>
+                    </svg>
+                </button>
+
+                <div class="filter-content" *ngIf="filtroAbierto === 'turno'">
+                    <select [(ngModel)]="filtrosTemp.turno">
+                        <option value="">Todos</option>
+                        <option value="mañana">Mañana</option>
+                        <option value="tarde">Tarde</option>
+                        <option value="noche">Noche</option>
+                    </select>
+
+                    <button class="btn-add-filter" type="button" (click)="agregarFiltro('turno')">
+                        Agregar filtro
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="filters-drawer-footer">
+            <button class="btn-search-filter" type="button" (click)="aplicarFiltrosPanel()">
+                Buscar
+            </button>
+
+            <button class="btn-clear-filter" type="button" (click)="limpiarFiltrosPanel()">
+                Limpiar
+            </button>
+        </div>
+
+    </aside>
+
+    <div class="catalogo-content">
+
+        <div *ngIf="cargando" class="loading-placeholder">
+            <p>Cargando instructores...</p>
+        </div>
+
+        <div *ngIf="!cargando && errorMessage" class="error-message">
+            {{ errorMessage }}
+        </div>
+
+        <div *ngIf="!cargando && !errorMessage && instructores.length === 0" class="empty-state">
+            <h3>No se encontraron instructores</h3>
+            <p>Prueba con otro distrito, especialidad o término de búsqueda.</p>
+        </div>
+
+        <section *ngIf="!cargando && !errorMessage && instructores.length > 0" class="catalogo-grid">
+
+            <article class="instructor-card" *ngFor="let instructor of instructores">
+                <div class="card-hero">
+                    <span class="badge-verificado">
+                        <svg viewBox="0 0 24 24" fill="currentColor" class="badge-verified-icon">
+                            <path fill-rule="evenodd"
+                                d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        VERIFICADO
+                    </span>
+
+                    <img class="instructor-image" [src]="obtenerImagen(instructor)" [alt]="instructor.nombreCompleto">
+
+                    <div class="hero-overlay"></div>
+
+                    <div class="hero-content">
+                        <p class="especialidad-superior">
+                            {{ instructor.especialidad || 'Sin especialidad' }}
+                        </p>
+
+                        <h3 class="nombre-instructor">
+                            {{ instructor.nombreCompleto }}
+                        </h3>
+                    </div>
+                </div>
+
+                <div class="card-content">
+                    <div class="card-top-info">
+                        <div class="rating-box">
+                            <span class="star">★</span>
+                            <span class="rating">{{ obtenerRating(instructor) }}</span>
+                            <span class="sesiones">({{ obtenerSesiones(instructor) }} sesiones)</span>
+                        </div>
+
+                        <div class="precio">
+                            {{ obtenerTarifa(instructor) }}
+                        </div>
+                    </div>
+
+                    <div class="disponibilidad-box">
+                        <div class="icon-clock">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="9"></circle>
+                                <path d="M12 7v5l3 2"></path>
+                            </svg>
+                        </div>
+
+                        <div class="disponibilidad-texto">
+                            <span class="label">Disponibilidad</span>
+                            <strong>{{ obtenerHorario(instructor) }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="btn-outline" type="button" (click)="verPerfil(instructor)">
+                            Ver Perfil
+                        </button>
+
+                        <button class="btn-reserve" type="button" (click)="solicitarSesion(instructor)">
+                            Solicitar Sesión
+                        </button>
+                    </div>
+                </div>
+            </article>
+
+        </section>
+
+    </div>
+</div>

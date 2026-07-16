@@ -1,0 +1,161 @@
+<div class="sesiones-container" (click)="cerrarDropdowns()">
+    <div class="modal-overlay" *ngIf="mostrarModalReserva">
+        <div class="success-modal">
+            <div class="success-icon"><svg viewBox="0 0 24 24" fill="none">
+                    <path d="M20 6L9 17l-5-5"></path>
+                </svg></div>
+            <h2>Reserva registrada</h2>
+            <p>Tu reserva fue creada correctamente. Ahora puedes verla en tu panel de sesiones.</p>
+            <button type="button" (click)="cerrarModalReserva()">Entendido</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" *ngIf="mostrarModalDetalle && sesionDetalle" (click)="cerrarDetalle()">
+        <div class="detail-modal" (click)="$event.stopPropagation()">
+            <div class="detail-shell">
+                <div class="detail-header-card">
+                    <img [src]="obtenerImagenSesion(sesionDetalle)" [alt]="obtenerNombreInstructor(sesionDetalle)">
+                    <div class="detail-header-content">
+                        <div class="detail-chip-row">
+                            <span class="mini-badge" [ngClass]="obtenerClaseBadge(sesionDetalle)">{{
+                                obtenerEstadoTexto(sesionDetalle) }}</span>
+                            <span class="detail-pill">Reserva #{{ sesionDetalle.idReserva }}</span>
+                        </div>
+                        <h2>{{ obtenerNombreInstructor(sesionDetalle) }}</h2>
+                        <p>{{ sesionDetalle.especialidad || 'Instructor certificado' }}</p>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">Resumen de la reserva</div>
+                    <div class="detail-grid">
+                        <div class="detail-item"><span>Fecha</span><strong>{{ obtenerFecha(sesionDetalle) }}</strong>
+                        </div>
+                        <div class="detail-item"><span>Hora</span><strong>{{ obtenerHora(sesionDetalle) }} - {{
+                                obtenerHoraFin(sesionDetalle) }}</strong></div>
+                        <div class="detail-item"><span>Duración</span><strong>{{ obtenerDuracionTexto(sesionDetalle)
+                                }}</strong></div>
+                        <div class="detail-item"><span>Monto</span><strong>{{ obtenerMonto(sesionDetalle) }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="detail-section-title">Ubicación y contacto</div>
+                    <div class="detail-grid">
+                        <div class="detail-item wide"><span>Sede</span><strong>{{ obtenerSede(sesionDetalle) }}</strong>
+                        </div>
+                        <div class="detail-item wide"><span>Dirección</span><strong>{{
+                                obtenerDireccionSede(sesionDetalle) }}</strong></div>
+                        <div class="detail-item"><span>Detalle</span><strong>#{{ sesionDetalle.idDetalle }}</strong>
+                        </div>
+                        <div class="detail-item"><span>Estado</span><strong>{{ obtenerEstadoTexto(sesionDetalle)
+                                }}</strong></div>
+                    </div>
+                </div>
+            </div>
+            <div class="detail-actions">
+                <button class="btn-modal-secondary" (click)="cerrarDetalle()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" *ngIf="mostrarModalConfirmacionCancelacion" (click)="cerrarConfirmacionCancelacion()">
+        <div class="confirm-modal" (click)="$event.stopPropagation()">
+            <div class="confirm-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 9v4"></path>
+                    <path d="M12 16h.01"></path>
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                    </path>
+                </svg>
+            </div>
+            <h2>¿Cancelar esta reserva?</h2>
+            <p>La sesión se marcará como cancelada y dejará de aparecer como activa en tu panel.</p>
+            <div class="confirm-actions">
+                <button class="btn-modal-secondary" type="button"
+                    (click)="cerrarConfirmacionCancelacion()">Volver</button>
+                <button class="btn-modal-primary danger" type="button" (click)="confirmarCancelacion()">Sí,
+                    cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <section class="sesiones-header">
+        <div>
+            <h1>Panel de Reservas</h1>
+            <p>Gestión de solicitudes de reservas activas y hoja de ruta diaria.</p>
+        </div>
+        <span class="today-pill"><span class="dot"></span>{{ obtenerTotalHoy() }} reservas hoy</span>
+    </section>
+
+    <div *ngIf="cargando" class="loading-placeholder">Cargando reservas...</div>
+    <div *ngIf="!cargando && errorMessage" class="error-message">{{ errorMessage }}</div>
+    <div *ngIf="!cargando && !errorMessage && sesiones.length === 0" class="empty-state">
+        <h3>No tienes reservas registradas</h3>
+        <p>Solicita una sesión desde el catálogo de instructores.</p>
+        <button (click)="irCatalogo()">Ir al catálogo</button>
+    </div>
+
+    <section *ngIf="!cargando && !errorMessage && sesiones.length > 0" class="solicitudes-panel">
+        <article class="solicitud-row" *ngFor="let sesion of sesiones"
+            [class.solicitud-cancelada]="normalizarTexto(sesion.estadoDetalle) === 'cancelada' || normalizarTexto(sesion.estadoDetalle) === 'rechazada' || normalizarTexto(sesion.estadoDetalle) === 'plazo_vencido'">
+            <div class="row-left">
+                <img [src]="obtenerImagenSesion(sesion)" [alt]="obtenerNombreInstructor(sesion)">
+                <div class="info-block">
+                    <div class="name-wrapper">
+                        <h2>{{ obtenerNombreInstructor(sesion) }}</h2>
+                        <span class="mini-badge" [ngClass]="obtenerClaseBadge(sesion)">{{ obtenerEstadoTexto(sesion)
+                            }}</span>
+                    </div>
+                    <div class="date-badge">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <span>{{ obtenerFecha(sesion) }}, {{ obtenerHora(sesion) }}</span>
+                        <svg viewBox="0 0 24 24" class="icon-reloj">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 7v5l3 2"></path>
+                        </svg>
+                        <span>{{ obtenerDuracionTexto(sesion) }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row-actions">
+                <ng-container *ngIf="normalizarTexto(sesion.estadoDetalle) === 'pendiente'">
+                    <button class="btn-main" (click)="verDetalles(sesion); $event.stopPropagation()">Detalles</button>
+                    <button class="btn-cancel"
+                        (click)="abrirConfirmacionCancelacion(sesion); $event.stopPropagation()">Cancelar</button>
+                </ng-container>
+                <ng-container
+                    *ngIf="normalizarTexto(sesion.estadoDetalle) === 'aprobada' || normalizarTexto(sesion.estadoDetalle) === 'confirmada'">
+
+                    <button type="button" class="btn-hoja-ruta"
+                        (click)="$event.stopPropagation(); verHojaRuta(sesion.idReserva)">
+                        Hoja de ruta
+                    </button>
+                    <button class="btn-more" (click)="toggleDropdown($event, sesion.idReserva)">
+                        ⋮
+                    </button>
+
+                    <div class="dropdown-menu" *ngIf="dropdownAbierto === sesion.idReserva"
+                        (click)="$event.stopPropagation()">
+
+                        <button class="dropdown-item" (click)="verDetalles(sesion)">
+                            Detalles
+                        </button>
+
+                        <button class="dropdown-item dropdown-danger" (click)="abrirConfirmacionCancelacion(sesion)">
+                            Cancelar
+                        </button>
+                    </div>
+                </ng-container>
+                <ng-container
+                    *ngIf="normalizarTexto(sesion.estadoDetalle) === 'plazo_vencido' || normalizarTexto(sesion.estadoDetalle) === 'cancelada' || normalizarTexto(sesion.estadoDetalle) === 'rechazada'">
+                    <button class="btn-main" (click)="verDetalles(sesion); $event.stopPropagation()">Detalles</button>
+                </ng-container>
+            </div>
+        </article>
+    </section>
+</div>

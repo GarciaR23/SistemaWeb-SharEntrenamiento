@@ -1,0 +1,222 @@
+<div class="calendar-page">
+
+  <section class="calendar-main">
+
+    <section class="day-summary">
+      <div class="summary-title">Resumen del Día</div>
+
+      <div class="summary-item">
+        <strong>{{ totalSessions | number:'2.0-0' }}</strong>
+        <span>Sesiones</span>
+      </div>
+
+      <div class="summary-item">
+        <strong>{{ totalMinutes }}</strong>
+        <span>Minutos</span>
+      </div>
+
+      <div class="summary-item highlight">
+        <strong>{{ totalAvailableHours | number:'2.0-0' }}</strong>
+        <span>Horas Disponibles</span>
+      </div>
+    </section>
+
+    <section class="calendar-toolbar">
+      <div class="month-nav">
+        <button type="button" class="nav-btn" (click)="prevMonth()">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M15 18 9 12l6-6"></path>
+          </svg>
+        </button>
+
+        <strong>{{ monthLabel | uppercase }}</strong>
+
+        <button type="button" class="nav-btn" (click)="nextMonth()">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="m9 18 6-6-6-6"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="view-tabs">
+        <button type="button" [class.active]="vistaActiva === 'mes'" (click)="cambiarVista('mes')">Mes</button>
+        <button type="button" [class.active]="vistaActiva === 'semana'" (click)="cambiarVista('semana')">Semana</button>
+        <button type="button" [class.active]="vistaActiva === 'dia'" (click)="cambiarVista('dia')">Día</button>
+      </div>
+    </section>
+
+    <section class="month-card" *ngIf="vistaActiva === 'mes'">
+      <div class="week-header">
+        <span *ngFor="let weekDay of weekDays" [class.weekend]="weekDay === 'SÁB' || weekDay === 'DOM'">
+          {{ weekDay }}
+        </span>
+      </div>
+
+      <div class="days-grid">
+        <div class="day-cell"
+          *ngFor="let item of calendarDays; trackBy: trackDay"
+          [class.outside]="item.outside"
+          [class.selected]="isSelected(item)"
+          (click)="selectDay(item)"
+          style="cursor: pointer;">
+
+          <span class="day-number" [class.today]="isSelected(item)">{{ item.day }}</span>
+
+          <div class="day-sessions">
+            <div class="mini-session"
+              *ngFor="let session of getSessionsForDate(item.date); trackBy: trackSession"
+              [class.green]="session.color === 'green'"
+              [class.blue]="session.color === 'blue'">
+
+              <span>{{ session.time }} - {{ session.patient }}</span>
+            </div>
+          </div>
+
+          <span class="selected-dot" *ngIf="isSelected(item)"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA SEMANA -->
+    <section class="month-card" *ngIf="vistaActiva === 'semana'">
+      <div class="week-header">
+        <span *ngFor="let weekDay of weekDays" [class.weekend]="weekDay === 'SÁB' || weekDay === 'DOM'">
+          {{ weekDay }}
+        </span>
+      </div>
+
+      <div class="days-grid">
+        <div class="day-cell" style="min-height: 400px; cursor: pointer;"
+          *ngFor="let item of currentWeekDays; trackBy: trackDay"
+          [class.outside]="item.outside"
+          [class.selected]="isSelected(item)"
+          (click)="selectDay(item)">
+
+          <span class="day-number" [class.today]="isSelected(item)">{{ item.day }}</span>
+
+          <div class="day-sessions">
+            <div class="mini-session"
+              *ngFor="let session of getSessionsForDate(item.date); trackBy: trackSession"
+              [class.green]="session.color === 'green'"
+              [class.blue]="session.color === 'blue'">
+
+              <span>{{ session.time }} - {{ session.patient }}</span>
+            </div>
+          </div>
+
+          <span class="selected-dot" *ngIf="isSelected(item)"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- VISTA DÍA -->
+    <section class="month-card day-view" *ngIf="vistaActiva === 'dia'" style="background: transparent;">
+      <h3 style="color: #e8edf9; margin-bottom: 24px; font-size: 20px; font-weight: 900;">Agenda: {{ selectedDateFormatted }}</h3>
+      
+      <div *ngIf="todaySessions.length === 0" style="padding: 40px; text-align: center; color: #687181; background: #171c2a; border-radius: 16px; border: 1px dashed rgba(255,255,255,0.08);">
+        No hay sesiones programadas para este día.
+      </div>
+
+      <div class="today-list" *ngIf="todaySessions.length > 0">
+        <article class="today-card" *ngFor="let session of todaySessions">
+          <div class="avatar-placeholder"></div>
+          <div class="today-info">
+            <div class="today-card-top">
+              <h3>{{ session.patient }}</h3>
+              <span>{{ session.status }}</span>
+            </div>
+            <p class="specialty">{{ session.specialty }}</p>
+            <div class="today-meta" style="flex-direction: row; gap: 32px;">
+              <p>
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M12 7v5l3 2"></path>
+                </svg>
+                {{ session.time }} ({{ session.duration }})
+              </p>
+              <p>
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M21 10c0 7-9 12-9 12S3 17 3 10a9 9 0 1 1 18 0Z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                {{ session.location }}
+              </p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="available-card">
+      <div class="available-header">
+        <h3>Horas Disponibles</h3>
+
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+          <path d="M8 2v4"></path>
+          <path d="M16 2v4"></path>
+          <path d="M3 10h18"></path>
+          <path d="m9 16 2 2 4-5"></path>
+        </svg>
+      </div>
+
+      <div class="available-list">
+        <div class="available-row" *ngFor="let hour of availableHours">
+          <span>{{ hour.range }}</span>
+          <strong>{{ hour.status | uppercase }}</strong>
+        </div>
+      </div>
+    </section>
+
+  </section>
+
+  <aside class="today-panel">
+    <div class="today-header">
+      <h2>Sesiones para Hoy</h2>
+
+      <p>
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="3" y="4" width="18" height="17" rx="2"></rect>
+          <path d="M8 2v4"></path>
+          <path d="M16 2v4"></path>
+          <path d="M3 10h18"></path>
+        </svg>
+        {{ selectedDateFormatted }}
+      </p>
+    </div>
+
+    <div class="today-list">
+      <article class="today-card" *ngFor="let session of todaySessions">
+        <div class="avatar-placeholder"></div>
+
+        <div class="today-info">
+          <div class="today-card-top">
+            <h3>{{ session.patient }}</h3>
+            <span>{{ session.status }}</span>
+          </div>
+
+          <p class="specialty">{{ session.specialty }}</p>
+
+          <div class="today-meta">
+            <p>
+              <svg viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 7v5l3 2"></path>
+              </svg>
+              {{ session.time }} ({{ session.duration }})
+            </p>
+
+            <p>
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M21 10c0 7-9 12-9 12S3 17 3 10a9 9 0 1 1 18 0Z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              {{ session.location }}
+            </p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </aside>
+
+</div>

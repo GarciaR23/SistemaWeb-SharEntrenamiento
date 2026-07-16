@@ -1,9 +1,6 @@
 package edu.utp.backend.features.servicio.entities;
 
 import java.math.BigDecimal;
-import java.time.LocalTime;
-
-import org.hibernate.annotations.ColumnTransformer;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,17 +27,4 @@ public class ServicioInstructor {
 
     @Column(name = "tarifa_hora", nullable = false)
     private BigDecimal tarifaHora;
-
-    @ColumnTransformer(write = "?::tipo_horario_preferencia")
-    @Column(name = "horario_preferencia", nullable = false, columnDefinition = "tipo_horario_preferencia")
-    private String horarioPreferencia;
-
-    @Column(name = "dia_disponible", nullable = false)
-    private String diaDisponible;
-
-    @Column(name = "horario_inicio", nullable = false)
-    private LocalTime horarioInicio;
-
-    @Column(name = "horario_final", nullable = false)
-    private LocalTime horarioFinal;
 }

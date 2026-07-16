@@ -1,0 +1,336 @@
+<section class="sede-page">
+  <header class="sede-header">
+    <div>
+      <h1>Gestión de mis Sedes</h1>
+      <p>Supervisa y administra el estado de tus locales en tiempo real.</p>
+    </div>
+  </header>
+
+  <button type="button" class="fab-add-sede" (click)="abrirModal()" title="Agregar Sede">
+    <span>+</span>
+  </button>
+
+  <section class="sede-toolbar">
+    <label class="sede-search">
+      <span class="sede-icon"><img src="assets/icons/Icon_lupa.png" alt="Busqueda"></span>
+      <input type="text" placeholder="Buscar sede por nombre o dirección..." [(ngModel)]="busqueda"
+        (input)="filtrar()" />
+    </label>
+
+    <label class="sede-select">
+      <span class="sede-icon"><img src="assets/icons/Icon_filt_dist.png" alt="Filtro Distrito"></span>
+      <select [(ngModel)]="distritoFiltro" (change)="filtrar()">
+        <option value="">Filtrar por Distrito</option>
+        @for (distrito of distritos; track distrito) {
+        <option [value]="distrito">
+          {{ distrito }}
+        </option>
+        }
+      </select>
+    </label>
+  </section>
+
+  @if (mensajeInfo) {
+  <div class="sede-alert sede-alert-info">
+    {{ mensajeInfo }}
+  </div>
+  }
+
+  @if (mensajeError) {
+  <div class="sede-alert sede-alert-error">
+    {{ mensajeError }}
+  </div>
+  }
+
+  @if (cargando) {
+  <section class="sede-loading">
+    Cargando sedes...
+  </section>
+  }
+
+  @if (!cargando && sedes.length > 0) {
+  <section class="sede-grid">
+    @for (sede of sedes; track sede.idSede) {
+    <article class="sede-card" [class.sede-card-inactive]="!sede.estadoActivacion">
+      <div class="sede-card-image">
+        <img [src]="imagenPrincipal(sede)" [alt]="sede.nombreCard" />
+        <span class="sede-badge" [class.sede-badge-danger]="!sede.estadoActivacion">
+          {{ sede.estadoActivacion ? sede.etiqueta : 'MANTENIMIENTO' }}
+        </span>
+        @if (sede.imagenes && sede.imagenes.length > 1) {
+        <div class="sede-dots">
+          @for (imagen of sede.imagenes; track imagen; let i = $index) {
+          <span [class.active]="i === obtenerIndiceImagen(sede)" (click)="cambiarImagenSede(sede, i, $event)"
+            style="cursor: pointer;"></span>
+          }
+        </div>
+        }
+      </div>
+      <div class="sede-card-body">
+        <h2>{{ sede.nombreCard }}</h2>
+        <p class="sede-address">
+          <span><img src="assets/icons/Icon_gps.png" alt="Ubicacion"></span>
+          {{ sede.direccionSede }}, {{ sede.distritoSede }}
+        </p>
+        <p class="sede-description">
+          {{ sede.descripcionSede }}
+        </p>
+        <footer class="sede-card-footer">
+          <div>
+            <span>ESTADO</span>
+            <strong [class.inactive]="!sede.estadoActivacion">
+              {{ sede.estadoActivacion ? 'Sede Activa' : 'Inactiva' }}
+            </strong>
+          </div>
+          <button type="button" class="sede-switch" [class.active]="sede.estadoActivacion"
+            (click)="cambiarEstado(sede)">
+            <span></span>
+          </button>
+        </footer>
+      </div>
+    </article>
+    }
+  </section>
+  }
+
+  @if (!cargando && sedes.length === 0) {
+  <section class="sede-empty">
+    <div class="empty-icon" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 10.5 12 3l9 7.5"></path>
+        <path d="M5 9.5V21h14V9.5"></path>
+        <path d="M9 21v-6h6v6"></path>
+      </svg>
+    </div>
+    <h2>No tienes sedes registradas</h2>
+    <p>
+      Registra al menos tres sedes para poder aparecer en el catálogo de instructores.
+    </p>
+  </section>
+  }
+</section>
+
+<!-- MODAL DE ADVERTENCIA - LÍMITE DE SEDES -->
+@if (modalAdvertenciaAbierto) {
+<div class="modal-backdrop">
+  <section class="sede-modal modal-warning">
+    <div class="warning-content">
+      <div class="warning-icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      </div>
+      <h2 class="warning-title">Límite de sedes alcanzado</h2>
+      <p class="warning-message">{{ mensajeAdvertencia }}</p>
+      <button type="button" class="btn-save" (click)="cerrarModalAdvertencia()">
+        Entendido
+      </button>
+    </div>
+  </section>
+</div>
+}
+
+@if (modalAbierto) {
+<div class="modal-backdrop">
+  <section class="sede-modal">
+    <button type="button" class="modal-close" (click)="cerrarModal()">×</button>
+    <header class="modal-header">
+      <h2>Registrar Nueva Sede</h2>
+      <p>Ingresa los detalles para habilitar un nuevo centro de entrenamiento.</p>
+    </header>
+
+    <form class="sede-form" [formGroup]="sedeFormGroup" (ngSubmit)="guardarSede()">
+      <div class="sede-form-grid">
+        <label class="sede-field sede-field-left">
+          <span>Nombre de la Sede</span>
+          <input type="text" formControlName="nombreSede" placeholder="Ej: Centro de Entrenamiento Lima Norte"
+            [class.input-invalid]="campoInvalido('nombreSede')" required />
+        </label>
+        <label class="sede-field sede-field-right">
+          <span>Zona de la Sede</span>
+          <select formControlName="zonaSede" [class.select-invalid]="campoInvalido('zonaSede')" required>
+            <option value="" disabled selected hidden class="select-placeholder">Selecciona una zona</option>
+            @for (zona of zonas; track zona) {
+            <option [value]="zona">
+              {{ zona }}
+            </option>
+            }
+          </select>
+        </label>
+        <label class="sede-field sede-field-left">
+          <span>Distrito</span>
+          <select formControlName="distritoSede" [class.select-invalid]="campoInvalido('distritoSede')" required>
+            <option value="" disabled selected hidden class="select-placeholder">Selecciona un distrito</option>
+            @for (distrito of distritos; track distrito) {
+            <option [value]="distrito">
+              {{ distrito | lowercase | titlecase }}
+            </option>
+            }
+          </select>
+        </label>
+        <label class="sede-field sede-field-right">
+          <span>Dirección Exacta</span>
+          <input type="text" formControlName="direccionSede" placeholder="Ej: Av. Javier Prado Este 1234, Oficina 502"
+            [class.input-invalid]="campoInvalido('direccionSede')" required />
+        </label>
+      </div>
+
+      <label class="sede-field sede-field-full">
+        <span>Descripción de la Sede</span>
+        <textarea formControlName="descripcionSede"
+          placeholder="Describe las instalaciones, horarios de acceso y puntos de referencia..."
+          [class.textarea-invalid]="campoInvalido('descripcionSede')" required></textarea>
+        <div class="description-meta">
+          <div class="description-counter" [class.description-counter-error]="campoInvalido('descripcionSede')">
+            {{ caracteresDescripcion }}/150 caracteres
+          </div>
+        </div>
+      </label>
+      <div class="upload-section">
+        <span class="upload-section-title">Galería de Imágenes</span>
+        @if (archivosConPreview.length === 0) {
+        <div class="upload-card" [class.upload-card-invalid]="campoInvalido('imagenes')" (click)="fileInput.click()"
+          style="cursor: pointer;">
+          <div class="upload-box">
+            <div class="upload-icon"><img src="assets/icons/Icon_camara.png" alt="Camara"></div>
+            <p class="upload-heading">Sube al menos 3 fotos de la sede</p>
+            <div class="file-label-modern">
+              <input #fileInput type="file" accept="image/*" multiple (change)="onImagenesSedeChange($event)" hidden />
+              <span class="upload-title">
+                Arrastra y suelta tus archivos aquí o haz clic para explorar. Aceptamos JPG, PNG y WEBP.
+              </span>
+            </div>
+          </div>
+        </div>
+        }
+
+        @if (archivosConPreview.length > 0) {
+        <div class="revision-modal-body" style="padding: 0; margin-top: 10px;">
+          @for (preview of archivosConPreview; track preview; let i = $index) {
+          <div class="documento-revision-row" [class.approved]="preview.estado === 'aceptado'">
+            <div class="documento-meta">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image icon-documento-tipo">
+                <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+                <circle cx="9" cy="9" r="2" />
+                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+              </svg>
+              <span class="documento-label" style="word-break: break-all;">{{ preview.file.name }}</span>
+            </div>
+            <div class="documento-actions-group">
+              <button type="button" class="btn-action-neon btn-view" (click)="verImagenPreview(i, $event)"
+                title="Visualizar Imagen">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye">
+                  <path
+                    d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+              <button type="button" class="btn-action-neon btn-reject" [class.selected]="preview.estado === 'rechazado'"
+                (click)="marcarEstadoImagen(i, 'rechazado')" title="Rechazar/Eliminar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  class="icon-x">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="m15 9-6 6M9 9l6 6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          }
+
+          @if (archivosConPreview.length < 3) { <div class="upload-card upload-card-inline"
+            (click)="fileInputAdd.click()" style="cursor: pointer; margin-top: 10px;">
+            <input #fileInputAdd type="file" accept="image/*" multiple (change)="onImagenesSedeChange($event)" hidden />
+            <div class="upload-box upload-box-inline">
+              <p class="upload-heading upload-heading-inline">Agregar más fotos ({{ archivosConPreview.length }}/3)</p>
+            </div>
+        </div>
+        }
+      </div>
+      }
+</div>
+@if (mensajeErrorModal) {
+<div class="sede-alert sede-alert-error" style="margin-bottom: 20px;">
+  {{ mensajeErrorModal }}
+</div>
+}
+
+<footer class="modal-actions">
+  <button type="button" class="btn-cancel" (click)="cerrarModal()">
+    Cancelar
+  </button>
+  <button type="submit" class="btn-save" [disabled]="!formularioValido() || guardando">
+    {{ guardando ? 'Guardando...' : 'Guardar Sede' }}
+  </button>
+</footer>
+</form>
+</section>
+</div>
+}
+
+@if (previewImagenAbierto) {
+<div class="preview-imagen-backdrop" (click)="cerrarPreviewImagen()">
+  <div class="preview-imagen-modal" (click)="$event.stopPropagation()">
+    <button type="button" class="preview-close" (click)="cerrarPreviewImagen()" title="Cerrar (Esc)">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </svg>
+    </button>
+
+    @if (hayPreviewAnterior) {
+    <button type="button" class="preview-nav preview-prev" (click)="anteriorPreview()" title="Anterior (←)">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="m15 18-6-6 6-6" />
+      </svg>
+    </button>
+    }
+
+    <div class="preview-imagen-content">
+      @if (previewImagenActual; as img) {
+      <img [src]="img.url" [alt]="img.file.name" class="preview-imagen-img" />
+      <div class="preview-imagen-info">
+        <span class="preview-imagen-nombre">{{ img.file.name }}</span>
+        <span class="preview-imagen-contador">Imagen {{ previewImagenIndex + 1 }} de {{ previewImagenTotal }}</span>
+      </div>
+      }
+    </div>
+
+    @if (hayPreviewSiguiente) {
+    <button type="button" class="preview-nav preview-next" (click)="siguientePreview()" title="Siguiente (→)">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="m9 18 6-6-6-6" />
+      </svg>
+    </button>
+    }
+  </div>
+</div>
+}
+
+@if (modalExitoAbierto) {
+<div class="modal-backdrop">
+  <section class="sede-modal modal-success">
+    <div class="success-content">
+      <div class="success-icon">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <h2 class="success-title">¡Sede Registrada Exitosamente!</h2>
+      <p class="success-message">Tu nueva sede ha sido creada y agregada al sistema.</p>
+      <div class="success-timer">
+        <p>Cerrando en 3 segundos...</p>
+      </div>
+    </div>
+  </section>
+</div>
+}

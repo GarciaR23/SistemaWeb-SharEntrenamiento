@@ -1,0 +1,256 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+
+import { FileService } from '../../../core/services/file.service';
+import { DocumentKey } from '../models/registration.model';
+import { RegistroTutorResponse } from '../models/response-tutor.model';
+import { RegistroInstructorResponse } from '../models/response-instructor.model';
+import { DocumentoDto } from '../../admin/models/documento.model';
+import { PacienteDto } from '../../tutor/models/paciente.model';
+
+interface ProtocoloEmergenciaDto {
+  idProtocolo: number | null;
+  idPaciente: number;
+  descripcion: string;
+}
+
+interface ContactoEmergenciaDto {
+  idContacto: number | null;
+  idPaciente: number;
+  nombreContacto: string;
+  telefono: string;
+  relacion: string;
+}
+
+interface SensibilidadPacienteDto {
+  idSensibilidad: number | null;
+  idPaciente: number;
+  tipoSensibilidad: string;
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class RegistrationApiService {
+  private readonly registroUrl = 'http://localhost:8080/api/auth/register';
+  private readonly pacienteUrl = 'http://localhost:8080/api/pacientes';
+  private readonly documentoUrl = 'http://localhost:8080/api/documentos';
+
+  constructor(
+    private http: HttpClient,
+    private fileService: FileService,
+  ) { }
+
+  async registrarTutorConPaciente(payload: {
+    tutorNombre: string;
+    pacienteNombre: string;
+    condicion: string;
+    gradoAutismo: string;
+    genero: string;
+    edad: number;
+    distrito: string;
+    direccion: string;
+    correo: string;
+    clave: string;
+    fotoPaciente: File | null;
+    protocoloEmergencia: string;
+    sensibilidades: string[];
+    nombreContacto: string;
+    telefonoContacto: string;
+    relacionContacto: string;
+  }): Promise<void> {
+    let fotoUrl: string = 'https://via.placeholder.com/300';
+
+    if (payload.fotoPaciente) {
+      const uploadedImage = await firstValueFrom(
+        this.fileService.uploadImage(payload.fotoPaciente),
+      );
+
+      console.log('Imagen subida a Cloudinary:', uploadedImage);
+
+      fotoUrl = uploadedImage.url;
+    }
+
+    const registerResult = await firstValueFrom(
+      this.http.post<RegistroTutorResponse>(`${this.registroUrl}/tutor`, {
+        email: payload.correo,
+        clave: payload.clave,
+        nombreCompleto: payload.tutorNombre,
+      }),
+    );
+
+    if (!registerResult.success || !registerResult.usuario) {
+      throw new Error(registerResult.message || 'No se pudo registrar');
+    }
+
+    const idTutor = registerResult.idTutor;
+    localStorage.setItem('authToken_tutor', registerResult.token);
+    localStorage.setItem('authUser_tutor', JSON.stringify(registerResult.usuario));
+    const gradoAutismoMap: Record<string, string> = {
+      Leve: 'uno',
+      Moderado: 'dos',
+      Severo: 'tres',
+      leve: 'uno',
+      moderado: 'dos',
+      severo: 'tres',
+    };
+
+    const pacienteResult = await firstValueFrom(
+      this.http.post<PacienteDto>(this.pacienteUrl, {
+        idPaciente: null,
+        idTutor: idTutor,
+        nombreCompleto: payload.pacienteNombre,
+        urlImagenPaciente: fotoUrl,
+        condicion: payload.condicion,
+        gradoAutismo: gradoAutismoMap[payload.gradoAutismo] ?? payload.gradoAutismo,
+        genero: payload.genero.toLowerCase(),
+        edad: payload.edad,
+        distrito: payload.distrito,
+        direccion: payload.direccion,
+      }),
+    );
+
+    const idPaciente = pacienteResult.idPaciente;
+
+    if (!idPaciente) {
+      throw new Error('No se pudo obtener el id del paciente registrado');
+    }
+
+    await firstValueFrom(
+      this.http.post<ProtocoloEmergenciaDto>(
+        `${this.pacienteUrl}/${idPaciente}/protocolo-emergencia`,
+        {
+          idProtocolo: null,
+          idPaciente: idPaciente,
+          descripcion: payload.protocoloEmergencia,
+        },
+      ),
+    );
+
+    await firstValueFrom(
+      this.http.post<ContactoEmergenciaDto>(
+        `${this.pacienteUrl}/${idPaciente}/contacto-emergencia`,
+        {
+          idContacto: null,
+          idPaciente: idPaciente,
+          nombreContacto: payload.nombreContacto,
+          telefono: payload.telefonoContacto,
+          relacion: payload.relacionContacto,
+        },
+      ),
+    );
+
+    const sensibilidadMap: Record<string, string> = {
+      'Ruidos fuertes': 'ruidos fuertes',
+      'Contacto físico': 'contacto físico',
+      'Luces brillantes': 'luces brillantes',
+      'Multitudes': 'multitudes',
+      'Cambios de rutina': 'cambios de rutina',
+      'Texturas específicas': 'texturas específicas',
+      'Olores intensos': 'olores intensos',
+      'Espacios cerrados': 'espacios cerrados',
+    };
+
+    for (const sensibilidad of payload.sensibilidades) {
+      const sensibilidadDb = sensibilidadMap[sensibilidad];
+
+      if (!sensibilidadDb) {
+        continue;
+      }
+
+      await firstValueFrom(
+        this.http.post<SensibilidadPacienteDto>(
+          `${this.pacienteUrl}/${idPaciente}/sensibilidades`,
+          {
+            idSensibilidad: null,
+            idPaciente: idPaciente,
+            tipoSensibilidad: sensibilidadDb,
+          },
+        ),
+      );
+    }
+
+    localStorage.setItem('authToken_tutor', registerResult.token);
+    localStorage.setItem('authUser_tutor', JSON.stringify(registerResult.usuario));
+  }
+
+  async registrarInstructorConDocumentos(payload: {
+    nombreCompleto: string;
+    especialidad: string;
+    biografia: string;
+    distrito: string;
+    direccion: string;
+    profileImageFile?: File | null;
+    email: string;
+    clave: string;
+    documentos: Record<DocumentKey, File | null>;
+    tarifaHora: number;
+    horarios: { diaSemana: string; horarioPreferencia: string; horarioInicio: string; horarioFinal: string }[];
+  }): Promise<void> {
+    let urlImagenPerfil: string | null = null;
+
+    if (payload.profileImageFile) {
+      const uploadedImage = await firstValueFrom(
+        this.fileService.uploadImage(payload.profileImageFile),
+      );
+      urlImagenPerfil = uploadedImage.url;
+    }
+
+    const documentNames: Record<DocumentKey, string> = {
+      dni: 'DNI',
+      titulo: 'Titulo universitario',
+      antecedentes: 'Antecedentes penales',
+      certificacion: 'Certificacion entrenamiento adaptado',
+    };
+
+    const uploadedDocuments: Partial<Record<DocumentKey, string>> = {};
+
+    for (const key of Object.keys(payload.documentos) as DocumentKey[]) {
+      const file = payload.documentos[key];
+      if (!file) continue;
+      const uploaded = await firstValueFrom(this.fileService.uploadFile(file));
+      uploadedDocuments[key] = uploaded.url;
+    }
+
+    const registerResult = await firstValueFrom(
+      this.http.post<RegistroInstructorResponse>(`${this.registroUrl}/instructor`, {
+        email: payload.email,
+        clave: payload.clave,
+        nombreCompleto: payload.nombreCompleto,
+        urlImagenPerfil: urlImagenPerfil,
+        especialidad: payload.especialidad,
+        biografia: payload.biografia,
+        distrito: payload.distrito,
+        direccion: payload.direccion,
+        tarifaHora: payload.tarifaHora,
+        horarios: payload.horarios,
+      }, {
+        headers: { 'X-Skip-Error-Interceptor': 'true' },
+      }),
+    );
+
+    if (!registerResult.success || !registerResult.usuario) {
+      throw new Error(registerResult.message || 'No se pudo registrar');
+    }
+
+    const idInstructor = registerResult.idInstructor;
+
+    for (const key of Object.keys(uploadedDocuments) as DocumentKey[]) {
+      const uploadedUrl = uploadedDocuments[key];
+      if (!uploadedUrl) continue;
+      await firstValueFrom(
+        this.http.post<DocumentoDto>(this.documentoUrl, {
+          idDocumento: null,
+          idInstructor: idInstructor,
+          nombreDocumento: documentNames[key],
+          urlArchivo: uploadedUrl,
+          estadoAprobacion: 'pendiente',
+          fechaSubida: null,
+        }, {
+          headers: { 'X-Skip-Error-Interceptor': 'true' },
+        }),
+      );
+    }
+  }
+}

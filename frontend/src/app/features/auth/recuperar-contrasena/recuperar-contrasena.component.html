@@ -1,0 +1,45 @@
+<app-header></app-header>
+
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Recuperar Contraseña</h2>
+      <p>Introduce tu correo electrónico y te enviaremos<br>las instrucciones para restablecerla.</p>
+    </div>
+
+    <form [formGroup]="recoverForm" class="auth-form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <label class="form-label">
+        <span>Correo electrónico</span>
+        <div class="input-wrapper" [class.invalid-field]="shouldShowEmailError()">
+          <input type="text" formControlName="email" placeholder="tu@correo.com" autocomplete="email"
+            autocapitalize="off" spellcheck="false"
+            (input)="sanitizeEmailValue()"
+            (blur)="sanitizeEmailValue()" />
+          <span class="input-icon">
+            <img src="assets/icons/Icon_email.png" alt="Mensaje" />
+          </span>
+        </div>
+        @if (shouldShowEmailError()) {
+          <div class="field-error">
+            <small>{{ getEmailErrorMessage() }}</small>
+          </div>
+        }
+      </label>
+
+      <button type="submit" [disabled]="recoverForm.invalid" class="btn-primary">Enviar</button>
+
+      <p class="secondary-text">
+        <a routerLink="/login">← Volver al inicio de sesión</a>
+      </p>
+
+      @if (showModal) {
+        <div class="modal-overlay">
+          <div class="modal-box">
+            <p>{{ modalMessage }}</p>
+            <span class="modal-note">Serás redirigido al siguiente paso.</span>
+          </div>
+        </div>
+      }
+    </form>
+  </div>
+</div>

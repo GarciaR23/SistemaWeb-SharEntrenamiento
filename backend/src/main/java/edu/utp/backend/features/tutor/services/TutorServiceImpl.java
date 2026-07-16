@@ -59,4 +59,10 @@ public class TutorServiceImpl implements TutorService {
     private TutorDto toDto(Tutor tutor) {
         return new TutorDto(tutor.getIdTutor(), tutor.getIdUsuario(), tutor.getNombreCompleto());
     }
+
+    public TutorDto findByIdUsuario(Long idUsuario) {
+        Tutor tutor = tutorRepository.findByIdUsuario(idUsuario)
+                .orElseThrow(() -> new IllegalArgumentException("Tutor no encontrado: " + idUsuario));
+        return new TutorDto(tutor.getIdTutor(), tutor.getIdUsuario(), tutor.getNombreCompleto());
+    }
 }

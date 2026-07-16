@@ -3,15 +3,24 @@ package edu.utp.backend.features.reserva.services;
 import java.util.List;
 
 import edu.utp.backend.features.reserva.dtos.ReservaDto;
+import edu.utp.backend.features.reserva.dtos.ReservaRequestDto;
+import edu.utp.backend.features.reserva.dtos.ReservaTutorSesionDto;
 
 public interface ReservaService {
+
     List<ReservaDto> findAll();
+
+    List<ReservaDto> findByPaciente(Integer idPaciente);
+
+    List<ReservaDto> findByInstructor(Integer idInstructor);
+
+    List<ReservaTutorSesionDto> findSesionesByTutor(Integer idTutor);
 
     ReservaDto findById(Integer id);
 
-    ReservaDto create(ReservaDto request);
+    ReservaDto create(ReservaRequestDto request);
 
-    ReservaDto update(Integer id, ReservaDto request);
+    void validarDisponibilidad(ReservaRequestDto request);
 
-    void delete(Integer id);
+    void cancelarDetalle(Integer idDetalle);
 }

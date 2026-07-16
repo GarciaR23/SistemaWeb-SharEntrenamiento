@@ -1,19 +1,13 @@
 package edu.utp.backend.features.reserva.entities;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import org.hibernate.annotations.ColumnTransformer;
+
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 @Data
 @NoArgsConstructor
@@ -35,19 +29,20 @@ public class Reserva {
     @Column(name = "id_sede", nullable = false)
     private Integer idSede;
 
-    @Column(name = "seleccion_horario", nullable = false)
-    private LocalDateTime seleccionHorario;
+    @ColumnTransformer(read = "total_horas_acumuladas::text", write = "?::interval")
+    @Column(name = "total_horas_acumuladas", nullable = false, columnDefinition = "interval")
+    private String totalHorasAcumuladas;
 
-    @JdbcTypeCode(SqlTypes.INTERVAL_SECOND)
-    @Column(name = "duracion_entrenamiento", nullable = false)
-    private Duration duracionEntrenamiento;
+    @Column(name = "monto_total_acumulado", nullable = false)
+    private BigDecimal montoTotalAcumulado;
 
-    @Column(name = "monto_total", nullable = false)
-    private BigDecimal montoTotal;
-
-    @Column(name = "estado_reserva")
-    private String estadoReserva = "pendiente";
-
-    @Column(name = "fecha_creacion", insertable = false, updatable = false)
+    @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion;
+
+    @PrePersist
+    public void prePersist() {
+        if (fechaCreacion == null) {
+            fechaCreacion = LocalDateTime.now();
+        }
+    }
 }

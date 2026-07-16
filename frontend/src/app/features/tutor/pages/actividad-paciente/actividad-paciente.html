@@ -1,0 +1,1537 @@
+<section class="actividad-page">
+
+  <header class="section-header">
+    <h1>Actividad</h1>
+
+    <p>
+      Panel de seguimiento de sesiones, pagos, incidencias y reprogramaciones.
+    </p>
+  </header>
+
+  <div class="actividad-toolbar">
+
+    <div class="pending-badge">
+      <span>Pendiente</span>
+      <strong>{{ contadorPendiente }}</strong>
+    </div>
+
+    <div class="filter-tabs">
+
+      <button type="button" class="filter-tab" [class.active]="filtroActual === 'en_curso'"
+        (click)="cambiarFiltro('en_curso')">
+        <span>En curso</span>
+        <span class="tab-count">{{ contadorEnCurso }}</span>
+      </button>
+
+      <button type="button" class="filter-tab" [class.active]="filtroActual === 'reprogramado'"
+        (click)="cambiarFiltro('reprogramado')">
+        <span>Reprogramados</span>
+        <span class="tab-count">{{ contadorReprogramado }}</span>
+      </button>
+
+      <button type="button" class="filter-tab" [class.active]="filtroActual === 'finalizado'"
+        (click)="cambiarFiltro('finalizado')">
+        <span>Finalizados</span>
+        <span class="tab-count">{{ contadorFinalizado }}</span>
+      </button>
+
+    </div>
+  </div>
+
+  @if (cargando) {
+
+  <div class="empty-state">
+    <h3>Cargando actividades...</h3>
+    <p>Estamos consultando las sesiones desde la base de datos.</p>
+  </div>
+
+  } @else if (actividadesVisibles.length === 0) {
+
+  <div class="empty-state">
+    <h3>No hay actividades en esta sección</h3>
+    <p>
+      Las tarjetas aparecerán aquí cuando exista una hoja de ruta aceptada,
+      una sesión en curso, una reprogramación o una sesión finalizada.
+    </p>
+  </div>
+
+  } @else {
+
+  <div class="sessions-grid">
+
+    @for (actividad of actividadesVisibles; track actividad.idDetalle) {
+
+    <article class="session-card" [class.active-run]="actividad.estadoSesion === 'en_curso'"
+      [class.finished]="actividad.estadoSesion === 'finalizado'"
+      [class.reprogrammed]="actividad.estadoSesion === 'reprogramada'">
+
+      @if (actividad.estadoSesion === 'en_curso' || actividad.tiempoCumplido) {
+
+      <div class="timer-bar">
+
+        <div class="timer-text">
+          <span class="timer-icon">◷</span>
+
+          @if (!actividad.tiempoCumplido) {
+          <span>
+            {{ formatearTiempo(actividad.segundosRestantes) }}
+            restantes
+          </span>
+          } @else {
+          <span>Tiempo cumplido</span>
+          }
+        </div>
+
+        <span class="state-badge">
+          {{
+          actividad.estadoSesion === 'finalizado'
+          ? 'FINALIZADO'
+          : actividad.tiempoCumplido
+          ? 'PENDIENTE DE PAGO'
+          : 'EN CURSO'
+          }}
+        </span>
+
+      </div>
+      }
+
+      <div class="card-body">
+
+        <div class="patient-row">
+
+          <div class="patient-profile">
+
+            <div class="avatar-container">
+              <span class="avatar-letter">
+                {{ actividad.pacienteNombre.charAt(0) }}
+              </span>
+            </div>
+
+            <div class="patient-details">
+              <h3>{{ actividad.pacienteNombre }}</h3>
+
+              <div class="patient-sub">
+                {{ actividad.pacienteEdad || 'Edad no registrada' }} años
+              </div>
+            </div>
+
+          </div>
+
+          <span class="status-label" [class.status-course]="actividad.estadoSesion === 'en_curso'"
+            [class.status-reprogrammed]="actividad.estadoSesion === 'reprogramada'"
+            [class.status-finished]="actividad.estadoSesion === 'finalizado'">
+
+            {{
+            actividad.estadoSesion === 'programada'
+            ? 'PENDIENTE'
+            : actividad.estadoSesion === 'pendiente'
+            ? 'PENDIENTE'
+            : actividad.mostrarAsistencia
+            ? 'PENDIENTE DE ASISTENCIA'
+            : actividad.estadoSesion.replace('_', ' ').toUpperCase()
+            }}
+
+          </span>
+
+        </div>
+
+        @if (actividad.estadoSesion === 'reprogramada' && actividad.respuestaTutor) {
+
+        <div class="reprogram-summary-box active">
+          <span class="summary-title">
+            Reprogramación aceptada
+          </span>
+
+          <strong>
+            {{ formatearFecha(actividad.horaInicioEstimada) }}
+          </strong>
+
+          <small>
+            La sesión fue actualizada con el nuevo horario seleccionado.
+          </small>
+        </div>
+        }
+
+        @if (actividad.estadoSesion === 'reprogramada' && !actividad.respuestaTutor) {
+
+        <div class="reprogram-summary-box active">
+          <span class="summary-title">
+            Reprogramación pendiente
+          </span>
+
+          <strong>
+            Selecciona una nueva fecha propuesta.
+          </strong>
+
+          <small>
+            {{ actividad.motivoReprogramacion || 'Pendiente de revisión.' }}
+          </small>
+        </div>
+        }
+
+        <div class="meta-grid">
+
+          <div class="meta-box">
+            <span class="meta-label">Fecha</span>
+            <span class="meta-value">
+              {{ formatearFecha(actividad.horaInicioEstimada) }}
+            </span>
+          </div>
+
+          <div class="meta-box">
+            <span class="meta-label">Sede</span>
+            <span class="meta-value">
+              {{ actividad.nombreSede }}
+            </span>
+          </div>
+
+          <div class="meta-box">
+            <span class="meta-label">Duración</span>
+            <span class="meta-value">
+              {{ actividad.duracionMinutos }} min
+            </span>
+          </div>
+
+        </div>
+
+        <div class="instructor-info">
+          Instructor:
+          <strong>{{ actividad.instructorNombre }}</strong>
+        </div>
+
+        <div class="btn-row">
+
+          @if (
+          !actividad.mostrarAsistencia &&
+          (
+          actividad.estadoSesion === 'programada' ||
+          actividad.estadoSesion === 'pendiente'
+          )
+          ) {
+
+          <button type="button" class="btn btn-start" [disabled]="!puedeEmpezar(actividad)"
+            (click)="empezarActividad(actividad)">
+            {{ mensajeBotonEmpezar(actividad) }}
+          </button>
+
+          }
+
+          @if (actividad.mostrarAsistencia) {
+
+          <button type="button" class="btn btn-asistencia" (click)="abrirModalPin(actividad)">
+            Registrar asistencia
+          </button>
+
+          }
+
+          @if (actividad.estadoSesion === 'en_curso' && !actividad.tiempoCumplido) {
+
+          <button type="button" class="btn btn-incidencia" (click)="abrirSelectorIncidencia(actividad)">
+            Registrar incidencia
+          </button>
+
+          <button type="button" class="btn btn-pay" disabled>
+            Pagar
+          </button>
+
+          }
+
+          @if (actividad.estadoSesion === 'en_curso' && actividad.tiempoCumplido) {
+
+          <button type="button" class="btn btn-pay" (click)="abrirModalPago(actividad)">
+            Proceder al pago
+          </button>
+
+          }
+
+          @if (actividad.estadoSesion === 'reprogramada') {
+
+          <button type="button" class="btn btn-reprogram" (click)="abrirReprogramacion(actividad)">
+            Ver propuesta
+          </button>
+
+          }
+
+          @if (actividad.estadoSesion === 'finalizado') {
+
+          <button type="button" class="btn btn-report" (click)="abrirReporte(actividad)">
+            Ver reporte técnico
+          </button>
+
+          }
+
+        </div>
+
+      </div>
+    </article>
+    }
+
+  </div>
+  }
+
+</section>
+
+<div class="modal-overlay" [class.active]="modalPinAbierto">
+
+  <div class="modal-card">
+
+    <h3 class="modal-title green-text">
+      Validar PIN de asistencia
+    </h3>
+
+    <p class="modal-description">
+      Ingresa el PIN para iniciar oficialmente la sesión.
+    </p>
+
+    <input class="pin-input" type="text" maxlength="4" inputmode="numeric" placeholder="••••"
+      [formControl]="pinControl">
+
+    @if (pinControl.touched && pinControl.hasError('required')) {
+    <small class="field-error">
+      El PIN es obligatorio.
+    </small>
+    }
+
+    @if (pinControl.touched && pinControl.hasError('pattern')) {
+    <small class="field-error">
+      El PIN debe contener 4 números.
+    </small>
+    }
+
+    @if (pinControl.hasError('pinIncorrecto')) {
+    <small class="field-error">
+      El PIN ingresado es incorrecto.
+    </small>
+    }
+
+    <div class="modal-actions">
+
+      <button type="button" class="btn btn-report" (click)="cerrarModalPin()">
+        Cancelar
+      </button>
+
+      <button type="button" class="btn btn-asistencia" (click)="confirmarPin()">
+        Confirmar PIN
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" [class.active]="modalTiposIncidenciaAbierto">
+
+  <div class="modal-card modal-wide incident-select-modal">
+
+    <div class="incident-header">
+      <h3>Reportar Incidencia</h3>
+      <p>
+        Mantenga los estándares de seguridad y puntualidad. Seleccione la categoría
+        que mejor describa la situación actual.
+      </p>
+    </div>
+
+    <div class="incident-list">
+
+      <div class="incident-option">
+
+        <div class="incident-icon green">
+          <svg viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" />
+            <path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </div>
+
+        <div>
+          <h4>Impuntualidad</h4>
+          <p>Registro de retrasos en relevos o servicios programados.</p>
+        </div>
+
+        <button type="button" class="incident-action" (click)="seleccionarTipoIncidencia('impuntualidad')">
+          Reportar
+        </button>
+
+      </div>
+
+      <div class="incident-option">
+
+        <div class="incident-icon green">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" stroke="currentColor" stroke-width="2" />
+            <path d="M3 21v-2a5 5 0 0 1 10 0v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M18 8v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M18 16h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+          </svg>
+        </div>
+
+        <div>
+          <h4>Mal trato</h4>
+          <p>Situaciones de falta de respeto o trato no profesional.</p>
+        </div>
+
+        <button type="button" class="incident-action" (click)="seleccionarTipoIncidencia('mal_trato')">
+          Reportar
+        </button>
+
+      </div>
+
+      <div class="incident-option">
+
+        <div class="incident-icon green">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 3l9 16H3L12 3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+            <path d="M12 9v5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M12 17h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+          </svg>
+        </div>
+
+        <div>
+          <h4>Incidente menor</h4>
+          <p>Eventos fuera de lo común que no requieren urgencia médica.</p>
+        </div>
+
+        <button type="button" class="incident-action" (click)="seleccionarTipoIncidencia('incidente_menor')">
+          Reportar
+        </button>
+
+      </div>
+
+      <div class="incident-option emergency">
+
+        <div class="incident-icon red">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 3v18" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+            <path d="M4.2 7.5l15.6 9" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+            <path d="M19.8 7.5l-15.6 9" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+          </svg>
+        </div>
+
+        <div>
+          <h4>¿Colapso del paciente?</h4>
+          <p>
+            Active el protocolo de emergencia de forma inmediata si el paciente presenta
+            pérdida de conciencia o signos críticos.
+          </p>
+        </div>
+
+        <button type="button" class="incident-action danger" (click)="seleccionarTipoIncidencia('colapso_paciente')">
+          Colapso
+        </button>
+
+      </div>
+
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn btn-report" (click)="cerrarSelectorIncidencia()">
+        Cancelar
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-overlay" [class.active]="modalReporteIncidenciaAbierto">
+
+  <div class="modal-card modal-wide incident-report-modal">
+
+    <button type="button" class="modal-close-x" (click)="cerrarReporteIncidencia()">
+      ×
+    </button>
+
+    <div class="incident-header">
+      <h3>Reporte de Incidencia</h3>
+      <p>
+        Describe los detalles del inconveniente detectado para que nuestro equipo
+        de soporte pueda resolverlo a la brevedad.
+      </p>
+    </div>
+
+    <span class="section-mini-title">
+      Nivel de severidad
+    </span>
+
+    <div class="severity-grid">
+
+      <button type="button" class="severity-card" [class.active]="severidadSeleccionada === 'baja'"
+        (click)="seleccionarSeveridad('baja')">
+
+        <span class="severity-icon green">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z" stroke="currentColor" stroke-width="2" />
+            <path d="M9 12l2 2 4-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </span>
+
+        <strong>Baja</strong>
+        <small>Sin riesgo crítico</small>
+      </button>
+
+      <button type="button" class="severity-card" [class.active]="severidadSeleccionada === 'moderada'"
+        (click)="seleccionarSeveridad('moderada')">
+
+        <span class="severity-icon blue">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 3l9 16H3L12 3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+            <path d="M12 9v5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M12 17h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+          </svg>
+        </span>
+
+        <strong>Moderada</strong>
+        <small>Requiere atención</small>
+      </button>
+
+      <button type="button" class="severity-card" [class.active]="severidadSeleccionada === 'critica'"
+        (click)="seleccionarSeveridad('critica')">
+
+        <span class="severity-icon red">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect x="4" y="4" width="16" height="16" rx="4" stroke="currentColor" stroke-width="2" />
+            <path d="M8 8l8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <path d="M16 8l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </span>
+
+        <strong>Crítica</strong>
+        <small>Acción inmediata</small>
+      </button>
+
+    </div>
+
+    <span class="section-mini-title">
+      Descripción de la incidencia
+    </span>
+
+    <textarea class="text-area incident-textarea" rows="5"
+      placeholder="Describe las instalaciones, horarios de acceso y puntos de referencia..."
+      [formControl]="descripcionControl">
+    </textarea>
+
+    @if (descripcionControl.touched && descripcionControl.invalid) {
+    <small class="field-error">
+      Ingresa una descripción válida de al menos 10 caracteres.
+    </small>
+    }
+
+    <span class="section-mini-title">
+      Galería de evidencia
+    </span>
+
+    <label class="upload-box">
+
+      <input type="file" multiple accept=".jpg,.jpeg,.png,.webp" hidden (change)="onEvidenciasSeleccionadas($event)">
+
+      <div class="upload-icon">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M4 8h3l2-3h6l2 3h3v11H4V8z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+          <circle cx="12" cy="13.5" r="3.2" stroke="currentColor" stroke-width="2" />
+          <path d="M18 6V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M16.5 4.5h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </div>
+
+      <h4>Arrastra tus evidencias aquí</h4>
+
+      <p>
+        Arrastra y suelta tus archivos aquí o haz clic para explorar.
+        Aceptamos JPG, PNG y WEBP.
+      </p>
+
+    </label>
+
+    @if (archivosEvidencia.length > 0) {
+    <div class="file-list">
+      @for (archivo of archivosEvidencia; track archivo.name) {
+      <span>{{ archivo.name }}</span>
+      }
+    </div>
+    }
+
+    <div class="incident-helper">
+      <svg viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" />
+        <path d="M12 11v5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        <path d="M12 8h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+      </svg>
+
+      <span>
+        Las fotos ayudan a reconocer el lugar y mejoran la tasa de reserva.
+      </span>
+    </div>
+
+    <div class="modal-actions">
+
+      <button type="button" class="btn btn-report" (click)="cerrarReporteIncidencia()">
+        Cancelar
+      </button>
+
+      <button type="button" class="btn btn-incidencia" (click)="guardarReporteIncidencia()">
+        Guardar reporte
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-overlay" [class.active]="modalProtocoloEmergenciaAbierto">
+
+  <div class="modal-card emergency-layout-modal">
+
+    <h3 class="emergency-title">
+      <span class="emergency-title-icon">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M5 4h14v16H5V4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+          <path d="M8 8h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M8 12h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M16 16l1.5 1.5L21 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+      </span>
+      Protocolo de emergencia
+    </h3>
+
+    <section class="protocol-panel">
+
+      <div class="protocol-step">
+        <strong>1</strong>
+        <div>
+          <h4>Asegurar el entorno</h4>
+          <p>
+            Verificar que el área de entrenamiento esté libre de riesgos inmediatos
+            para el paciente y el personal de auxilio.
+          </p>
+        </div>
+      </div>
+
+      <div class="protocol-step">
+        <strong>2</strong>
+        <div>
+          <h4>Evaluación de conciencia</h4>
+          <p>
+            Determinar el estado de respuesta del paciente mediante estímulos
+            verbales y táctiles suaves.
+          </p>
+        </div>
+      </div>
+
+      <div class="protocol-step">
+        <strong>3</strong>
+        <div>
+          <h4>Monitoreo de signos vitales</h4>
+          <p>
+            Controlar frecuencia respiratoria y pulso. Mantener la vía aérea despejada
+            sin realizar maniobras bruscas.
+          </p>
+        </div>
+      </div>
+
+      <div class="protocol-step">
+        <strong>4</strong>
+        <div>
+          <h4>Activación de contacto</h4>
+          <p>
+            Contactar de inmediato al enlace de emergencia designado en la ficha
+            técnica del usuario.
+          </p>
+        </div>
+      </div>
+
+      <div class="protocol-step">
+        <strong>5</strong>
+        <div>
+          <h4>Reporte técnico</h4>
+          <p>
+            Documentar la hora exacta del evento y los síntomas observados para el
+            equipo médico de urgencias.
+          </p>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="emergency-contact-card">
+
+      <span class="contact-label">
+        Contacto de emergencia
+      </span>
+
+      <div class="contact-person-row">
+
+        <div class="contact-icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" stroke="currentColor" stroke-width="2" />
+
+            <path d="M4 21v-1a8 8 0 0 1 16 0v1" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </div>
+
+        <div>
+          <h4>
+            {{ actividadSeleccionada?.contactoEmergenciaNombre || 'Contacto no registrado' }}
+          </h4>
+
+          <p>
+            {{ actividadSeleccionada?.contactoEmergenciaRelacion || 'Relación no registrada' }}
+            /
+            Enlace Directo
+          </p>
+        </div>
+
+      </div>
+
+      <button type="button" class="btn-call-now" [disabled]="!actividadSeleccionada?.contactoEmergenciaTelefono">
+
+        <svg viewBox="0 0 24 24" fill="none">
+          <path
+            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.77.63 2.6a2 2 0 0 1-.45 2.11L8.1 9.9a16 16 0 0 0 6 6l1.47-1.19a2 2 0 0 1 2.11-.45c.83.3 1.7.51 2.6.63A2 2 0 0 1 22 16.92z"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+
+        Llamar ahora
+      </button>
+
+      @if (actividadSeleccionada?.contactoEmergenciaTelefono) {
+      <span class="contact-phone">
+        {{ actividadSeleccionada?.contactoEmergenciaTelefono }}
+      </span>
+      }
+
+    </section>
+
+    <section class="emergency-payment-card">
+
+      <div class="emergency-payment-header">
+        <span>Cálculo de pago</span>
+
+        <strong>
+          {{ obtenerTextoEstadoProtocolo() }}
+        </strong>
+      </div>
+
+      <div class="emergency-progress-row">
+        <span>Progreso de la sesión al momento de la incidencia</span>
+
+        <strong>
+          {{ progresoProtocoloPorcentaje }}%
+        </strong>
+      </div>
+
+      <div class="emergency-progress-bar">
+        <div [style.width.%]="progresoProtocoloPorcentaje"></div>
+      </div>
+
+      <div class="emergency-payment-grid">
+
+        <div>
+          <span>Monto total</span>
+
+          <strong>
+            S/ {{ actividadSeleccionada?.montoSubtotal?.toFixed(2) || '0.00' }}
+          </strong>
+        </div>
+
+        <div>
+          <span>Tiempo transcurrido</span>
+
+          <strong>
+            {{ minutosTranscurridosProtocolo }} / {{ actividadSeleccionada?.duracionMinutos || 0 }} min
+          </strong>
+        </div>
+
+      </div>
+
+      <div class="emergency-note">
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" />
+          <path d="M12 11v5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M12 8h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+        </svg>
+
+        <p>
+          La sesión se detiene por incidencia crítica en el minuto
+          {{ minutosTranscurridosProtocolo }}.
+          El cobro se mantiene completo porque el instructor activó el protocolo de emergencia.
+        </p>
+      </div>
+
+    </section>
+
+    <div class="modal-actions emergency-actions">
+
+      <button type="button" class="btn btn-report" (click)="cerrarProtocoloEmergencia()">
+        Cancelar
+      </button>
+
+      <button type="button" class="btn btn-incidencia" (click)="activarProtocoloColapso()">
+        Confirmar protocolo
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
+<div class="modal-overlay" [class.active]="modalPagoAbierto">
+
+  <div class="payment-terminal-modal">
+
+    <section class="payment-panel">
+
+      <h3 class="payment-title">
+        Terminal de Pago
+      </h3>
+
+      @if (actividadSeleccionada) {
+
+      <div class="payment-amount-card">
+        <span>Monto total</span>
+
+        <strong>
+          S/ {{ actividadSeleccionada.montoSubtotal.toFixed(2) }}
+        </strong>
+      </div>
+
+      }
+
+      <div class="payment-method-section">
+
+        <span class="payment-section-label">
+          Seleccionar método
+        </span>
+
+        <button type="button" class="payment-method-option selected">
+
+          <span class="method-left">
+
+            <span class="method-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" stroke-width="2" />
+                <path d="M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <path d="M7 15h3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              </svg>
+            </span>
+
+            <span>Tarjeta de Crédito / Débito</span>
+
+          </span>
+
+          <span class="radio-selected">
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" />
+              <circle cx="12" cy="12" r="4" fill="currentColor" />
+            </svg>
+          </span>
+
+        </button>
+
+      </div>
+
+      <div class="payment-opinion-box">
+
+        <span class="payment-section-label">
+          Tu opinión nos importa
+        </span>
+
+        <div class="rating-row">
+
+          <span class="rating-label">
+            Califica al instructor
+          </span>
+
+          <div class="rating-stars">
+
+            @for (estrella of [1, 2, 3, 4, 5]; track estrella) {
+
+            <button type="button" class="star-btn" [class.active]="esEstrellaVisible(estrella)"
+              (mouseenter)="setHoverCalificacion(estrella)" (mouseleave)="limpiarHoverCalificacion()"
+              (click)="seleccionarCalificacion(estrella)">
+
+              <svg viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M12 3.5l2.78 5.63 6.22.91-4.5 4.39 1.06 6.2L12 17.72 6.44 20.63l1.06-6.2L3 10.04l6.22-.91L12 3.5z"
+                  stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"
+                  [attr.fill]="esEstrellaVisible(estrella) ? 'currentColor' : 'none'">
+                </path>
+              </svg>
+
+            </button>
+
+            }
+
+          </div>
+
+        </div>
+
+        <textarea class="payment-comment" rows="4" placeholder="Escribe un breve comentario sobre tu experiencia..."
+          [formControl]="comentarioPagoControl">
+        </textarea>
+
+        <span class="optional-label">
+          Opcional
+        </span>
+
+      </div>
+
+      <button type="button" class="btn-confirm-payment" (click)="confirmarPago()">
+
+        <span>Confirmar Pago</span>
+
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+
+      </button>
+
+      <button type="button" class="btn-cancel-payment" (click)="cerrarModalPago()">
+        Cancelar
+      </button>
+
+      <div class="payment-secure-text">
+
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z" stroke="currentColor" stroke-width="2"
+            stroke-linejoin="round" />
+          <path d="M9 12l2 2 4-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+
+        <span>
+          Transacción protegida por cifrado de extremo a extremo
+        </span>
+
+      </div>
+
+    </section>
+
+    <section class="payment-blocked-panel">
+
+      <div class="lock-circle">
+        <svg viewBox="0 0 24 24" fill="none">
+          <rect x="5" y="10" width="14" height="11" rx="2" stroke="currentColor" stroke-width="2" />
+          <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <circle cx="12" cy="15.5" r="1.5" fill="currentColor" />
+        </svg>
+      </div>
+
+      <h3>
+        Contenido Bloqueado
+      </h3>
+
+      <p>
+        Bitácora bloqueada hasta confirmación de pago.
+        Los datos técnicos se sincronizarán con el perfil una vez procesado el depósito.
+      </p>
+
+      <div class="blocked-lines">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+    </section>
+
+  </div>
+</div>
+
+<div class="modal-overlay" [class.active]="modalReprogramacionAbierto">
+
+  <div class="modal-card">
+
+    <h3 class="modal-title orange-text">
+      Propuesta de reprogramación
+    </h3>
+
+    @if (actividadSeleccionada) {
+
+    <div class="reason-box">
+      <strong>Motivo</strong>
+
+      <p>
+        {{ actividadSeleccionada.motivoReprogramacion || 'Reprogramación solicitada.' }}
+      </p>
+    </div>
+
+    <p class="modal-description">
+      Selecciona una de las propuestas disponibles.
+    </p>
+
+    <div class="slot-list">
+
+      @for (propuesta of actividadSeleccionada.propuestas; track propuesta.idDetalleReprogramar) {
+
+      <button type="button" class="slot-card" [class.selected]="
+              propuestaSeleccionada?.idDetalleReprogramar === propuesta.idDetalleReprogramar
+            " (click)="seleccionarPropuesta(propuesta)">
+
+        <span>
+          <strong>
+            {{ propuesta.fechaPropuesta }}
+          </strong>
+
+          <small>
+            {{ propuesta.horaInicioPropuesta }}
+            -
+            {{ propuesta.horaFinPropuesta }}
+          </small>
+        </span>
+
+        <span class="radio-indicator">
+          {{
+          propuestaSeleccionada?.idDetalleReprogramar === propuesta.idDetalleReprogramar
+          ? '●'
+          : '○'
+          }}
+        </span>
+
+      </button>
+      }
+
+    </div>
+    }
+
+    <div class="modal-actions">
+
+      <button type="button" class="btn btn-report" (click)="cerrarReprogramacion()">
+        Cancelar
+      </button>
+
+      <button type="button" class="btn btn-reprogram" [disabled]="!propuestaSeleccionada"
+        (click)="confirmarReprogramacion()">
+        Guardar nueva fecha
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" [class.active]="modalReporteAbierto">
+
+  <div class="technical-report-modal">
+
+    <button type="button" class="technical-report-close" (click)="cerrarReporte()">
+      ×
+    </button>
+
+    <div id="reporte-tecnico-pdf" class="technical-report-sheet">
+
+      <header class="technical-report-header">
+
+        <div>
+
+          <h2>
+            Reporte de Desempeño
+            <span>Técnico</span>
+          </h2>
+
+          <div class="technical-report-meta">
+
+            @if (actividadSeleccionada) {
+
+            <span class="report-code">
+              ID: SHAR-{{ actividadSeleccionada.idReserva }}
+            </span>
+
+            <span>
+              {{ actividadSeleccionada.nombreSede || 'Sede no registrada' }}
+            </span>
+
+            }
+
+          </div>
+
+        </div>
+
+        @if (actividadSeleccionada) {
+
+        <div class="technical-time-card">
+
+          <div>
+            <span>Inicio sesión</span>
+            <strong>
+              {{ actividadSeleccionada.horaInicioEstimada | date:'hh:mm a' }}
+            </strong>
+          </div>
+
+          <div>
+            <span>Término</span>
+            <strong>
+              {{ actividadSeleccionada.horaFinEstimada | date:'hh:mm a' }}
+            </strong>
+          </div>
+
+        </div>
+
+        }
+
+      </header>
+
+      @if (reporteSeleccionado && actividadSeleccionada) {
+
+      <section class="technical-report-person">
+
+        <div class="technical-instructor-card">
+
+          <div class="technical-avatar">
+            <span>
+              {{ actividadSeleccionada.instructorNombre.charAt(0) }}
+            </span>
+
+            <small></small>
+          </div>
+
+          <div>
+            <h4>
+              {{ actividadSeleccionada.instructorNombre }}
+            </h4>
+
+            <p>
+              {{ actividadSeleccionada.especialidad || 'Especialista deportivo' }}
+            </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <main class="technical-report-grid">
+
+        <section class="technical-left-column">
+
+          <article class="technical-section-card no-card">
+
+            <div class="technical-section-title">
+
+              <span class="section-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M7 4v16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  <path d="M17 4v16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  <path d="M4 8h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  <path d="M14 16h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+              </span>
+
+              <h3>
+                Hoja de Ruta del Atleta
+              </h3>
+
+            </div>
+
+            <div class="routine-list">
+
+              @if (reporteSeleccionado.ejercicios && reporteSeleccionado.ejercicios.length > 0) {
+
+              @for (ejercicio of reporteSeleccionado.ejercicios; track ejercicio.idDetalleRutina) {
+
+              <div class="routine-row" [class.completed]="ejercicio.estadoEjercicio === 'completado'"
+                [class.modified]="ejercicio.estadoEjercicio === 'modificado'"
+                [class.pending]="ejercicio.estadoEjercicio !== 'completado' && ejercicio.estadoEjercicio !== 'modificado'">
+
+                <span class="routine-status-icon">
+
+                  @if (ejercicio.estadoEjercicio === 'completado') {
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="9" fill="currentColor" />
+                    <path d="M8 12l2.4 2.4L16 9" stroke="#07111e" stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                  }
+
+                  @if (ejercicio.estadoEjercicio === 'modificado') {
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M4 6h10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M4 12h7" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M4 18h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M16 14l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M20 14l-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  </svg>
+                  }
+
+                  @if (ejercicio.estadoEjercicio !== 'completado' && ejercicio.estadoEjercicio !== 'modificado') {
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" />
+                    <path d="M9 9l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M15 9l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  </svg>
+                  }
+
+                </span>
+
+                <strong>
+                  {{ ejercicio.nombreEjercicio }}
+                </strong>
+
+                <span class="routine-badge" [class.completed]="ejercicio.estadoEjercicio === 'completado'"
+                  [class.modified]="ejercicio.estadoEjercicio === 'modificado'"
+                  [class.pending]="ejercicio.estadoEjercicio !== 'completado' && ejercicio.estadoEjercicio !== 'modificado'">
+                  {{
+                  ejercicio.estadoEjercicio === 'completado'
+                  ? 'Completado'
+                  : ejercicio.estadoEjercicio === 'modificado'
+                  ? 'Modificado'
+                  : 'No realizado'
+                  }}
+                </span>
+
+              </div>
+
+              }
+
+              } @else {
+
+              <div class="routine-row pending">
+
+                <span class="routine-status-icon">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" />
+                    <path d="M9 9l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M15 9l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  </svg>
+                </span>
+
+                <strong>
+                  No hay ejercicios registrados
+                </strong>
+
+                <span class="routine-badge pending">
+                  Sin datos
+                </span>
+
+              </div>
+
+              }
+
+            </div>
+
+          </article>
+
+          <article class="technical-objectives">
+
+            <div class="objective-title">
+              <span></span>
+              Cumplimiento de objetivos
+            </div>
+
+            <div class="objective-grid">
+
+              <div>
+                <span>Coordinación</span>
+
+                <strong>
+                  {{ reporteSeleccionado.puntajeCoordinacion || 0 }}
+                </strong>
+
+                <small>/5</small>
+
+                <div class="objective-line green"></div>
+              </div>
+
+              <div>
+                <span>Resistencia</span>
+
+                <strong>
+                  {{ reporteSeleccionado.puntajeResistencia || 0 }}
+                </strong>
+
+                <small>/5</small>
+
+                <div class="objective-line blue"></div>
+              </div>
+
+              <div>
+                <span>Equilibrio</span>
+
+                <strong>
+                  {{ reporteSeleccionado.puntajeEquilibrio || 0 }}
+                </strong>
+
+                <small>/5</small>
+
+                <div class="objective-line green"></div>
+              </div>
+
+            </div>
+
+          </article>
+
+          <article class="technical-observations">
+
+            <div class="technical-section-title small-title">
+
+              <span class="section-icon small">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M5 4h14v16H5V4z" stroke="currentColor" stroke-width="2" />
+                  <path d="M8 8h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  <path d="M8 12h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+              </span>
+
+              <h3>
+                Observaciones Técnicas
+              </h3>
+
+            </div>
+
+            <span class="feedback-label">
+              Feedback del instructor
+            </span>
+
+            <blockquote>
+              “{{ reporteSeleccionado.observacionTecnica || 'Sin observación registrada.' }}”
+            </blockquote>
+
+            <div class="recommendation-box">
+
+              <span class="recommendation-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3a7 7 0 0 0-4 12.7V18h8v-2.3A7 7 0 0 0 12 3z" stroke="currentColor" stroke-width="2" />
+                  <path d="M9 21h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+              </span>
+
+              <div>
+                <span>Recomendación técnica</span>
+
+                <p>
+                  {{ reporteSeleccionado.recommendaciones || 'Sin recomendaciones registradas.' }}
+                </p>
+              </div>
+
+            </div>
+
+          </article>
+
+        </section>
+
+        <section class="technical-right-column">
+
+          <article class="emotional-profile-card">
+
+            <div class="technical-section-title small-title">
+
+              <span class="section-icon blue">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3a7 7 0 0 0-7 7c0 5 7 11 7 11s7-6 7-11a7 7 0 0 0-7-7z" stroke="currentColor"
+                    stroke-width="2" />
+                  <circle cx="12" cy="10" r="2" stroke="currentColor" stroke-width="2" />
+                </svg>
+              </span>
+
+              <h3>
+                Perfil Emocional
+              </h3>
+
+            </div>
+
+            <div class="response-box">
+
+              <div>
+                <span>R. Auditiva</span>
+
+                <strong [class.response-low]="reporteSeleccionado.respuestaAuditiva === 'bajo'"
+                  [class.response-mid]="reporteSeleccionado.respuestaAuditiva === 'medio'"
+                  [class.response-high]="reporteSeleccionado.respuestaAuditiva === 'alto'">
+                  {{ reporteSeleccionado.respuestaAuditiva }}
+                </strong>
+              </div>
+
+              <div>
+                <span>R. Visual</span>
+
+                <strong [class.response-low]="reporteSeleccionado.respuestaVisual === 'bajo'"
+                  [class.response-mid]="reporteSeleccionado.respuestaVisual === 'medio'"
+                  [class.response-high]="reporteSeleccionado.respuestaVisual === 'alto'">
+                  {{ reporteSeleccionado.respuestaVisual }}
+                </strong>
+              </div>
+
+            </div>
+
+            <div class="regulation-box">
+
+              <span>
+                Regulación de la sesión
+              </span>
+
+              <div class="regulation-flow">
+
+                <div>
+                  <span class="regulation-icon alert">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M13 2L4 14h7l-1 8 10-13h-7l1-7z" stroke="currentColor" stroke-width="2"
+                        stroke-linejoin="round" />
+                    </svg>
+                  </span>
+
+                  <small>
+                    Inicio: Alerta
+                  </small>
+                </div>
+
+                <strong>
+                  →
+                </strong>
+
+                <div>
+                  <span class="regulation-icon calm">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M19 4c-7 1-11 5-11 11 0 2.2 1.8 4 4 4 6 0 10-8 7-15z" fill="currentColor" />
+                      <path d="M8 19c2-5 6-8 10-10" stroke="#07111e" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                  </span>
+
+                  <small>
+                    Fin: Calma
+                  </small>
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="commitment-level">
+
+              <span>
+                Nivel de compromiso
+              </span>
+
+              <strong [class.low]="reporteSeleccionado.compromisoSesion < 60"
+                [class.mid]="reporteSeleccionado.compromisoSesion >= 60 && reporteSeleccionado.compromisoSesion < 80"
+                [class.high]="reporteSeleccionado.compromisoSesion >= 80">
+                {{
+                reporteSeleccionado.compromisoSesion >= 80
+                ? 'Alto'
+                : reporteSeleccionado.compromisoSesion >= 60
+                ? 'Medio'
+                : 'Bajo'
+                }}
+              </strong>
+
+            </div>
+
+          </article>
+
+          @if (reporteSeleccionado.tuvoColapso) {
+
+          <article class="technical-crisis-card">
+
+            <div class="crisis-top">
+
+              <div>
+                <span class="crisis-label-row">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3l9 16H3L12 3z" stroke="currentColor" stroke-width="2" />
+                    <path d="M12 9v5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M12 17h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                  </svg>
+
+                  Registro de crisis
+                </span>
+              </div>
+
+              <strong>
+                Reportado
+              </strong>
+
+            </div>
+
+            <div class="crisis-detected">
+
+              <span>
+                Evento detonado en
+              </span>
+
+              <h3>
+                {{ reporteSeleccionado.minutoColapso || 'Minuto registrado' }}
+              </h3>
+
+            </div>
+
+            <div class="crisis-protocol-dark">
+
+              <span>
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M5 4h14v16H5V4z" stroke="currentColor" stroke-width="2" />
+                  <path d="M8 8h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  <path d="M8 12h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+
+                Protocolo técnico aplicado
+              </span>
+
+              <p>
+                “{{
+                reporteSeleccionado.descripcionColapso ||
+                'Se activó el protocolo de emergencia y se registró la incidencia crítica del paciente.'
+                }}”
+              </p>
+
+            </div>
+
+            <div class="crisis-result-row">
+              <span>Resultado operativo</span>
+              <strong>Sesión finalizada</strong>
+            </div>
+
+            <div class="crisis-result-row">
+              <span>Ajuste por incidencia</span>
+              <strong>20% proporcional</strong>
+            </div>
+
+          </article>
+
+          }
+
+        </section>
+
+      </main>
+
+      } @else {
+
+      <div class="technical-report-empty">
+
+        <div class="technical-empty-icon">
+          !
+        </div>
+
+        <h4>
+          No se encontró reporte técnico
+        </h4>
+
+        <p>
+          El instructor aún no ha registrado el reporte técnico de esta sesión.
+        </p>
+
+      </div>
+
+      }
+
+    </div>
+
+    <footer class="technical-report-footer">
+
+      <button type="button" class="btn-export-technical-report" [disabled]="!reporteSeleccionado"
+        (click)="exportarReportePDF()">
+
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 3v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          <path d="M8 11l4 4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" />
+          <path d="M5 21h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+
+        Exportar reporte
+      </button>
+
+      <button type="button" class="btn-report-close" (click)="cerrarReporte()">
+        Cerrar
+      </button>
+
+    </footer>
+
+  </div>
+
+</div>

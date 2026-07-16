@@ -1,0 +1,50 @@
+.dashboard-layout {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #0c0f17;
+}
+
+.dashboard-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.dashboard-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px;
+    box-sizing: border-box;
+}
+
+.sidebar-backdrop {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .dashboard-layout {
+        position: relative;
+    }
+
+    .dashboard-body {
+        flex: 1 1 auto;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .dashboard-content {
+        padding: 24px 16px;
+    }
+
+    .sidebar-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 105;
+    }
+}

@@ -1,0 +1,219 @@
+<div class="perfil-container">
+
+    <div *ngIf="cargando" class="loading-placeholder">
+        Cargando perfil del instructor...
+    </div>
+
+    <div *ngIf="!cargando && errorMessage" class="error-message">
+        {{ errorMessage }}
+    </div>
+
+    <ng-container *ngIf="!cargando && !errorMessage && resumen">
+
+        <section class="hero-profile">
+            <button class="back-button" type="button" (click)="volverCatalogo()" aria-label="Volver al catálogo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M11 8l-4 4 4 4"></path>
+                    <path d="M7 12h8"></path>
+                </svg>
+            </button>
+
+            <div class="profile-image-box">
+                <img [src]="obtenerImagenPerfil()" [alt]="resumen.nombreCompleto">
+
+                <div class="verified-floating">
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="verified-icon">
+                        <path fill-rule="evenodd"
+                            d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+            <div class="profile-main-info">
+                <span class="role-badge">INSTRUCTOR</span>
+
+                <h1>{{ resumen.nombreCompleto }}</h1>
+
+                <h2>{{ resumen.especialidad || 'Especialidad no registrada' }}</h2>
+
+                <div class="profile-tags">
+                    <span class="icon-box">
+                        <img src="assets/icons/map-pin.png" alt="Ubicación" class="icon-img">
+
+                        {{ obtenerDistrito() }}
+                    </span>
+                    <span class="icon-box">
+                        <img src="assets/icons/clock.png" alt="Horario" class="icon-img">
+                        {{ obtenerHorarioPrincipal() }}
+                    </span>
+                    <span class="icon-box">
+                        <img src="assets/icons/globe.png" alt="Idioma" class="icon-img">
+                        Español
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-block">
+            <h2 class="section-title">
+                <span class="section-title-icon">
+                    <img src="assets/icons/award.png" alt="certificaciones" class="icon-img">
+                </span>
+                Certificaciones Profesionales
+            </h2>
+
+            <div class="cert-grid">
+                <article class="cert-card">
+                    <div class="cert-icon">
+                        <img src="assets/icons/graduation-cap.png" alt="Certificación SUNEDU" class="icon-img">
+                    </div>
+                    <h3>SUNEDU</h3>
+                    <p>Licenciatura o formación profesional registrada para atención especializada.</p>
+                </article>
+
+                <article class="cert-card">
+                    <div class="cert-icon">
+                        <img src="assets/icons/square-user.png" alt="Antecedentes" class="icon-img">
+                    </div>
+                    <h3>Antecedentes</h3>
+                    <p>Verificación completa de antecedentes policiales y judiciales vigente.</p>
+                </article>
+
+                <article class="cert-card">
+                    <div class="cert-icon">
+                        <img src="assets/icons/brain.png" alt="Especialista" class="icon-img">
+                    </div>
+                    <h3>Especialista</h3>
+                    <p>{{ resumen.biografia || 'Instructor especializado con experiencia en sesiones personalizadas.' }}
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section-block">
+            <h2 class="section-title">
+                <span class="section-title-icon">
+                    <img src="assets/icons/shield-check.png" alt="Sedes" class="icon-img">
+                </span>
+                Mis Sedes Seguras
+            </h2>
+
+            <div class="sedes-grid">
+                <article class="sede-card" *ngFor="let sede of sedes">
+                    <div class="sede-image-box">
+                        <img [src]="obtenerImagenSede(sede)" [alt]="sede.nombreSede || 'Sede'">
+
+                        <span class="sede-badge">
+                            {{ sede.zonaSede || 'Sin zona' }}
+                        </span>
+                    </div>
+
+                    <div class="sede-content">
+                        <h3>{{ sede.nombreSede || 'Sede sin nombre' }}</h3>
+
+                        <p class="sede-description">
+                            {{ sede.descripcionSede || 'Descripción no registrada.' }}
+                        </p>
+
+                        <p class="sede-address">
+                            {{ sede.direccionSede || 'Dirección no registrada' }}
+                        </p>
+
+                        <p class="sede-district">
+                            {{ obtenerNombreDistrito(sede.distritoSede || '') }}
+                        </p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="section-block testimonials-layout">
+            <div class="testimonials-panel">
+                <h2 class="section-title">
+                    <span class="section-title-icon">
+                        <img src="assets/icons/message-square-text.png" alt="Testimonios" class="icon-img">
+                    </span>
+                    Testimonios de Familias
+                </h2>
+
+                <div class="testimonials-list" *ngIf="calificaciones.length > 0">
+                    <article class="testimonial-card" *ngFor="let calificacion of calificaciones.slice(0, 3)">
+                        <div class="testimonial-header">
+                            <div class="avatar-initials">
+                                {{ obtenerIniciales(calificacion.pacienteNombre) }}
+                            </div>
+
+                            <div>
+                                <h3>{{ calificacion.pacienteNombre }}</h3>
+                                <span>{{ obtenerFechaCalificacion(calificacion.fechaCalificacion) }}</span>
+                            </div>
+
+                            <div class="stars">
+                                {{ obtenerEstrellas(calificacion.puntajeEstrellas) }}
+                            </div>
+                        </div>
+
+                        <p class="testimonial-text">
+                            "{{ calificacion.comentarioTutor || 'Sin comentario registrado.' }}"
+                        </p>
+                    </article>
+                </div>
+
+                <div class="empty-state-card" *ngIf="calificaciones.length === 0">
+                    <div class="empty-state-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            <path d="M8 9h8"></path>
+                            <path d="M8 13h5"></path>
+                        </svg>
+                    </div>
+                    <h3>No hay testimonios aún</h3>
+                    <p>Este instructor todavía no tiene testimonios registrados.</p>
+                </div>
+            </div>
+
+            <aside class="summary-card">
+                <h3>RESUMEN DE PERFIL</h3>
+                <div class="summary-line"></div>
+
+                <div class="summary-item">
+                    <span>
+                        <span class="summary-icon-box">
+                            <img src="assets/icons/star.png" alt="Calificación">
+                        </span>
+                        Calificación
+                    </span>
+                    <strong>{{ obtenerPromedioCalificacion() }}/5</strong>
+                </div>
+
+                <div class="summary-item">
+                    <span>
+                        <span class="summary-icon-box">
+                            <img src="assets/icons/history.png" alt="Sesiones">
+                        </span>
+                        Sesiones Realizadas
+                    </span>
+                    <strong>+{{ obtenerTotalSesiones() }}</strong>
+                </div>
+
+                <div class="summary-item">
+                    <span>
+                        <span class="summary-icon-box">
+                            <img src="assets/icons/banknote.png" alt="Tarifa">
+                        </span>
+                        Tarifa Base
+                    </span>
+                    <strong>{{ obtenerTarifaBase() }} <small>/ses</small></strong>
+                </div>
+
+                <button class="btn-request" type="button" (click)="solicitarSesion()">
+                    Solicitar Sesión
+                </button>
+
+                <p class="response-text">Respuesta promedio en menos de 2 horas</p>
+            </aside>
+        </section>
+
+    </ng-container>
+</div>
