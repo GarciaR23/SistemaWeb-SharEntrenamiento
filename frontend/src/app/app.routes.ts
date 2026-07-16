@@ -37,7 +37,7 @@ import { ReservaPaciente } from './features/tutor/pages/reserva-paciente/reserva
 import { FormularioReserva } from './features/tutor/pages/formulario-reserva/formulario-reserva.component';
 import { CalendarioComponent } from './features/instructor/pages/calendario/calendario';
 import { HojaRutaComponent } from './features/instructor/pages/hoja-ruta/hoja-ruta';
-import { SesionComponent} from './features/instructor/pages/sesion/sesion';
+import { SesionComponent } from './features/instructor/pages/sesion/sesion';
 import { RevisionComponent } from './features/instructor/pages/revision/revision.component';
 import { ObservacionReclamo } from './features/admin/pages/observacion-reclamo/observacion-reclamo';
 
@@ -73,7 +73,7 @@ export const routes: Routes = [
           { path: 'solicitud-instructor', component: Solicitud, title: 'Solicitudes de Instructores | SharEntrenamiento' },
           { path: 'reporte-instructor', component: ReporteInstructor, title: 'Reportes de Instructores | SharEntrenamiento' },
           { path: 'reporte-paciente', component: ReportePaciente, title: 'Reportes de Pacientes | SharEntrenamiento' },
-          {path: 'observacion-reclamo', component: ObservacionReclamo, title: 'Observaciones | SharEntrenamiento'}
+          { path: 'observacion-reclamo', component: ObservacionReclamo, title: 'Observaciones | SharEntrenamiento' }
         ]
       },
 
@@ -128,6 +128,11 @@ export const routes: Routes = [
             path: 'plan',
             component: PlanPaciente,
             title: 'Plan | SharEntrenamiento'
+          },
+          {
+            path: 'plan/:idReserva',
+            component: PlanPaciente,
+            title: 'Hoja de Ruta | SharEntrenamiento'
           },
           {
             path: 'actividad',

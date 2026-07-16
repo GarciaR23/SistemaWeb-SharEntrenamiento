@@ -1,20 +1,401 @@
-<div class="progress-empty">
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-        stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
-        class="lucide lucide-clipboard-list">
+<section class="plan-page">
 
-        <rect x="8" y="2" width="8" height="4" rx="1"></rect>
-        <path d="M9 4H7a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2"></path>
+    @if (cargando) {
+    <div class="plan-loading">
+        <div class="loading-icon">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M12 3a9 9 0 1 0 9 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </svg>
+        </div>
 
-        <path d="M9 10h6"></path>
-        <path d="M9 14h6"></path>
-        <path d="M9 18h4"></path>
+        <h3>Cargando hoja de ruta...</h3>
+        <p>Estamos consultando la información desde la base de datos.</p>
+    </div>
+    }
 
-    </svg>
+    @if (!cargando && !plan && planes.length > 0) {
+    <section class="plans-list-page">
 
-    <h4>Plan de entrenamiento</h4>
+        <header class="plans-list-header">
+            <div>
+                <h1>Planes disponibles</h1>
+                <p>Selecciona una hoja de ruta para revisar el entorno y la rutina asignada.</p>
+            </div>
+        </header>
 
-    <p>
-        Consulta y realiza el seguimiento del plan de entrenamiento asignado a tu paciente.
-    </p>
-</div>
+        <div class="plans-list-grid">
+            @for (item of planes; track item.idReserva) {
+            <article class="plan-summary-card" (click)="abrirPlanDesdeLista(item)">
+
+                <div class="plan-summary-top">
+                    <div class="summary-avatar">
+                        @if (item.imagenInstructor) {
+                        <img [src]="item.imagenInstructor" alt="Instructor">
+                        } @else {
+                        <span>{{ inicial(item.instructorNombre) }}</span>
+                        }
+                    </div>
+
+                    <div>
+                        <h3>{{ item.instructorNombre }}</h3>
+                        <p>{{ item.especialidad || 'Especialidad no registrada' }}</p>
+                    </div>
+                </div>
+
+                <div class="plan-summary-body">
+                    <span>Paciente</span>
+                    <strong>{{ item.pacienteNombre }}</strong>
+
+                    <span>Fecha</span>
+                    <strong>{{ formatearFecha(item.horaInicioEstimada) }}</strong>
+
+                    <span>Sede</span>
+                    <strong>{{ item.nombreSede }}</strong>
+                </div>
+
+                <footer>
+                    <b [class.approved]="item.estadoHoja === 'aprobado_tutor'"
+                        [class.observed]="item.estadoHoja === 'observado_tutor'"
+                        [class.modified]="item.estadoHoja === 'modificado_instructor'">
+                        {{ obtenerEstadoTexto(item.estadoHoja) }}
+                    </b>
+
+                    <button type="button">
+                        Ver hoja de ruta
+                    </button>
+                </footer>
+
+            </article>
+            }
+        </div>
+
+    </section>
+    }
+
+    @if (!cargando && !plan && planes.length === 0) {
+    <div class="plan-empty-state">
+        <svg viewBox="0 0 24 24" fill="none">
+            <path d="M4 6l5-2 6 2 5-2v14l-5 2-6-2-5 2V6z" stroke="currentColor" stroke-width="2"
+                stroke-linejoin="round" />
+            <path d="M9 4v14" stroke="currentColor" stroke-width="2" />
+            <path d="M15 6v14" stroke="currentColor" stroke-width="2" />
+        </svg>
+
+        <h3>No tienes hojas de ruta disponibles</h3>
+        <p>Cuando el instructor envíe una hoja de ruta, aparecerá en esta sección.</p>
+    </div>
+    }
+
+    @if (!cargando && plan) {
+    <div class="route-modal">
+
+        <header class="route-header">
+            <div>
+                <h1>Hoja de Ruta Visual</h1>
+                <p>Revisa el entorno y los ejercicios que recibirá tu familiar antes de aprobar la sesión.</p>
+            </div>
+
+            <button type="button" class="btn-close-route" (click)="volverReservas()">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </button>
+        </header>
+
+        <div class="route-status-row">
+            <div class="instructor-chip">
+                <div class="instructor-avatar">
+                    @if (plan.imagenInstructor) {
+                    <img [src]="plan.imagenInstructor" alt="Instructor">
+                    } @else {
+                    <span>{{ inicial(plan.instructorNombre) }}</span>
+                    }
+                </div>
+
+                <div>
+                    <strong>{{ plan.instructorNombre }}</strong>
+                    <span>{{ plan.especialidad || 'Especialidad no registrada' }}</span>
+                </div>
+            </div>
+
+            <div class="status-chip" [class.approved]="plan.estadoHoja === 'aprobado_tutor'"
+                [class.observed]="plan.estadoHoja === 'observado_tutor'"
+                [class.modified]="plan.estadoHoja === 'modificado_instructor'">
+
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z" stroke="currentColor" stroke-width="2" />
+                    <path d="M9 12l2 2 4-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+
+                <span>{{ obtenerEstadoTexto(plan.estadoHoja) }}</span>
+            </div>
+        </div>
+
+        <section class="route-content">
+
+            <div class="info-grid">
+                <article class="info-card">
+                    <span>Paciente</span>
+                    <strong>{{ plan.pacienteNombre }}</strong>
+                </article>
+
+                <article class="info-card">
+                    <span>Fecha de sesión</span>
+                    <strong>{{ formatearFecha(plan.horaInicioEstimada) }}</strong>
+                </article>
+
+                <article class="info-card">
+                    <span>Sede</span>
+                    <strong>{{ plan.nombreSede }}</strong>
+                </article>
+            </div>
+
+            <section class="visual-section">
+                <div class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 6l5-2 6 2 5-2v14l-5 2-6-2-5 2V6z" stroke="currentColor" stroke-width="2"
+                            stroke-linejoin="round" />
+                        <path d="M9 4v14" stroke="currentColor" stroke-width="2" />
+                        <path d="M15 6v14" stroke="currentColor" stroke-width="2" />
+                    </svg>
+
+                    <h2>El entorno</h2>
+                </div>
+
+                @if (plan.imagenesSede.length > 0) {
+                <div class="environment-grid">
+                    @for (imagen of plan.imagenesSede; track imagen; let i = $index) {
+                    <article class="environment-card">
+                        <img [src]="imagen" alt="Imagen de sede">
+
+                        <div>
+                            <strong>{{ plan.nombreSede }}</strong>
+                            <span>Ángulo {{ i + 1 }} • {{ plan.distritoSede }}</span>
+                        </div>
+                    </article>
+                    }
+                </div>
+                } @else {
+                <div class="empty-environment">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <rect x="4" y="5" width="16" height="14" rx="2" stroke="currentColor" stroke-width="2" />
+                        <path d="M8 15l2.5-3 2 2.5 1.5-1.8L18 18" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <circle cx="9" cy="9" r="1" fill="currentColor" />
+                    </svg>
+
+                    <p>No hay imágenes registradas para esta sede.</p>
+                </div>
+                }
+            </section>
+
+            <section class="routine-section">
+                <div class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M7 17l10-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        <path d="M5 7h4v4H5V7z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                        <path d="M15 13h4v4h-4v-4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                    </svg>
+
+                    <h2>La rutina</h2>
+                    <span>{{ plan.ejercicios.length }} actividades</span>
+                </div>
+
+                <div class="routine-grid">
+                    @for (ejercicio of plan.ejercicios; track trackEjercicio($index, ejercicio)) {
+                    <article class="routine-card">
+                        <div class="routine-icon">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <path d="M13 3l-2 7h6l-6 11 2-8H7l6-10z" stroke="currentColor" stroke-width="2"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+
+                        <div>
+                            <strong>{{ ejercicio.nombreEjercicio }}</strong>
+
+                            <span>
+                                {{ ejercicio.duracionEstimada || 0 }} min • {{ ejercicio.tipoEjercicio || 'Tipo no
+                                registrado' }}
+                            </span>
+
+                            @if (ejercicio.descripcionEjercicio) {
+                            <p>{{ ejercicio.descripcionEjercicio }}</p>
+                            }
+                        </div>
+                    </article>
+                    }
+                </div>
+            </section>
+
+            @if (plan.ajustes.length > 0) {
+            <section class="adjustments-section">
+                <div class="section-title">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 9v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        <path d="M12 17h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                        <path d="M10.3 4.4L2.7 18a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 4.4a2 2 0 0 0-3.4 0z"
+                            stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                    </svg>
+
+                    <h2>Solicitudes registradas</h2>
+                </div>
+
+                <div class="adjustment-list">
+                    @for (ajuste of plan.ajustes; track ajuste.idAjuste) {
+                    <article class="adjustment-card">
+                        <div>
+                            <span>{{ obtenerMotivoTexto(ajuste.motivoCambio) }}</span>
+                            <strong>{{ ajuste.nombreEjercicioOriginal || 'Ejercicio no especificado' }}</strong>
+                            <p>{{ ajuste.motivoDetallado }}</p>
+
+                            @if (ajuste.ejercicioModificado) {
+                            <small>{{ ajuste.ejercicioModificado }}</small>
+                            }
+
+                            @if (ajuste.comentarioSupervisor) {
+                            <em>{{ ajuste.comentarioSupervisor }}</em>
+                            }
+                        </div>
+
+                        <b [class.done]="ajuste.autorizadoPorInstructor === true">
+                            {{ obtenerEstadoAjuste(ajuste) }}
+                        </b>
+                    </article>
+                    }
+                </div>
+            </section>
+            }
+
+            @if (esSoloLectura()) {
+            <div class="readonly-box">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" />
+                    <path d="M12 8v5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    <path d="M12 16h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                </svg>
+
+                <p>{{ obtenerMensajeSoloLectura() }}</p>
+            </div>
+            }
+
+            <footer class="route-footer">
+                <button type="button" class="btn-dark" (click)="volverReservas()">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                    Volver a reservas
+                </button>
+
+                <button type="button" class="btn-adjust" [disabled]="esSoloLectura()" (click)="abrirModalAjuste()">
+
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17v3z" stroke="currentColor" stroke-width="2"
+                            stroke-linejoin="round" />
+                        <path d="M13.5 7.5l3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+
+                    Solicitar ajuste
+                </button>
+
+                <button type="button" class="btn-confirm"
+                    [disabled]="aceptando || plan.estadoHoja === 'aprobado_tutor' || esSoloLectura()"
+                    (click)="aceptarHojaRuta()">
+
+                    <span>
+                        {{
+                        esSoloLectura()
+                        ? 'Sesión finalizada'
+                        : plan.estadoHoja === 'aprobado_tutor'
+                        ? 'Ya aprobado'
+                        : 'Conforme'
+                        }}
+                    </span>
+
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M5 12l4 4L19 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </footer>
+
+        </section>
+    </div>
+    }
+
+    @if (modalAjusteAbierto && plan) {
+    <div class="adjust-modal-overlay" (click)="cerrarModalAjuste()">
+        <div class="adjust-modal" (click)="$event.stopPropagation()">
+
+            <header class="adjust-modal-header">
+                <div>
+                    <h2>Solicitar ajuste</h2>
+                    <p>Envía una observación al instructor para modificar la hoja de ruta.</p>
+                </div>
+
+                <button type="button" class="btn-close-adjust" (click)="cerrarModalAjuste()">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                </button>
+            </header>
+
+            <form [formGroup]="formularioAjuste" (ngSubmit)="enviarSolicitudAjuste()" class="adjust-form">
+
+                <label>
+                    <span>Motivo del cambio</span>
+                    <select formControlName="motivoCambio">
+                        <option value="">Selecciona un motivo</option>
+                        <option value="sensibilidad_sensorial">Sensibilidad sensorial</option>
+                        <option value="fatiga_alta">Fatiga alta</option>
+                        <option value="complejidad_ejercicio">Complejidad del ejercicio</option>
+                        <option value="preferencia_paciente">Preferencia del paciente</option>
+                        <option value="otro">Otro motivo</option>
+                    </select>
+                </label>
+
+                <label>
+                    <span>Motivo detallado</span>
+                    <textarea rows="5" formControlName="motivoDetallado"
+                        placeholder="Ej: Mi familiar amaneció con mucha sensibilidad sensorial."></textarea>
+                </label>
+
+                <label>
+                    <span>Ejercicio a modificar</span>
+                    <select formControlName="idEjercicioOriginal">
+                        <option [ngValue]="null">Selecciona un ejercicio</option>
+
+                        @for (ejercicio of plan.ejercicios; track ejercicio.idDetalleRutina) {
+                        <option [ngValue]="ejercicio.idDetalleRutina">
+                            {{ ejercicio.nombreEjercicio }}
+                        </option>
+                        }
+                    </select>
+                </label>
+
+                <label>
+                    <span>Propuesta de modificación</span>
+                    <textarea rows="5" formControlName="ejercicioModificado"
+                        placeholder="Ej: Reemplazar trote por estiramientos suaves."></textarea>
+                </label>
+
+                <footer class="adjust-modal-footer">
+                    <button type="button" class="btn-dark" (click)="cerrarModalAjuste()">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn-confirm" [disabled]="enviandoAjuste">
+                        Enviar solicitud
+                    </button>
+                </footer>
+
+            </form>
+        </div>
+    </div>
+    }
+
+</section>

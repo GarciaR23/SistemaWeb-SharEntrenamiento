@@ -130,13 +130,25 @@
                 </ng-container>
                 <ng-container
                     *ngIf="normalizarTexto(sesion.estadoDetalle) === 'aprobada' || normalizarTexto(sesion.estadoDetalle) === 'confirmada'">
-                    <button class="btn-main btn-disabled" title="Esperando hoja de ruta">Hoja Ruta</button>
-                    <button class="btn-more" (click)="toggleDropdown($event, sesion.idReserva)">⋮</button>
+
+                    <button type="button" class="btn-hoja-ruta"
+                        (click)="$event.stopPropagation(); verHojaRuta(sesion.idReserva)">
+                        Hoja de ruta
+                    </button>
+                    <button class="btn-more" (click)="toggleDropdown($event, sesion.idReserva)">
+                        ⋮
+                    </button>
+
                     <div class="dropdown-menu" *ngIf="dropdownAbierto === sesion.idReserva"
                         (click)="$event.stopPropagation()">
-                        <button class="dropdown-item" (click)="verDetalles(sesion)">Detalles</button>
-                        <button class="dropdown-item dropdown-danger"
-                            (click)="abrirConfirmacionCancelacion(sesion)">Cancelar</button>
+
+                        <button class="dropdown-item" (click)="verDetalles(sesion)">
+                            Detalles
+                        </button>
+
+                        <button class="dropdown-item dropdown-danger" (click)="abrirConfirmacionCancelacion(sesion)">
+                            Cancelar
+                        </button>
                     </div>
                 </ng-container>
                 <ng-container

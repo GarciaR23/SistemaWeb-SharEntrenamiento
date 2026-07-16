@@ -173,7 +173,16 @@ export class ReservaPaciente implements OnInit {
             }
         });
     }
+    verHojaRuta(idReserva: number): void {
+        console.log('Abriendo hoja de ruta reserva:', idReserva);
 
+        if (!idReserva) {
+            console.error('No se recibió idReserva.');
+            return;
+        }
+
+        this.router.navigate(['/tutor/plan', idReserva]);
+    }
     irCatalogo(): void { this.router.navigate(['/tutor/catalogo-instructor']); }
     normalizarTexto(t: string): string { return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim(); }
 }

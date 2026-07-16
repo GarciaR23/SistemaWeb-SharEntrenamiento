@@ -42,9 +42,15 @@ export class FormularioReserva implements OnInit {
   mesSeleccionado = `${this.anio}-${String(this.mesIndex + 1).padStart(2, '0')}`;
   aceptaTerminos = false; cargando = true; guardando = false; validando = false;
   mostrarModal = false; mostrarAlerta = false; mostrarConfirmacion = false; alertaMensaje = '';
-  private ordenDias: Record<string, number> = { 'L': 1, 'M': 2, 'Mi': 3, 'J': 4, 'V': 5, 'S': 6, 'D': 7 };
-  private nombresDias: Record<string, string> = { 'L': 'Lunes', 'M': 'Martes', 'Mi': 'Miércoles', 'J': 'Jueves', 'V': 'Viernes', 'S': 'Sábado', 'D': 'Domingo' };
-
+  private nombresDias: Record<number, string> = {
+    0: 'Domingo',
+    1: 'Lunes',
+    2: 'Martes',
+    3: 'Miércoles',
+    4: 'Jueves',
+    5: 'Viernes',
+    6: 'Sábado'
+  };
   constructor(private route: ActivatedRoute, private router: Router, private tutorApiService: TutorApiService) { }
 
   ngOnInit(): void {
@@ -83,18 +89,100 @@ export class FormularioReserva implements OnInit {
   cambiarMes(): void { const [a, m] = this.mesSeleccionado.split('-'); this.anio = +a; this.mesIndex = +m - 1; this.paginaActual = 0; this.generarCalendario(); }
 
   generarCalendario(): void {
-    this.diasDisponibles = []; const hoy = new Date(); hoy.setHours(0, 0, 0, 0); const totalDias = new Date(this.anio, this.mesIndex + 1, 0).getDate();
+    this.diasDisponibles = [];
+    this.diasPaginados = [];
+    this.diaSeleccionado = null;
+    this.horasDisponibles = [];
+    this.horaInicioSeleccionada = '';
+
+    console.log('SERVICIOS RECIBIDOS DEL BACKEND:', this.servicios);
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const totalDias = new Date(this.anio, this.mesIndex + 1, 0).getDate();
+
     for (let d = 1; d <= totalDias; d++) {
-      const fecha = new Date(this.anio, this.mesIndex, d); fecha.setHours(0, 0, 0, 0); if (fecha < hoy) continue;
-      const dayOfWeek = fecha.getDay(); const diaCodigo = Object.keys(this.ordenDias).find(k => this.ordenDias[k] === dayOfWeek);
-      if (!diaCodigo) continue;
-      const horario = this.servicios.find(h => h.diaSemana?.split(', ').includes(diaCodigo));
-      if (horario) { this.diasDisponibles.push({ diaSemana: this.nombresDias[diaCodigo], fechaNumero: d, mesNombre: this.meses[this.mesIndex], horarioInicio: horario.horarioInicio || '', horarioFinal: horario.horarioFinal || '', horarioPreferencia: horario.horarioPreferencia || '' }); }
+      const fecha = new Date(this.anio, this.mesIndex, d);
+      fecha.setHours(0, 0, 0, 0);
+
+      if (fecha < hoy) {
+        continue;
+      }
+
+      const nombreDiaCalendario = this.nombresDias[fecha.getDay()];
+
+      const horario = this.servicios.find(servicio => {
+        const diaServicio = this.normalizarDia(servicio.diaSemana || '');
+        const diaCalendario = this.normalizarDia(nombreDiaCalendario);
+
+        return diaServicio === diaCalendario;
+      });
+
+      if (horario) {
+        this.diasDisponibles.push({
+          diaSemana: nombreDiaCalendario,
+          fechaNumero: d,
+          mesNombre: this.meses[this.mesIndex],
+          horarioInicio: horario.horarioInicio || '',
+          horarioFinal: horario.horarioFinal || '',
+          horarioPreferencia: horario.horarioPreferencia || ''
+        });
+      }
     }
+
+    console.log('DÍAS DISPONIBLES GENERADOS:', this.diasDisponibles);
+
     this.actualizarPaginacion();
   }
 
-  actualizarPaginacion(): void { const inicio = this.paginaActual * this.pageSize; this.diasPaginados = this.diasDisponibles.slice(inicio, inicio + this.pageSize); if (this.diasPaginados.length > 0 && !this.diaSeleccionado) { this.seleccionarDia(this.diasPaginados[0]); } }
+  private normalizarDia(dia: string): string {
+    return dia
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  }
+  private obtenerNombreDia(numeroDia: number): string {
+    const dias: Record<number, string> = {
+      0: 'Domingo',
+      1: 'Lunes',
+      2: 'Martes',
+      3: 'Miércoles',
+      4: 'Jueves',
+      5: 'Viernes',
+      6: 'Sábado'
+    };
+
+    return dias[numeroDia];
+  }
+
+  private coincideDiaServicio(diaServicio: string | null | undefined, nombreDiaCalendario: string): boolean {
+    if (!diaServicio) {
+      return false;
+    }
+
+    const diasServicio = diaServicio
+      .split(',')
+      .map(dia => this.normalizarDia(dia.trim()));
+
+    const diaCalendario = this.normalizarDia(nombreDiaCalendario);
+
+    return diasServicio.includes(diaCalendario);
+  }
+
+  actualizarPaginacion(): void {
+    const inicio = this.paginaActual * this.pageSize;
+
+    this.diasPaginados = this.diasDisponibles.slice(
+      inicio,
+      inicio + this.pageSize
+    );
+
+    if (this.diasPaginados.length > 0) {
+      this.seleccionarDia(this.diasPaginados[0]);
+    }
+  }
 
   seleccionarDia(dia: HorarioReserva): void {
     this.diaSeleccionado = dia;
